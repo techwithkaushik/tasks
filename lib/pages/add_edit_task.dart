@@ -2,16 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:tasks/controllers/add_edit_controller.dart';
+import 'package:tasks/models/task_model.dart';
 
 class AddEditTaskPage extends StatelessWidget {
   AddEditTaskPage({super.key});
   final AddEditController controller = Get.put(AddEditController());
-
+  final args = Get.arguments;
   @override
   Widget build(BuildContext context) {
+    if (args != null) {
+      final Task editingTask = args['task'];
+      controller.isEditing.value = true;
+      controller.taskDocId = editingTask.docId!;
+      controller.titleController.text = editingTask.title;
+      controller.contentController.text = editingTask.content;
+      if (editingTask.whenComplete != null &&
+          editingTask.whenComplete!.isNotEmpty) {
+        controller.whenComplete = editingTask.whenComplete!;
+        controller.isWhenComplete.value = true;
+      }
+    }
     return Obx(
       () => Scaffold(
-        appBar: AppBar(title: Text("AddEditTask")),
+        appBar: AppBar(
+          title: Text(controller.isEditing.value ? "Update Task" : "Add Task"),
+        ),
         body: Padding(
           padding: const EdgeInsets.all(16),
           child: Center(
@@ -57,7 +72,6 @@ class AddEditTaskPage extends StatelessWidget {
 
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
-                          initialEntryMode: DatePickerEntryMode.input,
                           firstDate: selectedDate,
                           lastDate: DateTime(2050),
                           initialDate: selectedDate,
@@ -68,7 +82,6 @@ class AddEditTaskPage extends StatelessWidget {
 
                         final TimeOfDay? pickedTime = await showTimePicker(
                           context: context,
-                          initialEntryMode: TimePickerEntryMode.input,
                           initialTime: TimeOfDay.fromDateTime(selectedDate),
                         );
 
@@ -84,22 +97,31 @@ class AddEditTaskPage extends StatelessWidget {
                                 pickedTime.minute,
                               ),
                             );
+                        controller.isWhenComplete.value = true;
+                        controller.isWhenCompleteError.value = false;
                       },
                       icon: Icon(Icons.calendar_month),
                     ),
                     Text("When complete? ${controller.whenComplete}"),
+                    Checkbox(
+                      isError: controller.isWhenCompleteError.value,
+                      value: controller.isWhenComplete.value,
+                      onChanged: ((value) {
+                        controller.isWhenComplete.value = value!;
+                      }),
+                    ),
                   ],
                 ),
                 SizedBox(height: 30),
                 OutlinedButton(
                   onPressed: () => controller.saveTask(),
-                  child: controller.isLoading
+                  child: controller.isLoading.value
                       ? SizedBox(
                           height: 22,
                           width: 22,
                           child: CircularProgressIndicator(strokeWidth: 2.5),
                         )
-                      : Text("save"),
+                      : Text(controller.isEditing.value ? "Update" : "Save"),
                 ),
               ],
             ),

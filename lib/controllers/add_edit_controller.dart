@@ -1,95 +1,127 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tasks/models/task_model.dart';
 import 'package:tasks/services/auth_service.dart';
 
 class AddEditController extends GetxController {
-  TextEditingController titleController = TextEditingController().obs();
-  TextEditingController contentController = TextEditingController().obs();
+  // FIXED: No .obs() on TextEditingController
+  final TextEditingController titleController = TextEditingController();
+  final TextEditingController contentController = TextEditingController();
 
   final RxnString _titleError = RxnString();
   final RxnString _contentError = RxnString();
 
-  get titleError => _titleError.value;
-  get contentError => _contentError.value;
+  String? get titleError => _titleError.value;
+  String? get contentError => _contentError.value;
 
   set titleError(String? s) => _titleError.value = s;
   set contentError(String? s) => _contentError.value = s;
 
   final RxString _whenComplete = "".obs;
-  get whenComplete => _whenComplete.value;
+  String get whenComplete => _whenComplete.value;
   set whenComplete(String d) => _whenComplete.value = d;
 
-  final RxBool _isLoading = false.obs;
-  get isLoading => _isLoading.value;
-  set isLoading(bool b) => _isLoading.value = b;
+  final RxBool isLoading = false.obs;
+  final RxBool isEditing = false.obs;
+  final RxBool isWhenComplete = false.obs;
+  final RxBool isWhenCompleteError = false.obs;
+
+  String taskDocId = "";
 
   void checkTitleField() {
-    var title = titleController.text;
-    titleError = null;
-    if (title.isEmpty) {
-      titleError = "enter title";
-      return;
-    }
+    titleError = titleController.text.isEmpty ? "enter title" : null;
   }
 
   void checkContentField() {
-    var content = contentController.text;
-    contentError = null;
-    if (content.isEmpty) {
-      contentError = "enter content";
-      return;
-    }
+    contentError = contentController.text.isEmpty ? "enter content" : null;
   }
 
-  void saveTask() {
-    var title = titleController.text;
-    var content = contentController.text;
+  void saveTask() async {
+    final title = titleController.text.trim();
+    final content = contentController.text.trim();
 
-    isLoading = true;
-    if (title.isEmpty || content.isEmpty) {
-      checkTitleField();
-      checkContentField();
-      isLoading = false;
+    // Basic validation
+    checkTitleField();
+    checkContentField();
+    if (titleError != null || contentError != null) return;
+    if (isWhenComplete.value && whenComplete.isEmpty) {
+      isWhenCompleteError.value = true;
       return;
     }
 
-    try {
-      User? user = AuthService().currentUser;
+    isLoading.value = true;
 
+    try {
+      final user = AuthService().currentUser;
       if (user == null) {
-        isLoading = false;
+        isLoading.value = false;
+        // optional: show login required snackbar
+        Get.snackbar(
+          "Not logged in",
+          "Please login to save tasks",
+          snackPosition: SnackPosition.BOTTOM,
+        );
         return;
       }
+      final CollectionReference collection = FirebaseFirestore.instance
+          .collection("tasks");
+      if (!isEditing.value) {
+        final task = Task(
+          userId: user.uid,
+          title: title,
+          content: content,
+          whenComplete: whenComplete,
+          isCompleted: false,
+          createdAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+        );
 
-      Task task = Task(
-        userId: user.uid,
-        title: title,
-        content: content,
-        whenComplete: whenComplete,
-        isCompleted: false,
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now(),
+        // Example using add()
+        collection.add(task.toFirestore());
+      } else {
+        // Example using set() with options (if you prefer update, use update)
+        collection.doc(taskDocId).set({
+          'title': title,
+          'content': content,
+          'whenComplete': isWhenComplete.value ? whenComplete : "",
+          'updatedAt': Timestamp.now(),
+        }, SetOptions(merge: true));
+      }
+      Get.showSnackbar(
+        GetSnackBar(
+          title: isEditing.value ? "Task Updated" : "Task Saved",
+          message: isEditing.value
+              ? "Task \"$title\" updated"
+              : "New task \"$title\" added",
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(
+            seconds: 2,
+          ), // visible time for success message
+          isDismissible: true,
+          showProgressIndicator: true,
+          margin: const EdgeInsets.all(12),
+          borderRadius: 8,
+          snackStyle: SnackStyle.FLOATING,
+        ),
       );
-      FirebaseFirestore.instance.collection("tasks").add(task.toFirestore());
-      Get.snackbar(
-        "Task Saved",
-        "New task ${task.title} added",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      whenComplete = "";
+      Get.back(closeOverlays: true);
     } catch (e) {
-      Get.snackbar(
-        "Task failed",
-        e.toString(),
-        snackPosition: SnackPosition.BOTTOM,
+      Get.showSnackbar(
+        GetSnackBar(
+          title: "Save Failed",
+          message: e.toString(),
+          snackPosition: SnackPosition.BOTTOM,
+          duration: const Duration(seconds: 3),
+          isDismissible: true,
+          margin: const EdgeInsets.all(12),
+          showProgressIndicator: true,
+          borderRadius: 8,
+          snackStyle: SnackStyle.FLOATING,
+        ),
       );
+    } finally {
+      isLoading.value = false;
     }
-
-    isLoading = false;
-    titleController.text = "";
-    contentController.text = "";
   }
 }
