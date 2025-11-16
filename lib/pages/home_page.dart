@@ -11,6 +11,32 @@ class HomePage extends StatelessWidget {
   HomePage({super.key});
   final HomeController controller = Get.put(HomeController());
 
+  Widget _buildLabelRich(String label, Color statusColor) {
+    final parenIndex = label.indexOf('(');
+    final baseStyle = TextStyle(
+      fontSize: 12,
+      fontStyle: FontStyle.italic,
+      color: Colors.grey[800],
+    );
+    if (parenIndex != -1) {
+      final prefix = label.substring(0, parenIndex).trimRight();
+      final paren = label.substring(parenIndex);
+      return Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(text: prefix, style: baseStyle),
+            TextSpan(text: ' ', style: baseStyle),
+            TextSpan(
+              text: paren,
+              style: baseStyle.copyWith(color: statusColor),
+            ),
+          ],
+        ),
+      );
+    }
+    return Text(label, style: baseStyle);
+  }
+
   String _relativeFrom(Duration d) {
     final seconds = d.inSeconds.abs();
     if (seconds < 60) return '${seconds}s';
@@ -33,110 +59,91 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _statusWidget(Task task) {
-    final whenStr = task.whenComplete!;
+    // Compute status locally from Task fields so this file works with the
+    // existing HomeController implementation.
+    final whenStr = task.whenComplete ?? '';
 
-    // prefer explicit completed flag
-    if (task.isCompleted!) {
+    // Completed path
+    if (task.isCompleted ?? false) {
       final completedTs = task.completedAt;
       if (completedTs != null) {
         final completedDate = completedTs.toDate();
-        final formatted = DateFormat(
-          'yyyy-MM-dd hh:mm a',
-        ).format(completedDate);
+
         final rel = _relativeToNow(completedDate);
 
-        // Determine on-time vs late if a due/whenCompleted string exists
-        final whenStr = task.whenComplete ?? '';
         String statusLabel = 'Completed';
-        TextStyle statusStyle = TextStyle(
-          fontStyle: FontStyle.italic,
-          color: Colors.green[800],
-        );
+        Color parenColor = Colors.green[800]!;
         if (whenStr.isNotEmpty) {
           try {
             final whenDate = DateFormat('yyyy-MM-dd hh:mm a').parse(whenStr);
             if (completedDate.isAfter(whenDate)) {
               statusLabel = 'Completed (late)';
-              statusStyle = TextStyle(
-                fontStyle: FontStyle.italic,
-                color: Colors.red[800],
-              );
+              parenColor = Colors.red[800]!;
             } else {
               statusLabel = 'Completed (on time)';
-              statusStyle = TextStyle(
-                fontStyle: FontStyle.italic,
-                color: Colors.green[800],
-              );
+              parenColor = Colors.green[800]!;
             }
           } catch (e) {
-            // ignore parse errors and keep generic 'Completed'
+            // ignore parse errors
           }
         }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(statusLabel, style: statusStyle),
-            SizedBox(height: 4),
-            Text(
-              'Completed $rel • $formatted',
-              style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-            ),
+            _buildLabelRich(statusLabel, parenColor),
+            SizedBox(width: 4),
+            Text(rel, style: TextStyle(fontSize: 12, color: Colors.grey[700])),
           ],
         );
       }
 
-      return Text(
-        'Completed',
-        style: TextStyle(fontStyle: FontStyle.italic, color: Colors.green[800]),
-      );
+      return _buildLabelRich('Completed', Colors.green[800]!);
     }
 
     if (whenStr.isEmpty) {
       return Text(
         'No due date',
-        style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey[700]),
+        style: TextStyle(
+          fontSize: 12,
+          fontStyle: FontStyle.italic,
+          color: Colors.grey[700],
+        ),
       );
     }
 
     try {
       final whenDate = DateFormat('yyyy-MM-dd hh:mm a').parse(whenStr);
-      final formattedWhen = DateFormat('yyyy-MM-dd hh:mm a').format(whenDate);
       final rel = _relativeToNow(whenDate);
       if (whenDate.isBefore(DateTime.now())) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        return Row(
           children: [
             Text(
               'Overdue',
               style: TextStyle(
+                fontSize: 12,
                 fontStyle: FontStyle.italic,
                 color: Colors.red[900],
               ),
             ),
-            SizedBox(height: 4),
-            Text(
-              'Due $formattedWhen • $rel',
-              style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-            ),
+            SizedBox(width: 4),
+            Text(rel, style: TextStyle(fontSize: 12, color: Colors.grey[700])),
           ],
         );
       }
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      return Row(
         children: [
           Text(
             'Due',
             style: TextStyle(
+              fontSize: 12,
               fontStyle: FontStyle.italic,
               color: Colors.orange[900],
             ),
           ),
-          SizedBox(height: 4),
-          Text(
-            '$formattedWhen • $rel',
-            style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-          ),
+          SizedBox(width: 4),
+          Text(rel, style: TextStyle(fontSize: 12, color: Colors.grey[700])),
         ],
       );
     } catch (e) {
