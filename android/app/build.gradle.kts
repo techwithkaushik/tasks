@@ -45,10 +45,17 @@ android {
 
     signingConfigs {
         create("release") {
-                storeFile = file(keystoreProperties.getProperty("storeFile"))
+	    if (System.getenv()["CI"]) {
+		storeFile = file(System.getenv("SIGNING_KEY_STORE"))
+            	storePassword = System.getenv("SIGNING_STORE_PASSWORD")
+	        keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+        	keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+            } else {
+		storeFile = file(keystoreProperties.getProperty("storeFile"))
                 storePassword = keystoreProperties.getProperty("storePassword")
                 keyAlias = keystoreProperties.getProperty("keyAlias")
                 keyPassword = keystoreProperties.getProperty("keyPassword")
+	   }
         }
     }
 
