@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:tasks/services/snackbar_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:tasks/services/auth_service.dart';
@@ -31,12 +32,15 @@ class AuthController extends GetxController {
   Future<void> register(String email, String password) async {
     final error = await AuthService().signUp(email, password);
     if (error != null) {
-      Get.snackbar("Signup Failed", error, snackPosition: SnackPosition.BOTTOM);
+      SnackbarService.show(
+        title: 'Signup Failed',
+        message: error,
+        isError: true,
+      );
     } else {
-      Get.snackbar(
-        "SignUp Sucessfully",
-        "Welcome $email",
-        snackPosition: SnackPosition.BOTTOM,
+      SnackbarService.show(
+        title: 'SignUp Successfully',
+        message: 'Welcome $email',
       );
     }
   }
@@ -44,12 +48,15 @@ class AuthController extends GetxController {
   Future<void> login(String email, String password) async {
     final error = await AuthService().signIn(email, password);
     if (error != null) {
-      Get.snackbar("Login Failed", error, snackPosition: SnackPosition.BOTTOM);
+      SnackbarService.show(
+        title: 'Login Failed',
+        message: error,
+        isError: true,
+      );
     } else {
-      Get.snackbar(
-        "Login Sucessfully",
-        "Welcome back $email",
-        snackPosition: SnackPosition.BOTTOM,
+      SnackbarService.show(
+        title: 'Login Successfully',
+        message: 'Welcome back $email',
       );
     }
   }

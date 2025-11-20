@@ -8,23 +8,25 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () => Scaffold(
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  loginController.isLogin
-                      ? "Welcome back to Tasks"
-                      : "Wecome to Tasks",
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 150),
+              Text(
+                loginController.isLogin
+                    ? "Welcome back to Tasks"
+                    : "Wecome to Tasks",
+                style: Theme.of(context).textTheme.headlineLarge,
+              ),
 
-                SizedBox(height: 40),
-                TextFormField(
+              SizedBox(height: 40),
+              Obx(
+                () => TextFormField(
+                  textInputAction: TextInputAction.next,
                   controller: loginController.emailController,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
@@ -36,8 +38,10 @@ class LoginPage extends StatelessWidget {
                   ),
                   onChanged: (value) => loginController.checkEmailField(),
                 ),
-                SizedBox(height: 10),
-                TextFormField(
+              ),
+              SizedBox(height: 10),
+              Obx(
+                () => TextFormField(
                   obscureText: !loginController.showPassword,
                   controller: loginController.passwordController,
                   decoration: InputDecoration(
@@ -58,8 +62,10 @@ class LoginPage extends StatelessWidget {
                   ),
                   onChanged: (value) => loginController.checkPasswordField(),
                 ),
-                SizedBox(height: 20),
-                !loginController.isLogin
+              ),
+              SizedBox(height: 20),
+              Obx(
+                () => !loginController.isLogin
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -73,7 +79,9 @@ class LoginPage extends StatelessWidget {
                         ],
                       )
                     : SizedBox(height: 0),
-                OutlinedButton(
+              ),
+              Obx(
+                () => OutlinedButton(
                   onPressed: () {
                     loginController.isLogin
                         ? loginController.login()
@@ -87,7 +95,9 @@ class LoginPage extends StatelessWidget {
                         )
                       : Text(loginController.isLogin ? "Login" : "SignUp"),
                 ),
-                Row(
+              ),
+              Obx(
+                () => Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
@@ -103,8 +113,8 @@ class LoginPage extends StatelessWidget {
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

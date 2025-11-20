@@ -61,48 +61,57 @@ class AddEditTaskPage extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: () async {
-                        var currentDateTime = DateTime.now();
-                        var selectedDate = DateTime(
-                          currentDateTime.year,
-                          currentDateTime.month,
-                          currentDateTime.day,
-                          currentDateTime.hour,
-                          currentDateTime.minute,
+                        var now = DateTime.now();
+                        var initial = DateTime(
+                          now.year,
+                          now.month,
+                          now.day,
+                          now.hour,
+                          now.minute,
                         );
 
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
-                          firstDate: selectedDate,
+                          firstDate: initial,
                           lastDate: DateTime(2050),
-                          initialDate: selectedDate,
+                          initialDate: initial,
                         );
 
                         if (pickedDate == null) return;
                         if (!context.mounted) return;
 
-                        final TimeOfDay? pickedTime = await showTimePicker(
+                        final pickedTime = await showTimePicker(
                           context: context,
-                          initialTime: TimeOfDay.fromDateTime(selectedDate),
+                          initialTime: TimeOfDay.fromDateTime(initial),
                         );
 
                         if (pickedTime == null) return;
 
-                        controller.whenComplete =
-                            DateFormat("yyyy-MM-dd hh:mm a").format(
-                              DateTime(
-                                pickedDate.year,
-                                pickedDate.month,
-                                pickedDate.day,
-                                pickedTime.hour,
-                                pickedTime.minute,
-                              ),
-                            );
+                        /// ADD SECONDS FIXED
+                        final full = DateTime(
+                          pickedDate.year,
+                          pickedDate.month,
+                          pickedDate.day,
+                          pickedTime.hour,
+                          pickedTime.minute,
+                          DateTime.now().second,
+                        );
+
+                        controller.whenComplete = DateFormat(
+                          "yyyy-MM-dd hh:mm:ss a",
+                        ).format(full);
+
                         controller.isWhenComplete.value = true;
                         controller.isWhenCompleteError.value = false;
                       },
                       icon: Icon(Icons.calendar_month),
                     ),
-                    Text("When complete? ${controller.whenComplete}"),
+                    Column(
+                      children: [
+                        Text("When complete?"),
+                        Text(": ${controller.whenComplete}"),
+                      ],
+                    ),
                     Checkbox(
                       isError: controller.isWhenCompleteError.value,
                       value: controller.isWhenComplete.value,

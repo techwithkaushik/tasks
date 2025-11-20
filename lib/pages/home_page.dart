@@ -38,89 +38,143 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _statusWidget(Task task) {
-    // Compute status locally from Task fields so this file works with the
-    // existing HomeController implementation.
+    const double iconSize = 15;
+
+    Widget row(IconData icon, Color iconColor, Color parenColor, Widget text) {
+      return Row(
+        children: [
+          Icon(icon, size: iconSize, color: iconColor),
+          SizedBox(width: 4),
+          text,
+        ],
+      );
+    }
+
     final whenStr = task.whenComplete ?? '';
 
-    // Completed path
+    // ---------------------------------------------------------------------------
+    // COMPLETED CASES
+    // ---------------------------------------------------------------------------
     if (task.isCompleted ?? false) {
       final completedTs = task.completedAt;
       if (completedTs != null) {
         final completedDate = completedTs.toDate();
 
-        String statusLabel = 'Completed';
-        Color parenColor = Colors.green[800]!;
+        String statusLabel = "Completed";
+        Color parenColor = Colors.green[900]!;
+        IconData icon = Icons.check_circle;
+        Color iconColor = Colors.green[900]!;
+
         if (whenStr.isNotEmpty) {
           try {
-            final whenDate = DateFormat('yyyy-MM-dd hh:mm a').parse(whenStr);
+            final whenDate = DateFormat('yyyy-MM-dd hh:mm:ss a').parse(whenStr);
+
             if (completedDate.isAfter(whenDate)) {
-              statusLabel = 'Completed (late)';
-              parenColor = Colors.red[800]!;
+              statusLabel = "Completed (late)";
+              parenColor = Colors.red[900]!;
             } else {
-              statusLabel = 'Completed (on time)';
-              parenColor = Colors.green[800]!;
+              statusLabel = "Completed (on time)";
             }
-          } catch (e) {
-            // ignore parse errors
-          }
+          } catch (_) {}
         }
 
         return Obx(
-          () => Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              _buildLabelRich(statusLabel, parenColor),
-              SizedBox(width: 4),
-              Text(
-                controller.relativeToNow(completedDate),
-                style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-              ),
-            ],
+          () => row(
+            icon,
+            iconColor,
+            parenColor,
+            Row(
+              children: [
+                _buildLabelRich(statusLabel, parenColor),
+                SizedBox(width: 4),
+                Text(
+                  controller.relativeToNow(completedDate),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey[800],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       }
 
-      return _buildLabelRich('Completed', Colors.green[800]!);
+      return row(
+        Icons.check_circle,
+        Colors.green[900]!,
+        Colors.green[800]!,
+        _buildLabelRich("Completed", Colors.green[900]!),
+      );
     }
 
+    // ---------------------------------------------------------------------------
+    // NO DUE DATE
+    // ---------------------------------------------------------------------------
     if (whenStr.isEmpty) {
-      return Text(
-        'No due date',
-        style: TextStyle(
-          fontSize: 12,
-          fontStyle: FontStyle.italic,
-          color: Colors.grey[700],
+      return row(
+        Icons.remove_circle_outline,
+        Colors.grey[800]!,
+        Colors.grey[700]!,
+        Text(
+          'No due date',
+          style: TextStyle(
+            fontSize: 12,
+            fontStyle: FontStyle.italic,
+            color: Colors.grey[700],
+          ),
         ),
       );
     }
 
+    // ---------------------------------------------------------------------------
+    // DUE / OVERDUE
+    // ---------------------------------------------------------------------------
     try {
-      final whenDate = DateFormat('yyyy-MM-dd hh:mm a').parse(whenStr);
+      final whenDate = DateFormat('yyyy-MM-dd hh:mm:ss a').parse(whenStr);
 
-      return Obx(
-        () => Row(
-          children: [
-            Text(
-              !whenDate.isBefore(controller.currentTime) ? "Due" : "Overdue",
-              style: TextStyle(
-                fontSize: 12,
-                fontStyle: FontStyle.italic,
-                color: !whenDate.isBefore(controller.currentTime)
-                    ? Colors.orange[900]
-                    : Colors.red[900],
+      return Obx(() {
+        final now = controller.currentTime;
+        final isDue = !whenDate.isBefore(now); // now <= whenDate
+        final icon = isDue ? Icons.schedule : Icons.warning_amber_rounded;
+        final color = isDue ? Colors.orange[900] : Colors.red[900];
+        final textLabel = isDue ? "Due" : "Overdue";
+
+        return row(
+          icon,
+          color!,
+          color,
+          Row(
+            children: [
+              Text(
+                textLabel,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  color: color,
+                ),
               ),
-            ),
-            SizedBox(width: 4),
-            Text(
-              controller.relativeToNow(whenDate),
-              style: TextStyle(fontSize: 12, color: Colors.grey[700]),
-            ),
-          ],
-        ),
-      );
+              SizedBox(width: 4),
+              Text(
+                controller.relativeToNow(whenDate),
+                style: TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  color: Colors.grey[700],
+                ),
+              ),
+            ],
+          ),
+        );
+      });
     } catch (e) {
-      return Text('Invalid date', style: TextStyle(color: Colors.grey));
+      return row(
+        Icons.error_outline,
+        Colors.grey[800]!,
+        Colors.grey,
+        Text('Invalid date', style: TextStyle(color: Colors.grey)),
+      );
     }
   }
 
@@ -186,20 +240,25 @@ class HomePage extends StatelessWidget {
               ),
               confirmDismiss: (direction) async {
                 if (direction == DismissDirection.startToEnd) {
+                  controller.timer?.cancel();
                   controller.deleteTask(index);
                   return true;
                 }
                 if (direction == DismissDirection.endToStart) {
+                  controller.timer?.cancel();
                   controller.updateTask(index, !task.isCompleted!);
                   return false; // keep in list
                 }
                 return false;
               },
               child: GestureDetector(
-                onTap: () => Get.toNamed(
-                  RouteNames.getAddEditTaskPage(),
-                  arguments: {'task': task},
-                ),
+                onTap: () {
+                  controller.timer?.cancel();
+                  Get.toNamed(
+                    RouteNames.getAddEditTaskPage(),
+                    arguments: {'task': task},
+                  );
+                },
                 child: Container(
                   margin: EdgeInsets.only(bottom: 8),
                   padding: EdgeInsets.all(12),
@@ -234,15 +293,6 @@ class HomePage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      SizedBox(width: 12),
-                      Icon(
-                        task.isCompleted!
-                            ? Icons.done_all
-                            : Icons.pending_actions,
-                        color: task.isCompleted!
-                            ? Colors.green[800]
-                            : Colors.grey[700],
-                      ),
                     ],
                   ),
                 ),
@@ -252,7 +302,10 @@ class HomePage extends StatelessWidget {
         );
       }),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.toNamed(RouteNames.getAddEditTaskPage()),
+        onPressed: () {
+          controller.timer?.cancel();
+          Get.toNamed(RouteNames.getAddEditTaskPage());
+        },
         child: Icon(Icons.add),
       ),
     );

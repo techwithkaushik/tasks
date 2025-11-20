@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:tasks/services/snackbar_service.dart';
 import 'package:tasks/models/task_model.dart';
 import 'package:tasks/routes/route_names.dart';
 
@@ -13,9 +14,10 @@ class HomeController extends GetxController {
   get isLoading => _isLoading.value;
   set isLoading(bool b) => _isLoading.value = b;
   final Rx<DateTime> _now = DateTime.now().obs;
-  late Timer _timer;
+  Timer? timer;
   get currentTime {
-    _timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+      timer?.cancel();
       _now.value = DateTime.now();
     });
     return _now.value;
@@ -72,7 +74,7 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
-    _timer.cancel();
+    timer?.cancel();
     super.onClose();
   }
 
@@ -95,29 +97,29 @@ class HomeController extends GetxController {
             isLoading = false;
           });
     } catch (e) {
-      Get.snackbar("Failed loadTasks", e.toString());
+      SnackbarService.show(
+        title: 'Failed loadTasks',
+        message: e.toString(),
+        isError: true,
+      );
     }
   }
 
-  void updateTask(int index, bool isCompleted) {
+  void updateTask(int index, bool newValue) {
     try {
-      final task = tasks.elementAt(index);
-      if (task.isCompleted!) {
-        task.completedAt = Timestamp.now();
-      } else {
-        task.completedAt = null;
-      }
+      final task = tasks[index];
 
       FirebaseFirestore.instance.collection("tasks").doc(task.docId).update({
-        "isCompleted": isCompleted,
+        "isCompleted": newValue,
         "updatedAt": Timestamp.now(),
-        if (isCompleted)
-          "completedAt": Timestamp.now()
-        else
-          "completedAt": null,
+        "completedAt": newValue ? Timestamp.now() : null,
       });
     } catch (e) {
-      Get.snackbar("Failed Update", e.toString());
+      SnackbarService.show(
+        title: 'Failed Update',
+        message: e.toString(),
+        isError: true,
+      );
     }
   }
 
@@ -126,7 +128,11 @@ class HomeController extends GetxController {
       final task = tasks.elementAt(index);
       FirebaseFirestore.instance.collection("tasks").doc(task.docId).delete();
     } catch (e) {
-      Get.snackbar("Failed Delete", e.toString());
+      SnackbarService.show(
+        title: 'Failed Delete',
+        message: e.toString(),
+        isError: true,
+      );
     }
   }
 }

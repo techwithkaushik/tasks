@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tasks/services/snackbar_service.dart';
 import 'package:tasks/models/task_model.dart';
 import 'package:tasks/services/auth_service.dart';
+import 'package:intl/intl.dart';
 
 class AddEditController extends GetxController {
-  // FIXED: No .obs() on TextEditingController
   final TextEditingController titleController = TextEditingController();
   final TextEditingController contentController = TextEditingController();
 
@@ -29,6 +30,13 @@ class AddEditController extends GetxController {
 
   String taskDocId = "";
 
+  @override
+  void onClose() {
+    titleController.dispose();
+    contentController.dispose();
+    super.onClose();
+  }
+
   void checkTitleField() {
     titleError = titleController.text.isEmpty ? "enter title" : null;
   }
@@ -37,14 +45,19 @@ class AddEditController extends GetxController {
     contentError = contentController.text.isEmpty ? "enter content" : null;
   }
 
-  void saveTask() async {
+  /// Format with seconds always
+  String generateTimeWithSeconds(DateTime d) {
+    return DateFormat("yyyy-MM-dd hh:mm:ss a").format(d);
+  }
+
+  void saveTask() {
     final title = titleController.text.trim();
     final content = contentController.text.trim();
 
-    // Basic validation
     checkTitleField();
     checkContentField();
     if (titleError != null || contentError != null) return;
+
     if (isWhenComplete.value && whenComplete.isEmpty) {
       isWhenCompleteError.value = true;
       return;
@@ -55,73 +68,59 @@ class AddEditController extends GetxController {
     try {
       final user = AuthService().currentUser;
       if (user == null) {
-        isLoading.value = false;
-        // optional: show login required snackbar
-        Get.snackbar(
-          "Not logged in",
-          "Please login to save tasks",
-          snackPosition: SnackPosition.BOTTOM,
+        SnackbarService.show(
+          title: 'Not logged in',
+          message: 'Please login to save tasks',
+          isError: true,
         );
+        isLoading.value = false;
         return;
       }
-      final CollectionReference collection = FirebaseFirestore.instance
-          .collection("tasks");
+
+      final collection = FirebaseFirestore.instance.collection("tasks");
+
+      final String finalWhenComplete = isWhenComplete.value ? whenComplete : "";
+
       if (!isEditing.value) {
+        /// NEW TASK
         final task = Task(
           userId: user.uid,
           title: title,
           content: content,
-          whenComplete: whenComplete,
+          whenComplete: finalWhenComplete,
           isCompleted: false,
           createdAt: Timestamp.now(),
           updatedAt: Timestamp.now(),
         );
 
-        // Example using add()
         collection.add(task.toFirestore());
       } else {
-        // Example using set() with options (if you prefer update, use update)
-        collection.doc(taskDocId).set({
+        /// EDITING EXISTING
+        collection.doc(taskDocId).update({
           'title': title,
           'content': content,
-          'whenComplete': isWhenComplete.value ? whenComplete : "",
+          'whenComplete': finalWhenComplete,
           'updatedAt': Timestamp.now(),
-        }, SetOptions(merge: true));
+        });
       }
-      Get.showSnackbar(
-        GetSnackBar(
-          title: isEditing.value ? "Task Updated" : "Task Saved",
-          message: isEditing.value
-              ? "Task \"$title\" updated"
-              : "New task \"$title\" added",
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(
-            seconds: 2,
-          ), // visible time for success message
-          isDismissible: true,
-          showProgressIndicator: true,
-          margin: const EdgeInsets.all(12),
-          borderRadius: 8,
-          snackStyle: SnackStyle.FLOATING,
-        ),
+
+      SnackbarService.show(
+        title: isEditing.value ? 'Task Updated' : 'Task Saved',
+        message: isEditing.value
+            ? 'Task "$title" updated'
+            : 'New task "$title" added',
+        duration: const Duration(seconds: 2),
       );
-      Get.back(closeOverlays: true);
-    } catch (e) {
-      Get.showSnackbar(
-        GetSnackBar(
-          title: "Save Failed",
-          message: e.toString(),
-          snackPosition: SnackPosition.BOTTOM,
-          duration: const Duration(seconds: 3),
-          isDismissible: true,
-          margin: const EdgeInsets.all(12),
-          showProgressIndicator: true,
-          borderRadius: 8,
-          snackStyle: SnackStyle.FLOATING,
-        ),
-      );
-    } finally {
+
       isLoading.value = false;
+      Get.back();
+    } catch (e) {
+      isLoading.value = false;
+      SnackbarService.show(
+        title: 'Save Failed',
+        message: e.toString(),
+        isError: true,
+      );
     }
   }
 }
