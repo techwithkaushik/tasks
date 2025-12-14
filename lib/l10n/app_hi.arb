@@ -1,0 +1,107 @@
+{
+  "@@locale": "hi",
+  "add": "जोड़ें",
+  "@add": {
+    "description": "नया कार्य जोड़ने के लिए बटन लेबल"
+  },
+  "addTask": "कार्य जोड़ें",
+  "@addTask": {
+    "description": "नया कार्य जोड़ने का शीर्षक या क्रिया"
+  },
+  "appTitle": "कार्य",
+  "@appTitle": {
+    "description": "ऐप बार और लॉन्चर में दिखने वाला ऐप शीर्षक"
+  },
+  "cancel": "रद्द करें",
+  "@cancel": {
+    "description": "वर्तमान क्रिया रद्द करने के लिए बटन लेबल"
+  },
+  "chooseLanguage": "भाषा चुनें",
+  "@chooseLanguage": {
+    "description": "ऐप की भाषा चुनने का संकेत"
+  },
+  "completed": "पूर्ण",
+  "@completed": {
+    "description": "कार्य की स्थिति जो पूर्ण होने को दर्शाती है"
+  },
+  "content": "विवरण",
+  "@content": {
+    "description": "कार्य के विवरण या सामग्री का लेबल"
+  },
+  "created": "बनाया गया",
+  "@created": {
+    "description": "कार्य बनने की स्थिति या तिथि दर्शाने वाला लेबल"
+  },
+  "darkMode": "डार्क थीम सक्षम करें",
+  "@darkMode": {
+    "description": "मैन्युअल रूप से डार्क मोड सक्षम करने का विकल्प"
+  },
+  "darkModeDescription": "मैन्युअल रूप से डार्क थीम पर स्विच करें",
+  "@darkModeDescription": {
+    "description": "डार्क मोड विकल्प का विवरण"
+  },
+  "dynamicColor": "डायनामिक रंग",
+  "@dynamicColor": {
+    "description": "डायनामिक सिस्टम रंगों का विकल्प"
+  },
+  "dynamicColorDescription": "वॉलपेपर आधारित सिस्टम रंग उपयोग करें",
+  "@dynamicColorDescription": {
+    "description": "डायनामिक रंग विकल्प का विवरण"
+  },
+  "english": "अंग्रेज़ी",
+  "@english": {
+    "description": "अंग्रेज़ी भाषा का विकल्प"
+  },
+  "error": "त्रुटि",
+  "@error": {
+    "description": "सामान्य त्रुटि संदेश या शीर्षक"
+  },
+  "followSystemTheme": "सिस्टम थीम का पालन करें",
+  "@followSystemTheme": {
+    "description": "सिस्टम थीम के अनुसार थीम बदलने का विकल्प"
+  },
+  "followSystemThemeDescription": "सिस्टम डार्क मोड के अनुसार अपने आप बदलें",
+  "@followSystemThemeDescription": {
+    "description": "सिस्टम थीम विकल्प का विवरण"
+  },
+  "hindi": "हिंदी",
+  "@hindi": {
+    "description": "हिंदी भाषा का विकल्प"
+  },
+  "language": "भाषा",
+  "@language": {
+    "description": "भाषा सेटिंग का लेबल"
+  },
+  "languageDescription": "ऐप की भाषा चुनें",
+  "@languageDescription": {
+    "description": "भाषा चयन विकल्प का विवरण"
+  },
+  "noTaskAdded": "अभी तक कोई कार्य नहीं जोड़ा गया है।",
+  "@noTaskAdded": {
+    "description": "जब कोई कार्य मौजूद न हो तब दिखने वाला संदेश"
+  },
+  "noTaskCompleted": "अभी तक कोई कार्य पूर्ण नहीं हुआ है।",
+  "@noTaskCompleted": {
+    "description": "जब कोई कार्य पूरा न हुआ हो तब दिखने वाला संदेश"
+  },
+  "pending": "लंबित",
+  "@pending": {
+    "description": "कार्य की स्थिति जो लंबित होने को दर्शाती है"
+  },
+  "settingsTitle": "सेटिंग्स",
+  "@settingsTitle": {
+    "description": "सेटिंग्स स्क्रीन का शीर्षक"
+  },
+  "status": "स्थिति",
+  "@status": {
+    "description": "कार्य की स्थिति का लेबल"
+  },
+  "systemDefault": "सिस्टम डिफ़ॉल्ट",
+  "@systemDefault": {
+    "description": "सिस्टम की डिफ़ॉल्ट भाषा का विकल्प"
+  },
+  "title": "शीर्षक",
+  "@title": {
+    "description": "कार्य के शीर्षक का लेबल"
+  }
+}

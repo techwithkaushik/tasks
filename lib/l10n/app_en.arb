@@ -1,0 +1,107 @@
+{
+  "@@locale": "en",
+  "add": "Add",
+  "@add": {
+    "description": "Button label to add a new task"
+  },
+  "addTask": "Add Task",
+  "@addTask": {
+    "description": "Title or action text for adding a new task"
+  },
+  "appTitle": "Tasks",
+  "@appTitle": {
+    "description": "Application title shown in app bar and launcher"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Button label to cancel the current action"
+  },
+  "chooseLanguage": "Choose language",
+  "@chooseLanguage": {
+    "description": "Prompt to select application language"
+  },
+  "completed": "Completed",
+  "@completed": {
+    "description": "Task status indicating completion"
+  },
+  "content": "Content",
+  "@content": {
+    "description": "Label for task description or content field"
+  },
+  "created": "Created",
+  "@created": {
+    "description": "Label indicating task creation date or status"
+  },
+  "darkMode": "Enable dark theme",
+  "@darkMode": {
+    "description": "Toggle label to enable dark mode manually"
+  },
+  "darkModeDescription": "Switch to dark theme manually",
+  "@darkModeDescription": {
+    "description": "Explanation text for dark mode toggle"
+  },
+  "dynamicColor": "Dynamic color",
+  "@dynamicColor": {
+    "description": "Toggle label for dynamic system colors"
+  },
+  "dynamicColorDescription": "Use wallpaper-based system colors",
+  "@dynamicColorDescription": {
+    "description": "Explanation text for dynamic color option"
+  },
+  "english": "English",
+  "@english": {
+    "description": "Language option for English"
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Generic error title or label"
+  },
+  "followSystemTheme": "Follow system theme",
+  "@followSystemTheme": {
+    "description": "Toggle label to follow system theme"
+  },
+  "followSystemThemeDescription": "Automatically match system dark mode",
+  "@followSystemThemeDescription": {
+    "description": "Explanation text for system theme option"
+  },
+  "hindi": "Hindi",
+  "@hindi": {
+    "description": "Language option for Hindi"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Label for language setting"
+  },
+  "languageDescription": "Choose app language",
+  "@languageDescription": {
+    "description": "Explanation text for language selection"
+  },
+  "noTaskAdded": "No tasks added yet.",
+  "@noTaskAdded": {
+    "description": "Empty state message when no tasks exist"
+  },
+  "noTaskCompleted": "No tasks completed yet.",
+  "@noTaskCompleted": {
+    "description": "Empty state message when no tasks are completed"
+  },
+  "pending": "Pending",
+  "@pending": {
+    "description": "Task status indicating pending state"
+  },
+  "settingsTitle": "Settings",
+  "@settingsTitle": {
+    "description": "Title of the settings screen"
+  },
+  "status": "Status",
+  "@status": {
+    "description": "Label for task status field"
+  },
+  "systemDefault": "System default",
+  "@systemDefault": {
+    "description": "Language option to follow system default"
+  },
+  "title": "Title",
+  "@title": {
+    "description": "Label for task title field"
+  }
+}

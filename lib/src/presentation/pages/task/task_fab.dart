@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tasks/bloc/task_type/task_type_cubit.dart';
+import 'package:tasks/l10n/app_localizations.dart';
+import 'package:tasks/src/bloc/task_type/task_type_cubit.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../bloc/task/task_bloc.dart';
@@ -22,7 +23,7 @@ class TaskFab extends StatelessWidget {
   void _showAddTaskDialog(BuildContext context) {
     final titleController = TextEditingController();
     final contentController = TextEditingController();
-
+    final l = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (context) => Padding(
@@ -36,23 +37,23 @@ class TaskFab extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Add Task',
+              Text(
+                l.addTask,
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 24),
               TextField(
                 controller: titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Title',
+                decoration: InputDecoration(
+                  labelText: l.title,
                   border: OutlineInputBorder(),
                 ),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: contentController,
-                decoration: const InputDecoration(
-                  labelText: 'Content',
+                decoration: InputDecoration(
+                  labelText: l.content,
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 3,
@@ -83,7 +84,7 @@ class TaskFab extends StatelessWidget {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel'),
+                    child: Text(l.cancel),
                   ),
                   ElevatedButton(
                     onPressed: () {
@@ -101,7 +102,7 @@ class TaskFab extends StatelessWidget {
                         Navigator.pop(context);
                       }
                     },
-                    child: const Text('Add'),
+                    child: Text(l.add),
                   ),
                 ],
               ),

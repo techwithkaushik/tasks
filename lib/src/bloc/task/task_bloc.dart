@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../../../models/task.dart';
+import '../../models/task.dart';
 
 part 'task_event.dart';
 part 'task_state.dart';
@@ -24,8 +24,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   ) async {
     try {
       emit(TaskLoading(tasks: state.tasks));
-      await Future.delayed(const Duration(seconds: 2));
-      final tasks = taskBox.values.toList();
+      List<Task> tasks = taskBox.values.toList();
       emit(TaskLoaded(tasks: tasks));
     } catch (e) {
       emit(TaskError(error: e.toString(), tasks: state.tasks));
@@ -80,7 +79,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   ) async {
     try {
       final task = state.tasks.firstWhere((t) => t.id == event.taskId);
-      final updatedTask = task.copyWith(isCompleted: !task.isCompleted);
+      final updatedTask = task.copyWith(
+        isCompleted: !task.isCompleted,
+        updatedAt: DateTime.now(),
+      );
+
       await taskBox.put(updatedTask.id, updatedTask);
       final updatedTasks = state.tasks.map((t) {
         return t.id == updatedTask.id ? updatedTask : t;

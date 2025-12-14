@@ -1,5 +1,5 @@
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:tasks/models/task.dart';
+import 'package:tasks/src/models/task.dart';
 
 class TaskTypeCubit extends Cubit<TaskType> {
   TaskTypeCubit() : super(TaskType.daily);

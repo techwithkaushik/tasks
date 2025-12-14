@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:tasks/models/task.dart';
+import 'package:tasks/l10n/app_localizations.dart';
+import 'package:tasks/src/models/task.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
-  final VoidCallback onPressed;
-  const TaskCard({super.key, required this.task, required this.onPressed});
+  final VoidCallback onTap;
+  const TaskCard({super.key, required this.task, required this.onTap});
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Card(
       margin: EdgeInsets.only(left: 0, right: 0, top: 5, bottom: 5),
       child: Padding(
@@ -28,16 +30,14 @@ class TaskCard extends StatelessWidget {
                   ],
                 ),
                 InkWell(
-                  onTap: onPressed,
+                  onTap: onTap,
                   borderRadius: BorderRadius.circular(50),
                   key: ValueKey(task.id),
                   child: Padding(
                     padding: EdgeInsetsGeometry.all(2),
                     child: Icon(
-                      Icons.favorite,
-                      color: task.isFavorite
-                          ? Colors.red[700]
-                          : Colors.grey[700],
+                      task.isFavorite ? Icons.favorite : Icons.favorite_outline,
+                      color: Colors.redAccent,
                     ),
                   ),
                 ),
@@ -45,7 +45,7 @@ class TaskCard extends StatelessWidget {
             ),
             SizedBox(height: 10),
             Text(
-              'Created: ${task.createdAt.toLocal().toString().split(' ')[0]}',
+              '${l.created}: ${task.createdAt.toLocal().toString().split(' ')[0]}',
               style: TextStyle(fontSize: 12, color: Colors.grey[600]),
             ),
 
@@ -54,7 +54,7 @@ class TaskCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Status: ${task.isCompleted ? "Completed" : "Pending"}',
+                  '${l.status}: ${task.isCompleted ? l.completed : l.pending}',
                   style: TextStyle(
                     fontSize: 12,
                     color: task.isCompleted ? Colors.green : Colors.red,
