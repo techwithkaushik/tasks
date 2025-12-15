@@ -17,7 +17,7 @@ class HomePage extends StatelessWidget {
     return BlocBuilder<NavCubit, int>(
       builder: (context, navIndex) {
         final getPages = [
-          TaskPage(title: l.title, isCompleted: false),
+          TaskPage(title: l.appTitle, isCompleted: false),
           TaskPage(title: l.completed, isCompleted: true),
           SettingsPage(l.settingsTitle),
           AboutPage(l.about),
@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
                   NavigationDestinationLabelBehavior.onlyShowSelected,
               selectedIndex: navIndex,
               destinations: [
-                _navigationDestination(Icons.list, l.title, false),
+                _navigationDestination(Icons.list, l.appTitle, false),
                 _navigationDestination(Icons.check_circle, l.completed, true),
                 _navigationDestination(Icons.settings, l.settingsTitle),
                 _navigationDestination(Icons.info, l.about),
