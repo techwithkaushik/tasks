@@ -36,8 +36,8 @@ class SettingsPage extends StatelessWidget {
                     icon: Icons.dark_mode,
                     title: l.darkMode,
                     description: isSystemMode
-                        ? l.darkModeDescription
-                        : l.darkModeDescription,
+                        ? l.darkModeDescriptionDisabled
+                        : l.darkModeDescriptionEnabled,
                     value: themeMode == ThemeMode.dark,
                     onChanged: isSystemMode
                         ? null

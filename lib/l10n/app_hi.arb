@@ -40,8 +40,12 @@
   "@darkMode": {
     "description": "मैन्युअल रूप से डार्क मोड सक्षम करने का विकल्प"
   },
-  "darkModeDescription": "मैन्युअल रूप से डार्क थीम पर स्विच करें",
-  "@darkModeDescription": {
+  "darkModeDescriptionEnabled": "मैन्युअल रूप से डार्क थीम पर स्विच करें",
+  "@darkModeDescriptionEnabled": {
+    "description": "डार्क मोड विकल्प का विवरण"
+  },
+  "darkModeDescriptionDisabled": "डार्क थीम मैन्युअल रूप से सक्षम करने के लिए सिस्टम थीम का पालन बंद करें",
+  "@darkModeDescriptionDisabled": {
     "description": "डार्क मोड विकल्प का विवरण"
   },
   "dynamicColor": "डायनामिक रंग",

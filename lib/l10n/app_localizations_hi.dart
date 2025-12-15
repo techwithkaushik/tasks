@@ -39,7 +39,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get darkMode => 'डार्क थीम सक्षम करें';
 
   @override
-  String get darkModeDescription => 'मैन्युअल रूप से डार्क थीम पर स्विच करें';
+  String get darkModeDescriptionEnabled =>
+      'मैन्युअल रूप से डार्क थीम पर स्विच करें';
+
+  @override
+  String get darkModeDescriptionDisabled =>
+      'डार्क थीम मैन्युअल रूप से सक्षम करने के लिए सिस्टम थीम का पालन बंद करें';
 
   @override
   String get dynamicColor => 'डायनामिक रंग';

@@ -162,7 +162,13 @@ abstract class AppLocalizations {
   ///
   /// In en, this message translates to:
   /// **'Switch to dark theme manually'**
-  String get darkModeDescription;
+  String get darkModeDescriptionEnabled;
+
+  /// Explanation text for dark mode toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Disable Follow system theme to enable dark theme manually'**
+  String get darkModeDescriptionDisabled;
 
   /// Toggle label for dynamic system colors
   ///

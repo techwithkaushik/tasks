@@ -39,7 +39,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get darkMode => 'Enable dark theme';
 
   @override
-  String get darkModeDescription => 'Switch to dark theme manually';
+  String get darkModeDescriptionEnabled => 'Switch to dark theme manually';
+
+  @override
+  String get darkModeDescriptionDisabled =>
+      'Disable Follow system theme to enable dark theme manually';
 
   @override
   String get dynamicColor => 'Dynamic color';

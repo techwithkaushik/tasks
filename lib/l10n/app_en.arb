@@ -40,8 +40,12 @@
   "@darkMode": {
     "description": "Toggle label to enable dark mode manually"
   },
-  "darkModeDescription": "Switch to dark theme manually",
-  "@darkModeDescription": {
+  "darkModeDescriptionEnabled": "Switch to dark theme manually",
+  "@darkModeDescriptionEnabled": {
+    "description": "Explanation text for dark mode toggle"
+  },
+  "darkModeDescriptionDisabled": "Disable Follow system theme to enable dark theme manually",
+  "@darkModeDescriptionDisabled": {
     "description": "Explanation text for dark mode toggle"
   },
   "dynamicColor": "Dynamic color",
