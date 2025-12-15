@@ -63,47 +63,11 @@ class SettingsPage extends StatelessWidget {
           Divider(),
           BlocBuilder<LanguageCubit, String>(
             builder: (context, lang) {
-              final langCubit = context.read<LanguageCubit>();
               return AppSettingsTile(
                 icon: Icons.translate,
                 title: l.language,
                 description: _languageLabel(lang, l),
-                onTap: () async {
-                  final selected = await showMenu<String>(
-                    initialValue: lang,
-                    position: RelativeRect.fromLTRB(100, 300, 100, 0),
-                    context: context,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18),
-                    ),
-                    items: [
-                      PopupMenuItem(
-                        value: "system",
-                        child: Text(
-                          l.systemDefault,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: AppLocalizationsEn().localeName,
-                        child: Text(
-                          AppLocalizationsEn().english,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: AppLocalizationsHi().localeName,
-                        child: Text(
-                          AppLocalizationsHi().hindi,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ],
-                  );
-                  if (selected != null) {
-                    langCubit.setLanguage(selected);
-                  }
-                },
+                onTap: () => _showLanguageDialog(context, lang),
               );
             },
           ),
@@ -111,6 +75,52 @@ class SettingsPage extends StatelessWidget {
       ),
     );
   }
+}
+
+void _showLanguageDialog(BuildContext context, String currentLang) {
+  Map<String, String> supportedLanguages = {
+    'system': AppLocalizations.of(context).systemDefault,
+    'en': AppLocalizationsEn().english,
+    'hi': AppLocalizationsHi().hindi,
+  };
+  showDialog(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: Text(
+          AppLocalizations.of(context).chooseLanguage,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        content: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: ListView(
+            shrinkWrap: true,
+            children: supportedLanguages.entries.map((entry) {
+              final code = entry.key;
+              final label = entry.value;
+              final selected = code == currentLang;
+
+              return ListTile(
+                title: Text(label),
+                trailing: selected
+                    ? Icon(
+                        Icons.check,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    : null,
+                onTap: () {
+                  context.read<LanguageCubit>().setLanguage(code);
+                  Navigator.of(dialogContext).pop();
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      );
+    },
+  );
 }
 
 String _languageLabel(String lang, AppLocalizations l) {
