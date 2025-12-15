@@ -9,6 +9,9 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
+  String get about => 'जानकारी';
+
+  @override
   String get add => 'जोड़ें';
 
   @override

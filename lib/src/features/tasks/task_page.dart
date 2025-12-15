@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/l10n/app_localizations.dart';
-import 'package:tasks/src/bloc/task/task_bloc.dart';
-import 'package:tasks/src/models/task.dart';
-import 'package:tasks/src/presentation/pages/task/task_fab.dart';
-import 'package:tasks/src/presentation/widgets/task_card.dart';
+import 'package:tasks/src/features/tasks/views/bloc/task_bloc.dart';
+import 'package:tasks/src/features/tasks/data/models/task.dart';
+import 'package:tasks/src/features/tasks/task_fab.dart';
+import 'package:tasks/src/features/tasks/task_card.dart';
 
 class TaskPage extends StatelessWidget {
   final String title;
@@ -14,7 +14,7 @@ class TaskPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final taskBloc = context.read<TaskBloc>();
-    final l = AppLocalizations.of(context)!;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(title)),
       body: BlocBuilder<TaskBloc, TaskState>(

@@ -1,5 +1,9 @@
 {
   "@@locale": "en",
+  "about":"About",
+  "@about":{
+    "description": "about the app"
+  },
   "add": "Add",
   "@add": {
     "description": "Button label to add a new task"

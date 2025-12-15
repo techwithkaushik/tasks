@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/l10n/app_localizations.dart';
 import 'package:tasks/l10n/app_localizations_en.dart';
 import 'package:tasks/l10n/app_localizations_hi.dart';
-import 'package:tasks/src/bloc/settings/dynamic_color.dart';
-import 'package:tasks/src/bloc/settings/language_cubit.dart';
-import 'package:tasks/src/presentation/pages/settings/settings_page_widgets.dart';
-import '../../../bloc/settings/theme_cubit.dart';
+import 'package:tasks/src/features/settings/views/cubit/dynamic_color_cubit.dart';
+import 'package:tasks/src/features/settings/views/cubit/language_cubit.dart';
+import 'package:tasks/src/features/settings/settings_page_widgets.dart';
+import 'views/cubit/theme_cubit.dart';
 
 class SettingsPage extends StatelessWidget {
   final String title;
@@ -14,7 +14,7 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context)!;
+    final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(title)),
       body: Column(

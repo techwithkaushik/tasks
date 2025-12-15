@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../../models/task.dart';
+import '../../data/models/task.dart';
 
 part 'task_event.dart';
 part 'task_state.dart';

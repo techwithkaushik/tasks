@@ -4,15 +4,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tasks/l10n/app_localizations.dart';
-import 'package:tasks/src/bloc/navigation/nav_cubit.dart';
-import 'package:tasks/src/bloc/settings/language_cubit.dart';
-import 'package:tasks/src/bloc/task/task_bloc.dart';
-import 'package:tasks/src/bloc/task_type/task_type_cubit.dart';
-import 'package:tasks/src/bloc/settings/dynamic_color.dart';
-import 'package:tasks/src/bloc/settings/theme_cubit.dart';
+import 'package:tasks/src/features/home/nav_cubit.dart';
+import 'package:tasks/src/features/settings/views/cubit/language_cubit.dart';
+import 'package:tasks/src/features/tasks/views/bloc/task_bloc.dart';
+import 'package:tasks/src/features/tasks/views/cubit/task_type_cubit.dart';
+import 'package:tasks/src/features/settings/views/cubit/dynamic_color_cubit.dart';
+import 'package:tasks/src/features/settings/views/cubit/theme_cubit.dart';
 import 'package:tasks/src/features/home/home_page.dart';
-import 'package:tasks/src/models/task.dart';
-import 'package:tasks/src/presentation/widgets/theme_data.dart';
+import 'package:tasks/src/features/tasks/data/models/task.dart';
+import 'package:tasks/src/app/theme_data.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -41,7 +41,7 @@ class App extends StatelessWidget {
                     builder: (languageContext, languageState) {
                       return MaterialApp(
                         onGenerateTitle: (context) {
-                          return AppLocalizations.of(context)!.appTitle;
+                          return AppLocalizations.of(context).appTitle;
                         },
                         locale: languageContext
                             .read<LanguageCubit>()

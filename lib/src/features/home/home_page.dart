@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/l10n/app_localizations.dart';
-import 'package:tasks/src/bloc/navigation/nav_cubit.dart';
-import 'package:tasks/src/bloc/task/task_bloc.dart';
+import 'package:tasks/src/features/home/nav_cubit.dart';
+import 'package:tasks/src/features/tasks/views/bloc/task_bloc.dart';
 import 'package:tasks/src/features/about/about_page.dart';
-import 'package:tasks/src/presentation/pages/settings/settings_page.dart';
-import 'package:tasks/src/presentation/pages/task/task_page.dart';
-import 'package:tasks/src/presentation/widgets/animated_badge.dart';
+import 'package:tasks/src/features/settings/settings_page.dart';
+import 'package:tasks/src/features/tasks/task_page.dart';
+import 'package:tasks/src/features/home/animated_badge.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context)!;
+    final l = AppLocalizations.of(context);
     return BlocBuilder<NavCubit, int>(
       builder: (context, navIndex) {
-        final titles = [l.appTitle, l.completed, l.settingsTitle, "About"];
         final getPages = [
-          TaskPage(title: titles[navIndex], isCompleted: false),
-          TaskPage(title: titles[navIndex], isCompleted: true),
-          SettingsPage(titles[navIndex]),
-          AboutPage(titles[navIndex]),
+          TaskPage(title: l.title, isCompleted: false),
+          TaskPage(title: l.completed, isCompleted: true),
+          SettingsPage(l.settingsTitle),
+          AboutPage(l.about),
         ];
         return PopScope(
           canPop: navIndex == 0,
@@ -35,10 +34,10 @@ class HomePage extends StatelessWidget {
                   NavigationDestinationLabelBehavior.onlyShowSelected,
               selectedIndex: navIndex,
               destinations: [
-                _navigationDestination(Icons.list, titles[0], false),
-                _navigationDestination(Icons.check_circle, titles[1], true),
-                _navigationDestination(Icons.settings, titles[2]),
-                _navigationDestination(Icons.info, titles[3]),
+                _navigationDestination(Icons.list, l.title, false),
+                _navigationDestination(Icons.check_circle, l.completed, true),
+                _navigationDestination(Icons.settings, l.settingsTitle),
+                _navigationDestination(Icons.info, l.about),
               ],
               onDestinationSelected: (value) =>
                   context.read<NavCubit>().setIndex(value),

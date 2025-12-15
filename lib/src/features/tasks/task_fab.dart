@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/l10n/app_localizations.dart';
-import 'package:tasks/src/bloc/task_type/task_type_cubit.dart';
+import 'package:tasks/src/features/tasks/views/cubit/task_type_cubit.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../bloc/task/task_bloc.dart';
-import '../../../models/task.dart';
+import 'views/bloc/task_bloc.dart';
+import 'data/models/task.dart';
 
 class TaskFab extends StatelessWidget {
   const TaskFab({super.key});
@@ -23,7 +23,7 @@ class TaskFab extends StatelessWidget {
   void _showAddTaskDialog(BuildContext context) {
     final titleController = TextEditingController();
     final contentController = TextEditingController();
-    final l = AppLocalizations.of(context)!;
+    final l = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
       builder: (context) => Padding(

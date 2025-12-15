@@ -67,8 +67,8 @@ abstract class AppLocalizations {
 
   final String localeName;
 
-  static AppLocalizations? of(BuildContext context) {
-    return Localizations.of<AppLocalizations>(context, AppLocalizations);
+  static AppLocalizations of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
   static const LocalizationsDelegate<AppLocalizations> delegate =
@@ -97,6 +97,12 @@ abstract class AppLocalizations {
     Locale('en'),
     Locale('hi'),
   ];
+
+  /// about the app
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get about;
 
   /// Button label to add a new task
   ///

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tasks/l10n/app_localizations.dart';
-import 'package:tasks/src/models/task.dart';
+import 'package:tasks/src/features/tasks/data/models/task.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
@@ -8,7 +8,7 @@ class TaskCard extends StatelessWidget {
   const TaskCard({super.key, required this.task, required this.onTap});
   @override
   Widget build(BuildContext context) {
-    final l = AppLocalizations.of(context)!;
+    final l = AppLocalizations.of(context);
     return Card(
       margin: EdgeInsets.only(left: 0, right: 0, top: 5, bottom: 5),
       child: Padding(
