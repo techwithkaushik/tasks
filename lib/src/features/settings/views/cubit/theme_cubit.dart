@@ -5,7 +5,7 @@ class ThemeCubit extends HydratedCubit<ThemeMode> {
   /// Stores user preference when NOT using system
   ThemeMode _userTheme = ThemeMode.light;
 
-  ThemeCubit() : super(ThemeMode.light);
+  ThemeCubit() : super(ThemeMode.system);
 
   /// Toggle system theme
   void setSystemMode(bool enabled) {
