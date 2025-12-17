@@ -1,4 +1,5 @@
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:tasks/core/constants/global_constant.dart';
 
 class DynamicColorCubit extends HydratedCubit<bool> {
   DynamicColorCubit() : super(false);
@@ -7,11 +8,11 @@ class DynamicColorCubit extends HydratedCubit<bool> {
 
   @override
   bool? fromJson(Map<String, dynamic> json) {
-    return json['dynamicColor'];
+    return json[GlobalConstant.dynamicColor];
   }
 
   @override
   Map<String, dynamic>? toJson(bool useDynamic) {
-    return {'dynamicColor': useDynamic};
+    return {GlobalConstant.dynamicColor: useDynamic};
   }
 }

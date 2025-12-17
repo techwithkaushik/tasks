@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tasks/core/features/tasks/presentation/bloc/task_bloc.dart';
 import 'package:tasks/l10n/app_localizations.dart';
-import 'package:tasks/src/features/tasks/views/cubit/task_type_cubit.dart';
+import 'package:tasks/core/features/tasks/presentation/cubit/task_type_cubit.dart';
 import 'package:uuid/uuid.dart';
 
-import 'views/bloc/task_bloc.dart';
 import 'data/models/task.dart';
 
 class TaskFab extends StatelessWidget {

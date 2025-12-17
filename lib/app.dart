@@ -3,23 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:tasks/core/constants/language.dart';
+import 'package:tasks/core/constants/global_constant.dart';
+import 'package:tasks/core/features/home/home_page.dart';
+import 'package:tasks/core/features/home/nav_cubit.dart';
+import 'package:tasks/core/features/settings/presentation/cubit/dynamic_color_cubit.dart';
+import 'package:tasks/core/features/settings/presentation/cubit/language_cubit.dart';
+import 'package:tasks/core/features/settings/presentation/cubit/theme_cubit.dart';
+import 'package:tasks/core/features/tasks/data/models/task.dart';
+import 'package:tasks/core/features/tasks/presentation/bloc/task_bloc.dart';
+import 'package:tasks/core/features/tasks/presentation/cubit/task_type_cubit.dart';
 import 'package:tasks/l10n/app_localizations.dart';
-import 'package:tasks/src/features/home/nav_cubit.dart';
-import 'package:tasks/src/features/settings/views/cubit/language_cubit.dart';
-import 'package:tasks/src/features/tasks/views/bloc/task_bloc.dart';
-import 'package:tasks/src/features/tasks/views/cubit/task_type_cubit.dart';
-import 'package:tasks/src/features/settings/views/cubit/dynamic_color_cubit.dart';
-import 'package:tasks/src/features/settings/views/cubit/theme_cubit.dart';
-import 'package:tasks/src/features/home/home_page.dart';
-import 'package:tasks/src/features/tasks/data/models/task.dart';
-import 'package:tasks/src/app/theme_data.dart';
+import 'package:tasks/core/theme_data.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final box = Hive.box<Task>('tasks');
+    final box = Hive.box<Task>(GlobalConstant.tasksBox);
     return MultiBlocProvider(
       providers: [
         BlocProvider<TaskBloc>(
@@ -31,23 +33,26 @@ class App extends StatelessWidget {
         BlocProvider<TaskTypeCubit>(create: (_) => TaskTypeCubit()),
         BlocProvider<LanguageCubit>(create: (_) => LanguageCubit()),
       ],
-      child: BlocBuilder<ThemeCubit, ThemeMode>(
-        builder: (themeContext, themeMode) {
-          return BlocBuilder<DynamicColorCubit, bool>(
-            builder: (dynamicContext, useDynamic) {
-              return DynamicColorBuilder(
-                builder: (lightDynamic, darkDynamic) {
-                  return BlocBuilder<LanguageCubit, String>(
-                    builder: (languageContext, languageState) {
+      child: DynamicColorBuilder(
+        builder: (lightDynamic, darkDynamic) {
+          return BlocSelector<ThemeCubit, ThemeMode, ThemeMode>(
+            selector: (state) => state,
+            builder: (_, themeMode) {
+              return BlocSelector<DynamicColorCubit, bool, bool>(
+                selector: (state) => state,
+                builder: (_, useDynamic) {
+                  return BlocSelector<LanguageCubit, Locale?, Locale?>(
+                    selector: (state) => state,
+                    builder: (_, locale) {
                       return MaterialApp(
                         onGenerateTitle: (context) {
                           return AppLocalizations.of(context).appTitle;
                         },
-                        locale: languageContext
-                            .read<LanguageCubit>()
-                            .resolveLocale(),
-                        supportedLocales: [Locale("en"), Locale("hi")],
-                        localizationsDelegates: [
+                        locale: locale,
+                        supportedLocales: Language.values
+                            .map((lang) => lang.locale)
+                            .toList(),
+                        localizationsDelegates: const [
                           AppLocalizations.delegate,
                           GlobalMaterialLocalizations.delegate,
                           GlobalWidgetsLocalizations.delegate,

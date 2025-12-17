@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tasks/core/constants/language.dart';
+import 'package:tasks/core/features/settings/presentation/cubit/dynamic_color_cubit.dart';
+import 'package:tasks/core/features/settings/presentation/cubit/language_cubit.dart';
+import 'package:tasks/core/features/settings/presentation/cubit/theme_cubit.dart';
+import 'package:tasks/core/features/settings/settings_page_widgets.dart';
 import 'package:tasks/l10n/app_localizations.dart';
-import 'package:tasks/l10n/app_localizations_en.dart';
-import 'package:tasks/l10n/app_localizations_hi.dart';
-import 'package:tasks/src/features/settings/views/cubit/dynamic_color_cubit.dart';
-import 'package:tasks/src/features/settings/views/cubit/language_cubit.dart';
-import 'package:tasks/src/features/settings/settings_page_widgets.dart';
-import 'views/cubit/theme_cubit.dart';
 
 class SettingsPage extends StatelessWidget {
   final String title;
@@ -61,13 +60,13 @@ class SettingsPage extends StatelessWidget {
             },
           ),
           Divider(),
-          BlocBuilder<LanguageCubit, String>(
-            builder: (context, lang) {
+          BlocBuilder<LanguageCubit, Locale?>(
+            builder: (context, locale) {
               return AppSettingsTile(
                 icon: Icons.translate,
                 title: l.language,
-                description: _languageLabel(lang, l),
-                onTap: () => _showLanguageDialog(context, lang),
+                description: _languageLabel(locale, l),
+                onTap: () => _showLanguageDialog(context, locale),
               );
             },
           ),
@@ -77,12 +76,8 @@ class SettingsPage extends StatelessWidget {
   }
 }
 
-void _showLanguageDialog(BuildContext context, String currentLang) {
-  Map<String, String> supportedLanguages = {
-    'system': AppLocalizations.of(context).systemDefault,
-    'en': AppLocalizationsEn().english,
-    'hi': AppLocalizationsHi().hindi,
-  };
+void _showLanguageDialog(BuildContext context, Locale? currentLacale) {
+  final l = AppLocalizations.of(context);
   showDialog(
     context: context,
     builder: (dialogContext) {
@@ -97,25 +92,31 @@ void _showLanguageDialog(BuildContext context, String currentLang) {
           width: MediaQuery.of(context).size.width,
           child: ListView(
             shrinkWrap: true,
-            children: supportedLanguages.entries.map((entry) {
-              final code = entry.key;
-              final label = entry.value;
-              final selected = code == currentLang;
-
-              return ListTile(
-                title: Text(label),
-                trailing: selected
-                    ? Icon(
-                        Icons.check,
-                        color: Theme.of(context).colorScheme.primary,
-                      )
-                    : null,
-                onTap: () {
-                  context.read<LanguageCubit>().setLanguage(code);
-                  Navigator.of(dialogContext).pop();
-                },
-              );
-            }).toList(),
+            children: [
+              _languageTile(
+                context,
+                title: l.systemDefault,
+                selected: currentLacale == null,
+                onTap: () => context.read<LanguageCubit>().setLocale(null),
+                dialogContext: dialogContext,
+              ),
+              _languageTile(
+                context,
+                title: l.english,
+                selected: currentLacale?.languageCode == Language.en.code,
+                onTap: () =>
+                    context.read<LanguageCubit>().setLocale(Language.en.locale),
+                dialogContext: dialogContext,
+              ),
+              _languageTile(
+                context,
+                title: l.systemDefault,
+                selected: currentLacale?.languageCode == Language.hi.code,
+                onTap: () =>
+                    context.read<LanguageCubit>().setLocale(Language.hi.locale),
+                dialogContext: dialogContext,
+              ),
+            ],
           ),
         ),
       );
@@ -123,13 +124,32 @@ void _showLanguageDialog(BuildContext context, String currentLang) {
   );
 }
 
-String _languageLabel(String lang, AppLocalizations l) {
-  switch (lang) {
-    case "en":
-      return l.english;
-    case "hi":
-      return l.hindi;
-    default:
-      return l.systemDefault;
+Widget _languageTile(
+  BuildContext context, {
+  required String title,
+  required bool selected,
+  required VoidCallback onTap,
+  required BuildContext dialogContext,
+}) {
+  return ListTile(
+    title: Text(title),
+    trailing: selected
+        ? Icon(Icons.check, color: Theme.of(context).colorScheme.primary)
+        : null,
+    onTap: () {
+      onTap();
+      Navigator.of(dialogContext).pop();
+    },
+  );
+}
+
+String _languageLabel(Locale? locale, AppLocalizations l) {
+  if (locale == null) return l.systemDefault;
+  if (locale.languageCode == Language.en.code) {
+    return l.english;
+  } else if (locale.languageCode == Language.hi.code) {
+    return l.hindi;
+  } else {
+    return l.systemDefault;
   }
 }

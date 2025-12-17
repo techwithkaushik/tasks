@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tasks/core/features/about/about_page.dart';
+import 'package:tasks/core/features/home/animated_badge.dart';
+import 'package:tasks/core/features/home/nav_cubit.dart';
+import 'package:tasks/core/features/settings/settings_page.dart';
+import 'package:tasks/core/features/tasks/presentation/bloc/task_bloc.dart';
+import 'package:tasks/core/features/tasks/task_page.dart';
 import 'package:tasks/l10n/app_localizations.dart';
-import 'package:tasks/src/features/home/nav_cubit.dart';
-import 'package:tasks/src/features/tasks/views/bloc/task_bloc.dart';
-import 'package:tasks/src/features/about/about_page.dart';
-import 'package:tasks/src/features/settings/settings_page.dart';
-import 'package:tasks/src/features/tasks/task_page.dart';
-import 'package:tasks/src/features/home/animated_badge.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

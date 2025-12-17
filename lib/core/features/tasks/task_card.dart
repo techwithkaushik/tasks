@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tasks/l10n/app_localizations.dart';
-import 'package:tasks/src/features/tasks/data/models/task.dart';
+import 'package:tasks/core/features/tasks/data/models/task.dart';
 
 class TaskCard extends StatelessWidget {
   final Task task;
