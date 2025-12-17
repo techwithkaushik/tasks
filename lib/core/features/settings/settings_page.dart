@@ -29,7 +29,7 @@ class SettingsPage extends StatelessWidget {
                 value: isSystemMode,
                 onChanged: (value) => themeCubit.setSystemMode(value),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 16),
               AppSettingsTile(
                 icon: Icons.dark_mode,
                 title: l.darkMode,
@@ -41,7 +41,7 @@ class SettingsPage extends StatelessWidget {
                     ? null
                     : (value) => themeCubit.setDarkMode(value),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 16),
               BlocBuilder<DynamicColorCubit, bool>(
                 builder: (_, useDynamic) {
                   return AppSettingsTile(
@@ -55,7 +55,7 @@ class SettingsPage extends StatelessWidget {
                   );
                 },
               ),
-              SizedBox(height: 10),
+              SizedBox(height: 16),
               BlocBuilder<LanguageCubit, Locale?>(
                 builder: (context, locale) {
                   return AppSettingsTile(
