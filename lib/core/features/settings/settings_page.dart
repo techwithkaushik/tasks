@@ -16,80 +16,82 @@ class SettingsPage extends StatelessWidget {
     final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(title)),
-      body: Column(
-        children: [
-          BlocBuilder<ThemeCubit, ThemeMode>(
-            builder: (_, themeMode) {
-              final themeCubit = context.read<ThemeCubit>();
-              final isSystemMode = themeMode == ThemeMode.system;
-              return Column(
-                children: [
-                  AppSettingsTile(
-                    icon: Icons.contrast,
-                    title: l.followSystemTheme,
-                    description: l.followSystemThemeDescription,
-                    value: isSystemMode,
-                    onChanged: (value) => themeCubit.setSystemMode(value),
-                  ),
-                  AppSettingsTile(
-                    icon: Icons.dark_mode,
-                    title: l.darkMode,
-                    description: isSystemMode
-                        ? l.darkModeDescriptionDisabled
-                        : l.darkModeDescriptionEnabled,
-                    value: themeMode == ThemeMode.dark,
-                    onChanged: isSystemMode
-                        ? null
-                        : (value) => themeCubit.setDarkMode(value),
-                  ),
-                ],
-              );
-            },
-          ),
-          BlocBuilder<DynamicColorCubit, bool>(
-            builder: (_, useDynamic) {
-              return AppSettingsTile(
-                icon: Icons.color_lens,
-                title: l.dynamicColor,
-                description: l.dynamicColorDescription,
-                value: useDynamic,
-                onChanged: (value) {
-                  context.read<DynamicColorCubit>().setDynamicColor(value);
+      body: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (_, themeMode) {
+          final themeCubit = context.read<ThemeCubit>();
+          final isSystemMode = themeMode == ThemeMode.system;
+          return Column(
+            children: [
+              AppSettingsTile(
+                icon: Icons.contrast,
+                title: l.followSystemTheme,
+                description: l.followSystemThemeDescription,
+                value: isSystemMode,
+                onChanged: (value) => themeCubit.setSystemMode(value),
+              ),
+              SizedBox(height: 10),
+              AppSettingsTile(
+                icon: Icons.dark_mode,
+                title: l.darkMode,
+                description: isSystemMode
+                    ? l.darkModeDescriptionDisabled
+                    : l.darkModeDescriptionEnabled,
+                value: themeMode == ThemeMode.dark,
+                onChanged: isSystemMode
+                    ? null
+                    : (value) => themeCubit.setDarkMode(value),
+              ),
+              SizedBox(height: 10),
+              BlocBuilder<DynamicColorCubit, bool>(
+                builder: (_, useDynamic) {
+                  return AppSettingsTile(
+                    icon: Icons.color_lens,
+                    title: l.dynamicColor,
+                    description: l.dynamicColorDescription,
+                    value: useDynamic,
+                    onChanged: (value) {
+                      context.read<DynamicColorCubit>().setDynamicColor(value);
+                    },
+                  );
                 },
-              );
-            },
-          ),
-          Divider(),
-          BlocBuilder<LanguageCubit, Locale?>(
-            builder: (context, locale) {
-              return AppSettingsTile(
-                icon: Icons.translate,
-                title: l.language,
-                description: _languageLabel(locale, l),
-                onTap: () => _showLanguageDialog(context, locale),
-              );
-            },
-          ),
-        ],
+              ),
+              SizedBox(height: 10),
+              BlocBuilder<LanguageCubit, Locale?>(
+                builder: (context, locale) {
+                  return AppSettingsTile(
+                    icon: Icons.translate,
+                    title: l.language,
+                    description: _languageLabel(locale, l),
+                    onTap: () => _showLanguageDialog(context, locale, l),
+                  );
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }
 }
 
-void _showLanguageDialog(BuildContext context, Locale? currentLacale) {
-  final l = AppLocalizations.of(context);
+void _showLanguageDialog(
+  BuildContext context,
+  Locale? currentLacale,
+  AppLocalizations l,
+) {
+  final mediaQuery = MediaQuery.of(context);
   showDialog(
     context: context,
     builder: (dialogContext) {
       return AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
-          AppLocalizations.of(context).chooseLanguage,
+          l.chooseLanguage,
           style: Theme.of(context).textTheme.titleLarge,
         ),
         content: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
+          height: mediaQuery.size.height,
+          width: mediaQuery.size.width,
           child: ListView(
             shrinkWrap: true,
             children: [
@@ -102,7 +104,7 @@ void _showLanguageDialog(BuildContext context, Locale? currentLacale) {
               ),
               _languageTile(
                 context,
-                title: l.english,
+                title: Language.en.nativeName,
                 selected: currentLacale?.languageCode == Language.en.code,
                 onTap: () =>
                     context.read<LanguageCubit>().setLocale(Language.en.locale),
@@ -110,7 +112,7 @@ void _showLanguageDialog(BuildContext context, Locale? currentLacale) {
               ),
               _languageTile(
                 context,
-                title: l.systemDefault,
+                title: Language.hi.nativeName,
                 selected: currentLacale?.languageCode == Language.hi.code,
                 onTap: () =>
                     context.read<LanguageCubit>().setLocale(Language.hi.locale),
@@ -144,8 +146,9 @@ Widget _languageTile(
 }
 
 String _languageLabel(Locale? locale, AppLocalizations l) {
-  if (locale == null) return l.systemDefault;
-  if (locale.languageCode == Language.en.code) {
+  if (locale == null) {
+    return l.systemDefault;
+  } else if (locale.languageCode == Language.en.code) {
     return l.english;
   } else if (locale.languageCode == Language.hi.code) {
     return l.hindi;
