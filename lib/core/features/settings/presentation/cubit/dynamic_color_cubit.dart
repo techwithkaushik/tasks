@@ -2,7 +2,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:tasks/core/constants/global_constant.dart';
 
 class DynamicColorCubit extends HydratedCubit<bool> {
-  DynamicColorCubit() : super(false);
+  DynamicColorCubit() : super(true);
 
   void setDynamicColor(bool value) => emit(value);
 

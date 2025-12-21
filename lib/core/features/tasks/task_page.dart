@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tasks/core/features/task_add/task_add_page.dart';
 import 'package:tasks/core/features/tasks/data/models/task.dart';
 import 'package:tasks/core/features/tasks/presentation/bloc/task_bloc.dart';
 import 'package:tasks/core/features/tasks/task_card.dart';
-import 'package:tasks/core/features/tasks/task_fab.dart';
+// import 'package:tasks/core/features/tasks/task_fab.dart';
 import 'package:tasks/l10n/app_localizations.dart';
 
 class TaskPage extends StatelessWidget {
@@ -95,7 +96,12 @@ class TaskPage extends StatelessWidget {
           );
         },
       ),
-      floatingActionButton: const TaskFab(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => TaskAddPage())),
+        child: Icon(Icons.add),
+      ), //const TaskFab(),
     );
   }
 }

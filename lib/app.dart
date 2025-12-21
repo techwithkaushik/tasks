@@ -5,8 +5,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:tasks/core/constants/language.dart';
 import 'package:tasks/core/constants/global_constant.dart';
+import 'package:tasks/core/features/home/cubit/nav_cubit.dart';
 import 'package:tasks/core/features/home/home_page.dart';
-import 'package:tasks/core/features/home/nav_cubit.dart';
+
 import 'package:tasks/core/features/settings/presentation/cubit/dynamic_color_cubit.dart';
 import 'package:tasks/core/features/settings/presentation/cubit/language_cubit.dart';
 import 'package:tasks/core/features/settings/presentation/cubit/theme_cubit.dart';

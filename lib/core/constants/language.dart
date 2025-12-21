@@ -15,7 +15,7 @@ extension LanguageX on Language {
       case Language.en:
         return 'English';
       case Language.hi:
-        return 'हिन्दी';
+        return 'हिंदी';
     }
   }
 }

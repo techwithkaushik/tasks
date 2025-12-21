@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/core/features/about/about_page.dart';
-import 'package:tasks/core/features/home/animated_badge.dart';
-import 'package:tasks/core/features/home/nav_cubit.dart';
+import 'package:tasks/core/features/home/cubit/nav_cubit.dart';
+import 'package:tasks/core/features/home/home_page_widgets.dart';
 import 'package:tasks/core/features/settings/settings_page.dart';
 import 'package:tasks/core/features/tasks/presentation/bloc/task_bloc.dart';
 import 'package:tasks/core/features/tasks/task_page.dart';
@@ -14,34 +14,36 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final pages = [
+      TaskPage(title: l.appTitle, isCompleted: false),
+      TaskPage(title: l.completed, isCompleted: true),
+      SettingsPage(l.settingsTitle),
+      AboutPage(l.about),
+    ];
+
     return BlocBuilder<NavCubit, int>(
-      builder: (context, navIndex) {
-        final getPages = [
-          TaskPage(title: l.appTitle, isCompleted: false),
-          TaskPage(title: l.completed, isCompleted: true),
-          SettingsPage(l.settingsTitle),
-          AboutPage(l.about),
-        ];
-        return PopScope(
-          canPop: navIndex == 0,
-          onPopInvokedWithResult: (didPop, result) {
-            context.read<NavCubit>().back();
-          },
-          child: Scaffold(
-            body: IndexedStack(index: navIndex, children: getPages),
-            bottomNavigationBar: NavigationBar(
-              labelBehavior:
-                  NavigationDestinationLabelBehavior.onlyShowSelected,
-              selectedIndex: navIndex,
-              destinations: [
-                _navigationDestination(Icons.list, l.appTitle, false),
-                _navigationDestination(Icons.check_circle, l.completed, true),
-                _navigationDestination(Icons.settings, l.settingsTitle),
-                _navigationDestination(Icons.info, l.about),
-              ],
-              onDestinationSelected: (value) =>
-                  context.read<NavCubit>().setIndex(value),
-            ),
+      builder: (context, state) {
+        return Scaffold(
+          body: PopScope(
+            canPop: state == 0,
+            onPopInvokedWithResult: (didPop, result) {
+              context.read<NavCubit>().back();
+            },
+            child: IndexedStack(index: state, children: pages),
+          ),
+
+          bottomNavigationBar: NavigationBar(
+            labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+            selectedIndex: context.read<NavCubit>().state,
+            destinations: [
+              _navigationDestination(Icons.list, l.appTitle, false),
+              _navigationDestination(Icons.check_circle, l.completed, true),
+              _navigationDestination(Icons.settings, l.settingsTitle),
+              _navigationDestination(Icons.info, l.about),
+            ],
+            onDestinationSelected: (value) {
+              return context.read<NavCubit>().setIndex(value);
+            },
           ),
         );
       },

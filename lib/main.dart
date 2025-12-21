@@ -17,5 +17,6 @@ void main() async {
     storageDirectory: HydratedStorageDirectory(appDocumentDir.path),
   );
   await Hive.openBox<Task>(GlobalConstant.tasksBox);
+
   runApp(const App());
 }
