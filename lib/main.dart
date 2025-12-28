@@ -1,22 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:tasks/app.dart';
-import 'package:tasks/core/constants/global_constant.dart';
-import 'package:tasks/core/features/tasks/data/models/task.dart';
+import 'package:tasks/firebase_options.dart';
+import 'package:tasks/service_locator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final appDocumentDir = await getApplicationDocumentsDirectory();
-
-  await Hive.initFlutter(appDocumentDir.path);
-  Hive.registerAdapter(TaskTypeAdapter());
-  Hive.registerAdapter(TaskAdapter());
-  HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: HydratedStorageDirectory(appDocumentDir.path),
-  );
-  await Hive.openBox<Task>(GlobalConstant.tasksBox);
-
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await setupServiceLocator();
   runApp(const App());
 }
