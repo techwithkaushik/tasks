@@ -28,4 +28,6 @@ abstract class AuthRepository {
 
   /// Sign out
   Future<Either<AuthFailure, void>> signOut();
+
+  Future<Either<AuthFailure, void>> resetPassword({required String email});
 }

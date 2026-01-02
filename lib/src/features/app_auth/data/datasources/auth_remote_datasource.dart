@@ -8,4 +8,5 @@ abstract class AuthRemoteDataSource {
   Future<void> sendEmailVerification();
   Future<bool> isEmailVerified();
   Future<void> signOut();
+  Future<void> resetPassword(String email);
 }

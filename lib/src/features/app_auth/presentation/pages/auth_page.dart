@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth_bloc.dart';
-import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth_state.dart';
+import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth/app_auth_bloc.dart';
+import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth/app_auth_state.dart';
+import 'package:tasks/src/features/app_auth/presentation/pages/sign_in_up_page.dart';
 import 'package:tasks/src/features/home/home_page.dart';
-import 'package:tasks/src/features/app_auth/presentation/pages/sign_in_page.dart';
 
 class AppAuthPage extends StatelessWidget {
   const AppAuthPage({super.key});
@@ -18,7 +18,7 @@ class AppAuthPage extends StatelessWidget {
           return HomePage();
         }
         if (state is AppAuthUnauthenticated) {
-          return SignInPage();
+          return SignInUpPage();
         }
         return Scaffold(body: Center(child: Text("Error")));
       },

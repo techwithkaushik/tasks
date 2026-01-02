@@ -77,4 +77,16 @@ class AuthRepositoryImpl implements AuthRepository {
     await remote.signOut();
     return const Right(null);
   }
+
+  @override
+  Future<Either<AuthFailure, void>> resetPassword({
+    required String email,
+  }) async {
+    try {
+      await remote.resetPassword(email);
+      return const Right(null);
+    } catch (e) {
+      return const Left(AuthFailure('Failed to send password reset email'));
+    }
+  }
 }
