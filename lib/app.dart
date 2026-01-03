@@ -2,37 +2,33 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:tasks/core/constants/language.dart';
-import 'package:tasks/core/constants/global_constant.dart';
-import 'package:tasks/core/features/home/cubit/nav_cubit.dart';
-import 'package:tasks/core/features/home/home_page.dart';
+import 'package:tasks/src/core/constants/language.dart';
+import 'package:tasks/src/features/home/cubit/nav_cubit.dart';
 
-import 'package:tasks/core/features/settings/presentation/cubit/dynamic_color_cubit.dart';
-import 'package:tasks/core/features/settings/presentation/cubit/language_cubit.dart';
-import 'package:tasks/core/features/settings/presentation/cubit/theme_cubit.dart';
-import 'package:tasks/core/features/tasks/data/models/task.dart';
-import 'package:tasks/core/features/tasks/presentation/bloc/task_bloc.dart';
-import 'package:tasks/core/features/tasks/presentation/cubit/task_type_cubit.dart';
+import 'package:tasks/src/features/settings/presentation/cubit/dynamic_color_cubit.dart';
+import 'package:tasks/src/features/settings/presentation/cubit/language_cubit.dart';
+import 'package:tasks/src/features/settings/presentation/cubit/theme_cubit.dart';
 import 'package:tasks/l10n/app_localizations.dart';
-import 'package:tasks/core/theme_data.dart';
+import 'package:tasks/src/core/theme_data.dart';
+import 'package:tasks/service_locator.dart';
+import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth/app_auth_bloc.dart';
+import 'package:tasks/src/features/app_auth/presentation/pages/auth_page.dart';
+import 'package:tasks/src/features/tasks/presentation/bloc/task_bloc.dart';
+import 'package:tasks/src/features/tasks/presentation/cubit/task_type_cubit.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final box = Hive.box<Task>(GlobalConstant.tasksBox);
     return MultiBlocProvider(
       providers: [
-        BlocProvider<TaskBloc>(
-          create: (_) => TaskBloc(box)..add(LoadTasksEvent()),
-        ),
-        BlocProvider<NavCubit>(create: (_) => NavCubit()),
-        BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
-        BlocProvider<DynamicColorCubit>(create: (_) => DynamicColorCubit()),
-        BlocProvider<TaskTypeCubit>(create: (_) => TaskTypeCubit()),
-        BlocProvider<LanguageCubit>(create: (_) => LanguageCubit()),
+        BlocProvider(create: (_) => DynamicColorCubit()),
+        BlocProvider(create: (_) => ThemeCubit()),
+        BlocProvider(create: (_) => LanguageCubit()),
+        BlocProvider(create: (_) => NavCubit()),
+        BlocProvider(create: (_) => sl<TaskBloc>()),
+        BlocProvider(create: (_) => TaskTypeCubit()),
       ],
       child: DynamicColorBuilder(
         builder: (lightDynamic, darkDynamic) {
@@ -46,6 +42,7 @@ class App extends StatelessWidget {
                     selector: (state) => state,
                     builder: (_, locale) {
                       return MaterialApp(
+                        debugShowCheckedModeBanner: false,
                         onGenerateTitle: (context) {
                           return AppLocalizations.of(context).appTitle;
                         },
@@ -60,17 +57,20 @@ class App extends StatelessWidget {
                           GlobalCupertinoLocalizations.delegate,
                         ],
                         theme: themeData(
-                          useDynamic,
-                          lightDynamic,
-                          Brightness.light,
+                          useDynamic: useDynamic,
+                          colorScheme: lightDynamic,
+                          brightness: Brightness.light,
                         ),
                         darkTheme: themeData(
-                          useDynamic,
-                          darkDynamic,
-                          Brightness.dark,
+                          useDynamic: useDynamic,
+                          colorScheme: darkDynamic,
+                          brightness: Brightness.dark,
                         ),
                         themeMode: themeMode,
-                        home: const HomePage(),
+                        home: BlocProvider.value(
+                          value: sl<AppAuthBloc>(),
+                          child: AppAuthPage(),
+                        ),
                       );
                     },
                   );

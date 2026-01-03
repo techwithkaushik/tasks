@@ -265,6 +265,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Title'**
   String get title;
+
+  /// welcome note for signin
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome Back'**
+  String get welcomeBack;
+
+  /// create account for tasks app
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get createAccount;
+
+  /// signin account
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in'**
+  String get signin;
+
+  /// signup account
+  ///
+  /// In en, this message translates to:
+  /// **'Sign up'**
+  String get signup;
+
+  /// forgot password of account
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password'**
+  String get forgotPassword;
+
+  /// email account
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// password for account
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// dont have an account
+  ///
+  /// In en, this message translates to:
+  /// **'Dont have an account? '**
+  String get dontHaveAnAccount;
+
+  /// already have an account
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? '**
+  String get alreadyHaveAnAccount;
+
+  /// confirm password
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get confirmPassword;
+
+  /// Password reset email sent
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset email sent'**
+  String get passwordResetEmailSent;
+
+  /// Invalid email
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email'**
+  String get invalidEmail;
+
+  /// Min 6 characters
+  ///
+  /// In en, this message translates to:
+  /// **'Min 6 characters'**
+  String get min6characters;
+
+  /// Passwords do not match
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
 }
 
 class _AppLocalizationsDelegate

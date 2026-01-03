@@ -94,4 +94,46 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get title => 'शीर्षक';
+
+  @override
+  String get welcomeBack => 'वापसी पर स्वागत है';
+
+  @override
+  String get createAccount => 'खाता बनाएं';
+
+  @override
+  String get signin => 'साइन इन';
+
+  @override
+  String get signup => 'साइन अप';
+
+  @override
+  String get forgotPassword => 'पासवर्ड भूल गए';
+
+  @override
+  String get email => 'ईमेल';
+
+  @override
+  String get password => 'पासवर्ड';
+
+  @override
+  String get dontHaveAnAccount => 'खाता नहीं है? ';
+
+  @override
+  String get alreadyHaveAnAccount => 'क्या पहले से एक खाता मौजूद है? ';
+
+  @override
+  String get confirmPassword => 'पासवर्ड की पुष्टि कीजिये';
+
+  @override
+  String get passwordResetEmailSent => 'पासवर्ड रीसेट ईमेल भेजा गया';
+
+  @override
+  String get invalidEmail => 'ईमेल अमान्य है';
+
+  @override
+  String get min6characters => 'कम से कम 6 अक्षर डालें';
+
+  @override
+  String get passwordsDoNotMatch => 'पासवर्ड मेल नहीं खा रहा';
 }

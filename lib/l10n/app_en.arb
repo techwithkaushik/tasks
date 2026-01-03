@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
-  "about":"About",
-  "@about":{
+  "about": "About",
+  "@about": {
     "description": "about the app"
   },
   "add": "Add",
@@ -111,5 +111,61 @@
   "title": "Title",
   "@title": {
     "description": "Label for task title field"
+  },
+  "welcomeBack": "Welcome Back",
+  "@welcomeBack": {
+    "description": "welcome note for signin"
+  },
+  "createAccount": "Create account",
+  "@createAccount": {
+    "description": "create account for tasks app"
+  },
+  "signin": "Sign in",
+  "@signin": {
+    "description": "signin account"
+  },
+  "signup": "Sign up",
+  "@signup": {
+    "description": "signup account"
+  },
+  "forgotPassword": "Forgot password",
+  "@forgotPassword": {
+    "description": "forgot password of account"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "email account"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "password for account"
+  },
+  "dontHaveAnAccount": "Dont have an account? ",
+  "@dontHaveAnAccount": {
+    "description": "dont have an account"
+  },
+  "alreadyHaveAnAccount": "Already have an account? ",
+  "@alreadyHaveAnAccount": {
+    "description": "already have an account"
+  },
+  "confirmPassword": "Confirm password",
+  "@confirmPassword": {
+    "description": "confirm password"
+  },
+  "passwordResetEmailSent": "Password reset email sent",
+  "@passwordResetEmailSent": {
+    "description": "Password reset email sent"
+  },
+  "invalidEmail": "Invalid email",
+  "@invalidEmail": {
+    "description": "Invalid email"
+  },
+  "min6characters": "Min 6 characters",
+  "@min6characters": {
+    "description": "Min 6 characters"
+  },
+  "passwordsDoNotMatch": "Passwords do not match",
+  "@passwordsDoNotMatch": {
+    "description": "Passwords do not match"
   }
 }

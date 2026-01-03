@@ -1,7 +1,7 @@
 {
   "@@locale": "hi",
-  "about":"जानकारी",
-  "@about":{
+  "about": "जानकारी",
+  "@about": {
     "description": "ऐप की जानकारी"
   },
   "add": "जोड़ें",
@@ -111,5 +111,61 @@
   "title": "शीर्षक",
   "@title": {
     "description": "कार्य के शीर्षक का लेबल"
+  },
+  "welcomeBack": "वापसी पर स्वागत है",
+  "@welcomeBack": {
+    "description": "साइन इन करने के लिए स्वागत संदेश"
+  },
+  "createAccount": "खाता बनाएं",
+  "@createAccount": {
+    "description": "टास्क ऐप के लिए खाता बनाएं"
+  },
+  "signin": "साइन इन",
+  "@signin": {
+    "description": "खाते में साइन इन करें"
+  },
+  "signup": "साइन अप",
+  "@signup": {
+    "description": "खाते में साइन अप करें"
+  },
+  "forgotPassword": "पासवर्ड भूल गए",
+  "@forgotPassword": {
+    "description": "खाते का पासवर्ड भूल गए"
+  },
+  "email": "ईमेल",
+  "@email": {
+    "description": "ईमेल खाता"
+  },
+  "password": "पासवर्ड",
+  "@password": {
+    "description": "खाते के लिए पासवर्ड"
+  },
+  "dontHaveAnAccount": "खाता नहीं है? ",
+  "@dontHaveAnAccount": {
+    "description": "खाता नहीं है"
+  },
+  "alreadyHaveAnAccount": "क्या पहले से एक खाता मौजूद है? ",
+  "@alreadyHaveAnAccount": {
+    "description": "क्या आपके पास पहले से एक खाता मौजूद है?"
+  },
+  "confirmPassword": "पासवर्ड की पुष्टि कीजिये",
+  "@confirmPassword": {
+    "description": "पासवर्ड की पुष्टि कीजिये"
+  },
+  "passwordResetEmailSent": "पासवर्ड रीसेट ईमेल भेजा गया",
+  "@passwordResetEmailSent": {
+    "description": "पासवर्ड रीसेट ईमेल भेजा गया"
+  },
+  "invalidEmail": "ईमेल अमान्य है",
+  "@invalidEmail": {
+    "description": "ईमेल अमान्य है"
+  },
+  "min6characters": "कम से कम 6 अक्षर डालें",
+  "@min6characters": {
+    "description": "कम से कम 6 अक्षर डालें"
+  },
+  "passwordsDoNotMatch": "पासवर्ड मेल नहीं खा रहा",
+  "@passwordsDoNotMatch": {
+    "description": "पासवर्ड मेल नहीं खा रहा"
   }
 }

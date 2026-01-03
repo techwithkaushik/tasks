@@ -93,4 +93,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get title => 'Title';
+
+  @override
+  String get welcomeBack => 'Welcome Back';
+
+  @override
+  String get createAccount => 'Create account';
+
+  @override
+  String get signin => 'Sign in';
+
+  @override
+  String get signup => 'Sign up';
+
+  @override
+  String get forgotPassword => 'Forgot password';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get dontHaveAnAccount => 'Dont have an account? ';
+
+  @override
+  String get alreadyHaveAnAccount => 'Already have an account? ';
+
+  @override
+  String get confirmPassword => 'Confirm password';
+
+  @override
+  String get passwordResetEmailSent => 'Password reset email sent';
+
+  @override
+  String get invalidEmail => 'Invalid email';
+
+  @override
+  String get min6characters => 'Min 6 characters';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
 }
