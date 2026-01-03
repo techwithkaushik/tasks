@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tasks/src/features/tasks/data/models/task.dart';
-import 'package:tasks/src/features/tasks/presentation/bloc/task_bloc.dart';
-import 'package:tasks/src/features/tasks/presentation/cubit/task_type_cubit.dart';
 import 'package:tasks/l10n/app_localizations.dart';
-import 'package:uuid/uuid.dart';
 
 class TaskAddPage extends StatelessWidget {
   const TaskAddPage({super.key});
@@ -44,25 +39,7 @@ class TaskAddPage extends StatelessWidget {
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
-              BlocBuilder<TaskTypeCubit, TaskType>(
-                builder: (context, selectedType) {
-                  return DropdownButton<TaskType>(
-                    value: selectedType,
-                    isExpanded: false,
-                    items: TaskType.values.map((type) {
-                      return DropdownMenuItem(
-                        value: type,
-                        child: Text(type.toString().split('.').last),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      if (value != null) {
-                        context.read<TaskTypeCubit>().setTaskType(value);
-                      }
-                    },
-                  );
-                },
-              ),
+
               const SizedBox(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -77,15 +54,6 @@ class TaskAddPage extends StatelessWidget {
                     onPressed: () {
                       if (titleController.text.isNotEmpty &&
                           contentController.text.isNotEmpty) {
-                        final task = Task(
-                          id: const Uuid().v4(),
-                          title: titleController.text,
-                          content: contentController.text,
-                          createdAt: DateTime.now(),
-                          updatedAt: DateTime.now(),
-                          type: context.read<TaskTypeCubit>().state,
-                        );
-                        context.read<TaskBloc>().add(AddTaskEvent(task));
                         Navigator.pop(context);
                       }
                     },

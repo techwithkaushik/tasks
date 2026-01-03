@@ -1,120 +1,93 @@
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:tasks/src/features/tasks/data/models/task.dart';
+import 'dart:async';
 
+import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tasks/src/features/tasks/domain/entities/task.state_machine.dart';
+import 'package:tasks/src/features/tasks/domain/entities/task_entity.dart';
+import 'package:tasks/src/features/tasks/domain/usecases/add_task_use_case.dart';
+import 'package:tasks/src/features/tasks/domain/usecases/delete_task_use_case.dart';
+import 'package:tasks/src/features/tasks/domain/usecases/update_task_use_case.dart';
+import 'package:tasks/src/features/tasks/domain/usecases/watch_task_use_case.dart';
 part 'task_event.dart';
 part 'task_state.dart';
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
-  final Box<Task> taskBox;
-  TaskBloc(this.taskBox) : super(const TaskInitial()) {
-    on<LoadTasksEvent>(_onLoadTasks);
-    on<AddTaskEvent>(_onAddTask);
-    on<UpdateTaskEvent>(_onUpdateTask);
-    on<DeleteTaskEvent>(_onDeleteTask);
-    on<ToggleTaskCompletionEvent>(_onToggleTaskCompletion);
-    on<ToggleTaskFavoriteEvent>(_onToggleTaskFavorite);
-    on<ClearErrorEvent>(_onClearError);
+  final WatchTaskUseCase watchTaskUseCase;
+  final AddTaskUseCase addTaskUseCase;
+  final UpdateTaskUseCase updateTaskUseCase;
+  final DeleteTaskUseCase deleteTaskUseCase;
+
+  StreamSubscription? _sub;
+
+  TaskBloc(
+    this.watchTaskUseCase,
+    this.addTaskUseCase,
+    this.updateTaskUseCase,
+    this.deleteTaskUseCase,
+  ) : super(TaskLoading()) {
+    on<StartTaskStream>(_onStart);
+    on<TasksUpdated>(_onUpdated);
+    on<AddTaskEvent>(_onAdd);
+    on<UpdateTaskEvent>(_onUpdate);
+    on<DeleteTaskEvent>(_onDelete);
   }
 
-  Future<void> _onLoadTasks(
-    LoadTasksEvent event,
-    Emitter<TaskState> emit,
-  ) async {
-    try {
-      emit(TaskLoading(tasks: state.tasks));
-      List<Task> tasks = taskBox.values.toList();
-      emit(TaskLoaded(tasks: tasks));
-    } catch (e) {
-      emit(TaskError(error: e.toString(), tasks: state.tasks));
+  void _onStart(_, emit) {
+    _sub?.cancel();
+    _sub = watchTaskUseCase().listen(
+      (tasks) => add(TasksUpdated(tasks)),
+      onError: (e) => emit(TaskFailure(e.toString())),
+    );
+  }
+
+  void _onUpdated(TasksUpdated e, emit) => emit(TaskLoaded(e.tasks));
+
+  Future<void> _onAdd(AddTaskEvent e, _) => addTaskUseCase(e.task);
+
+  Future<void> _onUpdate(UpdateTaskEvent e, _) async {
+    final updated = TaskStateMachine.transition(e.task, e.to);
+    await updateTaskUseCase(updated);
+  }
+
+  Future<void> _onDelete(DeleteTaskEvent e, _) => deleteTaskUseCase(e.id);
+
+  @override
+  Future<void> close() {
+    _sub?.cancel();
+    return super.close();
+  }
+}
+
+class FocusCubit extends Cubit<Task?> {
+  FocusCubit() : super(null);
+
+  void select(List<Task> tasks) {
+    emit(
+      tasks.firstWhere(
+        (t) => t.status == TaskStatus.pending,
+        orElse: () => tasks.first,
+      ),
+    );
+  }
+}
+
+class PlanningCubit extends Cubit<Map<DateTime, List<Task>>> {
+  PlanningCubit() : super({});
+
+  void plan(List<Task> tasks) {
+    final map = <DateTime, List<Task>>{};
+    for (final t in tasks) {
+      final key = t.dueDate ?? DateTime(2100);
+      map.putIfAbsent(key, () => []).add(t);
     }
+    emit(map);
   }
+}
 
-  Future<void> _onAddTask(AddTaskEvent event, Emitter<TaskState> emit) async {
-    try {
-      final newTask = event.task;
-      await taskBox.put(newTask.id, newTask);
-      final updatedTasks = List<Task>.from(state.tasks)..add(newTask);
-      emit(TaskLoaded(tasks: updatedTasks));
-    } catch (e) {
-      emit(TaskError(error: e.toString(), tasks: state.tasks));
-    }
-  }
+class ReviewCubit extends Cubit<int> {
+  ReviewCubit() : super(0);
 
-  Future<void> _onUpdateTask(
-    UpdateTaskEvent event,
-    Emitter<TaskState> emit,
-  ) async {
-    try {
-      final updatedTask = event.task;
-      await taskBox.put(updatedTask.id, updatedTask);
-      final updatedTasks = state.tasks.map((task) {
-        return task.id == updatedTask.id ? updatedTask : task;
-      }).toList();
-      emit(TaskLoaded(tasks: updatedTasks));
-    } catch (e) {
-      emit(TaskError(error: e.toString(), tasks: state.tasks));
-    }
-  }
-
-  Future<void> _onDeleteTask(
-    DeleteTaskEvent event,
-    Emitter<TaskState> emit,
-  ) async {
-    try {
-      await taskBox.delete(event.taskId);
-      final updatedTasks = state.tasks
-          .where((task) => task.id != event.taskId)
-          .toList();
-      emit(TaskLoaded(tasks: updatedTasks));
-    } catch (e) {
-      emit(TaskError(error: e.toString(), tasks: state.tasks));
-    }
-  }
-
-  Future<void> _onToggleTaskCompletion(
-    ToggleTaskCompletionEvent event,
-    Emitter<TaskState> emit,
-  ) async {
-    try {
-      final task = state.tasks.firstWhere((t) => t.id == event.taskId);
-      final updatedTask = task.copyWith(
-        isCompleted: !task.isCompleted,
-        updatedAt: DateTime.now(),
-      );
-
-      await taskBox.put(updatedTask.id, updatedTask);
-      final updatedTasks = state.tasks.map((t) {
-        return t.id == updatedTask.id ? updatedTask : t;
-      }).toList();
-      emit(TaskLoaded(tasks: updatedTasks));
-    } catch (e) {
-      emit(TaskError(error: e.toString(), tasks: state.tasks));
-    }
-  }
-
-  Future<void> _onToggleTaskFavorite(
-    ToggleTaskFavoriteEvent event,
-    Emitter<TaskState> emit,
-  ) async {
-    try {
-      final task = state.tasks.firstWhere((t) => t.id == event.taskId);
-      final updatedTask = task.copyWith(isFavorite: !task.isFavorite);
-      await taskBox.put(updatedTask.id, updatedTask);
-      final updatedTasks = state.tasks.map((t) {
-        return t.id == updatedTask.id ? updatedTask : t;
-      }).toList();
-      emit(TaskLoaded(tasks: updatedTasks));
-    } catch (e) {
-      emit(TaskError(error: e.toString(), tasks: state.tasks));
-    }
-  }
-
-  Future<void> _onClearError(
-    ClearErrorEvent event,
-    Emitter<TaskState> emit,
-  ) async {
-    emit(TaskLoaded(tasks: state.tasks));
+  void analyze(List<Task> tasks) {
+    emit(tasks.where((t) => t.status == TaskStatus.completed).length);
   }
 }

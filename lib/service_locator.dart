@@ -1,7 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:tasks/src/core/constants/global_constant.dart';
 import 'package:tasks/src/features/app_auth/data/datasources/auth_remote_datasource.dart';
 import 'package:tasks/src/features/app_auth/data/datasources/auth_remote_datasource_impl.dart';
 import 'package:tasks/src/features/app_auth/data/repositories/auth_repository_impl.dart';
@@ -16,7 +15,13 @@ import 'package:tasks/src/features/app_auth/domain/usecases/sign_up_usecase.dart
 import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth/app_auth_bloc.dart';
 import 'package:tasks/src/features/app_auth/presentation/bloc/auth_form/auth_form_bloc.dart';
 import 'package:tasks/src/features/app_auth/presentation/bloc/sign_out/sign_out_bloc.dart';
-import 'package:tasks/src/features/tasks/data/models/task.dart';
+import 'package:tasks/src/features/tasks/data/datasources/task_firestore_datasource.dart';
+import 'package:tasks/src/features/tasks/data/repositories/task_repository_impl.dart';
+import 'package:tasks/src/features/tasks/domain/repositories/task_repository.dart';
+import 'package:tasks/src/features/tasks/domain/usecases/add_task_use_case.dart';
+import 'package:tasks/src/features/tasks/domain/usecases/delete_task_use_case.dart';
+import 'package:tasks/src/features/tasks/domain/usecases/update_task_use_case.dart';
+import 'package:tasks/src/features/tasks/domain/usecases/watch_task_use_case.dart';
 import 'package:tasks/src/features/tasks/presentation/bloc/task_bloc.dart';
 
 final sl = GetIt.instance;
@@ -24,10 +29,7 @@ final sl = GetIt.instance;
 Future<void> setupServiceLocator() async {
   // 🔹 External
   sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
-  sl.registerLazySingleton<Box<Task>>(
-    () => Hive.box<Task>(GlobalConstant.tasksBox),
-  );
-  sl.registerFactory<TaskBloc>(() => TaskBloc(sl<Box<Task>>()));
+
   // 🔹 Data sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(sl()),
@@ -64,4 +66,16 @@ Future<void> setupServiceLocator() async {
   );
 
   sl.registerFactory<SignOutBloc>(() => SignOutBloc(signOutUseCase: sl()));
+
+  // Firestore
+  sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
+  sl.registerLazySingleton(() => TaskFirestoreDataSource());
+
+  sl.registerLazySingleton<TaskRepository>(() => TaskRepositoryImpl(sl()));
+  sl.registerLazySingleton<WatchTaskUseCase>(() => WatchTaskUseCase(sl()));
+  sl.registerLazySingleton<AddTaskUseCase>(() => AddTaskUseCase(sl()));
+  sl.registerLazySingleton<DeleteTaskUseCase>(() => DeleteTaskUseCase(sl()));
+  sl.registerLazySingleton<UpdateTaskUseCase>(() => UpdateTaskUseCase(sl()));
+
+  sl.registerFactory(() => TaskBloc(sl(), sl(), sl(), sl()));
 }

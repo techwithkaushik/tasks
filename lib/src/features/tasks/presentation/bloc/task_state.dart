@@ -1,28 +1,27 @@
 part of 'task_bloc.dart';
 
 abstract class TaskState extends Equatable {
-  final List<Task> tasks;
-  final String? error;
-  final bool isLoading;
-
-  const TaskState({this.tasks = const [], this.error, this.isLoading = false});
+  const TaskState();
 
   @override
-  List<Object?> get props => [tasks, error, isLoading];
+  List<Object?> get props => [];
 }
 
-final class TaskInitial extends TaskState {
-  const TaskInitial() : super();
+class TaskLoading extends TaskState {
+  @override
+  List<Object?> get props => [];
 }
 
-final class TaskLoading extends TaskState {
-  const TaskLoading({super.tasks}) : super(isLoading: true);
+class TaskLoaded extends TaskState {
+  final List<Task> tasks;
+  const TaskLoaded(this.tasks);
+  @override
+  List<Object?> get props => [tasks];
 }
 
-final class TaskLoaded extends TaskState {
-  const TaskLoaded({required super.tasks});
-}
-
-final class TaskError extends TaskState {
-  const TaskError({required String super.error, super.tasks});
+class TaskFailure extends TaskState {
+  final String message;
+  const TaskFailure(this.message);
+  @override
+  List<Object?> get props => [message];
 }

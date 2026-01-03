@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/src/features/about/about_page.dart';
 import 'package:tasks/src/features/home/cubit/nav_cubit.dart';
-import 'package:tasks/src/features/home/home_page_widgets.dart';
 import 'package:tasks/src/features/settings/settings_page.dart';
-import 'package:tasks/src/features/tasks/presentation/bloc/task_bloc.dart';
 import 'package:tasks/src/features/tasks/presentation/pages/task_page.dart';
 import 'package:tasks/l10n/app_localizations.dart';
 
@@ -55,26 +53,6 @@ class HomePage extends StatelessWidget {
     String title, [
     bool? isCompleted,
   ]) {
-    return NavigationDestination(
-      icon: isCompleted == null
-          ? Icon(icon)
-          : BlocBuilder<TaskBloc, TaskState>(
-              buildWhen: (previous, current) =>
-                  current is TaskLoaded || previous is TaskLoaded,
-              builder: (context, state) {
-                int count = state is TaskLoaded
-                    ? state.tasks
-                          .where((task) => task.isCompleted == isCompleted)
-                          .length
-                    : 0;
-                return AnimatedBadge(
-                  color: isCompleted ? Colors.green[900]! : Colors.red[900]!,
-                  icon: icon,
-                  count: count,
-                );
-              },
-            ),
-      label: title,
-    );
+    return NavigationDestination(icon: Icon(icon), label: title);
   }
 }

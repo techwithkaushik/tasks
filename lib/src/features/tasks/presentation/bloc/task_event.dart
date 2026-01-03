@@ -7,12 +7,7 @@ abstract class TaskEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadTasksEvent extends TaskEvent {
-  const LoadTasksEvent();
-
-  @override
-  List<Object> get props => [];
-}
+class StartTaskStream extends TaskEvent {}
 
 class AddTaskEvent extends TaskEvent {
   final Task task;
@@ -25,43 +20,26 @@ class AddTaskEvent extends TaskEvent {
 
 class UpdateTaskEvent extends TaskEvent {
   final Task task;
+  final TaskStatus to;
 
-  const UpdateTaskEvent(this.task);
+  const UpdateTaskEvent(this.task, this.to);
 
   @override
-  List<Object> get props => [task];
+  List<Object> get props => [task, to];
 }
 
 class DeleteTaskEvent extends TaskEvent {
-  final String taskId;
-
-  const DeleteTaskEvent(this.taskId);
+  final String id;
+  const DeleteTaskEvent(this.id);
 
   @override
-  List<Object> get props => [taskId];
+  List<Object> get props => [id];
 }
 
-class ToggleTaskCompletionEvent extends TaskEvent {
-  final String taskId;
-
-  const ToggleTaskCompletionEvent(this.taskId);
-
-  @override
-  List<Object> get props => [taskId];
-}
-
-class ToggleTaskFavoriteEvent extends TaskEvent {
-  final String taskId;
-
-  const ToggleTaskFavoriteEvent(this.taskId);
+class TasksUpdated extends TaskEvent {
+  final List<Task> tasks;
+  const TasksUpdated(this.tasks);
 
   @override
-  List<Object> get props => [taskId];
-}
-
-class ClearErrorEvent extends TaskEvent {
-  const ClearErrorEvent();
-
-  @override
-  List<Object> get props => [];
+  List<Object> get props => [tasks];
 }

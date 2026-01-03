@@ -14,7 +14,6 @@ import 'package:tasks/service_locator.dart';
 import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth/app_auth_bloc.dart';
 import 'package:tasks/src/features/app_auth/presentation/pages/auth_page.dart';
 import 'package:tasks/src/features/tasks/presentation/bloc/task_bloc.dart';
-import 'package:tasks/src/features/tasks/presentation/cubit/task_type_cubit.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -28,7 +27,6 @@ class App extends StatelessWidget {
         BlocProvider(create: (_) => LanguageCubit()),
         BlocProvider(create: (_) => NavCubit()),
         BlocProvider(create: (_) => sl<TaskBloc>()),
-        BlocProvider(create: (_) => TaskTypeCubit()),
       ],
       child: DynamicColorBuilder(
         builder: (lightDynamic, darkDynamic) {
