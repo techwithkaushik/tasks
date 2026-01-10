@@ -80,7 +80,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
               // TYPE
               DropdownButtonFormField<TaskType>(
-                value: _type,
+                initialValue: _type,
                 decoration: const InputDecoration(labelText: 'Task Type'),
                 items: TaskType.values
                     .map((t) => DropdownMenuItem(value: t, child: Text(t.name)))
@@ -92,7 +92,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
               // PRIORITY
               DropdownButtonFormField<TaskPriority>(
-                value: _priority,
+                initialValue: _priority,
                 decoration: const InputDecoration(labelText: 'Priority'),
                 items: TaskPriority.values
                     .map((p) => DropdownMenuItem(value: p, child: Text(p.name)))
