@@ -32,7 +32,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<DeleteTaskEvent>(_onDelete);
   }
 
-  void _onStart(_, emit) {
+  void _onStart(StartTaskStream stream, emit) {
     _sub?.cancel();
     _sub = watchTaskUseCase().listen(
       (tasks) => add(TasksUpdated(tasks)),
