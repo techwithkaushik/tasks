@@ -75,7 +75,7 @@ class SettingsPage extends StatelessWidget {
 
 void _showLanguageDialog(
   BuildContext context,
-  Locale? currentLacale,
+  Locale? currentLocale,
   AppLocalizations l,
 ) {
   final mediaQuery = MediaQuery.of(context);
@@ -97,14 +97,14 @@ void _showLanguageDialog(
               _languageTile(
                 context,
                 title: l.systemDefault,
-                selected: currentLacale == null,
+                selected: currentLocale == null,
                 onTap: () => context.read<LanguageCubit>().setLocale(null),
                 dialogContext: dialogContext,
               ),
               _languageTile(
                 context,
                 title: Language.en.nativeName,
-                selected: currentLacale?.languageCode == Language.en.code,
+                selected: currentLocale?.languageCode == Language.en.code,
                 onTap: () =>
                     context.read<LanguageCubit>().setLocale(Language.en.locale),
                 dialogContext: dialogContext,
@@ -112,7 +112,7 @@ void _showLanguageDialog(
               _languageTile(
                 context,
                 title: Language.hi.nativeName,
-                selected: currentLacale?.languageCode == Language.hi.code,
+                selected: currentLocale?.languageCode == Language.hi.code,
                 onTap: () =>
                     context.read<LanguageCubit>().setLocale(Language.hi.locale),
                 dialogContext: dialogContext,
