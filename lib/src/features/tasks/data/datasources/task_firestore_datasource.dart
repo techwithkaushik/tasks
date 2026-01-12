@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:tasks/src/features/tasks/data/models/task_model.dart';
 import 'package:tasks/src/features/tasks/domain/entities/task_entity.dart';
 
 class TaskFirestoreDataSource {
-  final _ref = FirebaseFirestore.instance.collection("tasks");
+  FirebaseFirestore firestore;
+  TaskFirestoreDataSource({required this.firestore});
+  CollectionReference get _ref => firestore.collection("tasks");
 
-  Stream<List<Task>> watchTasks() => _ref
+  Stream<List<Task>> loadTasks(String userId) => _ref
+      .where("userId", isEqualTo: userId)
       .orderBy("createdAt", descending: true)
       .snapshots()
       .map((s) => s.docs.map(TaskModel.fromDoc).toList());

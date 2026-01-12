@@ -8,7 +8,7 @@ class TaskRepositoryImpl implements TaskRepository {
   TaskRepositoryImpl(this.ds);
 
   @override
-  Stream<List<Task>> watchTasks() => ds.watchTasks();
+  Stream<List<Task>> loadTasks(String userId) => ds.loadTasks(userId);
 
   @override
   Future<void> addTask(Task task) => ds.addTask(task);

@@ -5,6 +5,7 @@ import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth/app_auth_
 import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth/app_auth_state.dart';
 import 'package:tasks/src/features/app_auth/presentation/pages/sign_in_up_page.dart';
 import 'package:tasks/src/features/home/home_page.dart';
+import 'package:tasks/src/features/tasks/presentation/bloc/task_bloc.dart';
 
 class AppAuthPage extends StatelessWidget {
   const AppAuthPage({super.key});
@@ -15,10 +16,13 @@ class AppAuthPage extends StatelessWidget {
         if (state is AppAuthLoading) {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         }
+        final taskBloc = context.read<TaskBloc>();
         if (state is AppAuthAuthenticated) {
+          taskBloc.add(LoadTasksEvent());
           return HomePage();
         }
         if (state is AppAuthUnauthenticated) {
+          taskBloc.add(StopTasksEvent());
           return SignInUpPage();
         }
         return Scaffold(

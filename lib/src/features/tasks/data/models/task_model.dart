@@ -3,6 +3,7 @@ import 'package:tasks/src/features/tasks/domain/entities/task_entity.dart';
 
 class TaskModel {
   static Map<String, dynamic> toJson(Task task) => {
+    "userId": task.userId,
     "title": task.title,
     "description": task.description,
     "type": task.type.name,
@@ -22,6 +23,7 @@ class TaskModel {
     final d = doc.data() as Map<String, dynamic>;
     return Task(
       id: doc.id,
+      userId: d["userId"],
       title: d["title"],
       description: d["description"],
       type: TaskType.values.byName(d["type"]),

@@ -6,6 +6,7 @@ enum TaskStatus { pending, inProgress, completed, skipped, archived }
 
 class Task {
   final String id;
+  final String userId;
   final String title;
   final String? description;
 
@@ -26,6 +27,7 @@ class Task {
 
   const Task({
     required this.id,
+    required this.userId,
     required this.title,
     this.description,
     required this.type,
@@ -48,6 +50,7 @@ class Task {
   }) {
     return Task(
       id: id,
+      userId: userId,
       title: title,
       description: description,
       type: type,
