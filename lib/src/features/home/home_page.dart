@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/src/features/about/about_page.dart';
 import 'package:tasks/src/features/home/cubit/nav_cubit.dart';
+import 'package:tasks/src/features/home/home_page_widgets.dart';
 import 'package:tasks/src/features/settings/settings_page.dart';
+import 'package:tasks/src/features/tasks/presentation/bloc/task_bloc.dart';
 import 'package:tasks/src/features/tasks/presentation/pages/task_page.dart';
 import 'package:tasks/l10n/app_localizations.dart';
 
@@ -13,8 +15,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final pages = [
-      TaskPage(title: l.appTitle, isCompleted: false),
-      TaskPage(title: l.completed, isCompleted: true),
+      TaskPage(title: l.appTitle),
       SettingsPage(),
       AboutPage(l.about),
     ];
@@ -34,8 +35,21 @@ class HomePage extends StatelessWidget {
             labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
             selectedIndex: context.read<NavCubit>().state,
             destinations: [
-              _navigationDestination(Icons.list, l.appTitle, false),
-              _navigationDestination(Icons.check_circle, l.completed, true),
+              NavigationDestination(
+                icon: BlocBuilder<TaskBloc, TaskState>(
+                  buildWhen: (previous, current) =>
+                      current is TaskLoaded || previous is TaskLoaded,
+                  builder: (context, state) {
+                    int count = state is TaskLoaded ? state.tasks.length : 0;
+                    return AnimatedBadge(
+                      color: ColorScheme.of(context).tertiaryContainer,
+                      icon: Icons.list,
+                      count: count,
+                    );
+                  },
+                ),
+                label: l.appTitle,
+              ),
               _navigationDestination(Icons.settings, l.settingsTitle),
               _navigationDestination(Icons.info, l.about),
             ],
@@ -48,11 +62,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  NavigationDestination _navigationDestination(
-    IconData icon,
-    String title, [
-    bool? isCompleted,
-  ]) {
+  NavigationDestination _navigationDestination(IconData icon, String title) {
     return NavigationDestination(icon: Icon(icon), label: title);
   }
 }

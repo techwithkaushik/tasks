@@ -36,11 +36,7 @@ class AnimatedBadge extends StatelessWidget {
                 child: Text(
                   count > 99 ? "99+" : "$count",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
                 ),
               ),
             ),
