@@ -26,7 +26,7 @@ class App extends StatelessWidget {
         BlocProvider(create: (_) => ThemeCubit()),
         BlocProvider(create: (_) => LanguageCubit()),
         BlocProvider(create: (_) => NavCubit()),
-        BlocProvider(create: (_) => sl<TaskBloc>()),
+        BlocProvider(create: (_) => sl<TaskBloc>()..add(LoadTasksEvent())),
       ],
       child: DynamicColorBuilder(
         builder: (lightDynamic, darkDynamic) {

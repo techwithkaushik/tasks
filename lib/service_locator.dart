@@ -21,7 +21,7 @@ import 'package:tasks/src/features/tasks/domain/repositories/task_repository.dar
 import 'package:tasks/src/features/tasks/domain/usecases/add_task_use_case.dart';
 import 'package:tasks/src/features/tasks/domain/usecases/delete_task_use_case.dart';
 import 'package:tasks/src/features/tasks/domain/usecases/update_task_use_case.dart';
-import 'package:tasks/src/features/tasks/domain/usecases/watch_task_use_case.dart';
+import 'package:tasks/src/features/tasks/domain/usecases/load_task_use_case.dart';
 import 'package:tasks/src/features/tasks/presentation/bloc/task_bloc.dart';
 
 final sl = GetIt.instance;
@@ -69,10 +69,12 @@ Future<void> setupServiceLocator() async {
 
   // Firestore
   sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
-  sl.registerLazySingleton(() => TaskFirestoreDataSource());
+  sl.registerLazySingleton<TaskFirestoreDataSource>(
+    () => TaskFirestoreDataSource(firestore: sl()),
+  );
 
   sl.registerLazySingleton<TaskRepository>(() => TaskRepositoryImpl(sl()));
-  sl.registerLazySingleton<WatchTaskUseCase>(() => WatchTaskUseCase(sl()));
+  sl.registerLazySingleton<LoadTaskUseCase>(() => LoadTaskUseCase(sl()));
   sl.registerLazySingleton<AddTaskUseCase>(() => AddTaskUseCase(sl()));
   sl.registerLazySingleton<DeleteTaskUseCase>(() => DeleteTaskUseCase(sl()));
   sl.registerLazySingleton<UpdateTaskUseCase>(() => UpdateTaskUseCase(sl()));
