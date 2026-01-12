@@ -135,4 +135,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get required => 'Required';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get taskType => 'Task Type';
+
+  @override
+  String get priority => 'Priority';
+
+  @override
+  String get estimatedMinutes => 'Estimated Minutes';
+
+  @override
+  String get noDueDate => 'No Due Date';
+
+  @override
+  String get due => 'Due';
 }

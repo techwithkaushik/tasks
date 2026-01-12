@@ -349,6 +349,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Passwords do not match'**
   String get passwordsDoNotMatch;
+
+  /// field is required
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get required;
+
+  /// filed description
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// taskType in field
+  ///
+  /// In en, this message translates to:
+  /// **'Task Type'**
+  String get taskType;
+
+  /// task priority
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get priority;
+
+  /// estimated Minutes
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated Minutes'**
+  String get estimatedMinutes;
+
+  /// noDueDate
+  ///
+  /// In en, this message translates to:
+  /// **'No Due Date'**
+  String get noDueDate;
+
+  /// due
+  ///
+  /// In en, this message translates to:
+  /// **'Due'**
+  String get due;
 }
 
 class _AppLocalizationsDelegate

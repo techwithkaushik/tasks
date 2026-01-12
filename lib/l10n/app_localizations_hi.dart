@@ -136,4 +136,25 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get passwordsDoNotMatch => 'पासवर्ड मेल नहीं खा रहा';
+
+  @override
+  String get required => 'आवश्यक';
+
+  @override
+  String get description => 'विवरण';
+
+  @override
+  String get taskType => 'कार्य का प्रकार';
+
+  @override
+  String get priority => 'प्राथमिकता';
+
+  @override
+  String get estimatedMinutes => 'अनुमानित मिनट';
+
+  @override
+  String get noDueDate => 'कोई देय तारीख नहीं';
+
+  @override
+  String get due => 'देय';
 }

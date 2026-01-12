@@ -167,5 +167,33 @@
   "passwordsDoNotMatch": "Passwords do not match",
   "@passwordsDoNotMatch": {
     "description": "Passwords do not match"
+  },
+  "required": "Required",
+  "@required": {
+    "description": "field is required"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "filed description"
+  },
+  "taskType": "Task Type",
+  "@taskType": {
+    "description": "taskType in field"
+  },
+  "priority": "Priority",
+  "@priority": {
+    "description": "task priority"
+  },
+  "estimatedMinutes": "Estimated Minutes",
+  "@estimatedMinutes": {
+    "description": "estimated Minutes"
+  },
+  "noDueDate": "No Due Date",
+  "@noDueDate": {
+    "description": "noDueDate"
+  },
+  "due": "Due",
+  "@due": {
+    "description": "due"
   }
 }

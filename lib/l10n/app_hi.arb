@@ -167,5 +167,33 @@
   "passwordsDoNotMatch": "पासवर्ड मेल नहीं खा रहा",
   "@passwordsDoNotMatch": {
     "description": "पासवर्ड मेल नहीं खा रहा"
+  },
+  "required": "आवश्यक",
+  "@required": {
+    "description": "क्षेत्र आवश्यक हे।"
+  },
+  "description": "विवरण",
+  "@description": {
+    "description": "क्षेत्र विवरण"
+  },
+  "taskType": "कार्य का प्रकार",
+  "@taskType": {
+    "description": "कार्य का प्रकार"
+  },
+  "priority": "प्राथमिकता",
+  "@priority": {
+    "description": "कार्य प्राथमिकता"
+  },
+  "estimatedMinutes": "अनुमानित मिनट",
+  "@estimatedMinutes": {
+    "description": "अनुमानित मिनट"
+  },
+  "noDueDate": "कोई देय तारीख नहीं",
+  "@noDueDate": {
+    "description": "कोई देय तारीख नहीं"
+  },
+  "due": "देय",
+  "@due": {
+    "description": "देय"
   }
 }
