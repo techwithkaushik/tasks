@@ -30,7 +30,13 @@ class AuthFormBloc extends Bloc<AuthFormEvent, AuthFormState> {
   }
 
   void _onModeChanged(AuthModeChanged e, Emitter<AuthFormState> emit) {
-    emit(AuthFormState.initial().copyWith(mode: e.mode));
+    emit(
+      state.copyWith(
+        mode: e.mode,
+        confirmPassword: '',
+        isConfirmPasswordValid: false,
+      ),
+    );
   }
 
   void _onEmailChanged(AuthEmailChanged e, Emitter<AuthFormState> emit) {
