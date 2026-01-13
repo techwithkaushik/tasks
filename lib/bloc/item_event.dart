@@ -5,7 +5,11 @@ sealed class ItemEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+class StartWatcherEvent extends ItemEvent {}
+
 class LoadItemsEvent extends ItemEvent {}
+
+class _ItemsUpdatedEvent extends ItemEvent {}
 
 class AddItemEvent extends ItemEvent {
   final String title;
@@ -13,13 +17,17 @@ class AddItemEvent extends ItemEvent {
 }
 
 class ToggleFavoriteEvent extends ItemEvent {
-  final String id;
+  final int id;
   ToggleFavoriteEvent(this.id);
+  @override
+  List<Object?> get props => [id];
 }
 
 class ToggleSelectItemEvent extends ItemEvent {
-  final String id;
+  final int id;
   ToggleSelectItemEvent(this.id);
+  @override
+  List<Object?> get props => [id];
 }
 
 class ClearSelectionEvent extends ItemEvent {}

@@ -5,14 +5,14 @@ sealed class ItemState extends Equatable {
   List<Object?> get props => [];
 }
 
-class ItemLoadingState extends ItemState {}
+class LoadingItemState extends ItemState {}
 
-class ItemLoadedState extends ItemState {
+class LoadedItemState extends ItemState {
   final List<ItemModel> items;
-  final Set<String> selectedIds;
+  final Set<int> selectedIds;
   final String? formError;
 
-  ItemLoadedState({
+  LoadedItemState({
     required this.items,
     this.selectedIds = const {},
     this.formError,
@@ -20,12 +20,12 @@ class ItemLoadedState extends ItemState {
 
   bool get selectionMode => selectedIds.isNotEmpty;
 
-  ItemLoadedState copyWith({
+  LoadedItemState copyWith({
     List<ItemModel>? items,
-    Set<String>? selectedIds,
+    Set<int>? selectedIds,
     String? formError,
   }) {
-    return ItemLoadedState(
+    return LoadedItemState(
       items: items ?? this.items,
       selectedIds: selectedIds ?? this.selectedIds,
       formError: formError,
@@ -36,9 +36,9 @@ class ItemLoadedState extends ItemState {
   List<Object?> get props => [items, selectedIds, formError];
 }
 
-class ItemErrorState extends ItemState {
+class ErrorItemState extends ItemState {
   final String message;
-  ItemErrorState(this.message);
+  ErrorItemState(this.message);
   @override
   List<Object?> get props => [message];
 }

@@ -1,43 +1,71 @@
+import 'package:isar_community/isar.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:tasks/item_model.dart';
-import 'package:tasks/item_repo.dart';
 
-class ItemRepoImpl extends ItemRepo {
-  final List<ItemModel> _itemList = [];
+class ItemRepoImpl {
+  Isar? _isar;
 
-  @override
-  List<ItemModel> fetchItems() {
-    return List<ItemModel>.from(_itemList);
+  /// Getter returns an initialized Isar instance
+  Future<Isar> get db async {
+    if (_isar != null) return _isar!;
+
+    final dir = await getApplicationDocumentsDirectory();
+    _isar = await Isar.open(
+      [ItemModelSchema],
+      directory: dir.path,
+      inspector: true,
+    );
+
+    return _isar!;
   }
 
-  @override
+  /// FETCH
+  Future<List<ItemModel>> fetchItems() async {
+    final isar = await db;
+    return await isar.itemModels.where().findAll();
+  }
+
+  /// ADD
   Future<void> addItem(ItemModel item) async {
-    _itemList.add(item);
+    final isar = await db;
+    await isar.writeTxn(() async {
+      await isar.itemModels.put(item);
+    });
   }
 
-  @override
-  Future<void> delete(ItemModel item) async {
-    _itemList.removeWhere((e) => e.id == item.id);
+  /// UPDATE
+  Future<void> updateItem(ItemModel item) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      await isar.itemModels.put(item);
+    });
   }
 
-  @override
-  Future<void> deleteItems(List<String> ids) async {
-    _itemList.removeWhere((e) => ids.contains(e.id));
+  /// TOGGLE FAVORITE
+  Future<void> toggleFavorite(int id) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      final item = await isar.itemModels.get(id);
+      if (item != null) {
+        item.isFavorite = !item.isFavorite;
+        await isar.itemModels.put(item);
+      }
+    });
   }
 
-  @override
-  Future<void> updateItem(ItemModel updated) async {
-    final index = _itemList.indexWhere((e) => e.id == updated.id);
-    if (index != -1) {
-      _itemList[index] = updated;
-    }
+  /// DELETE ONE
+  Future<void> deleteItem(int id) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      await isar.itemModels.delete(id);
+    });
   }
 
-  @override
-  Future<void> toggleFavorite(String id) async {
-    final index = _itemList.indexWhere((e) => e.id == id);
-    if (index != -1) {
-      final item = _itemList[index];
-      _itemList[index] = item.copyWith(isFavorite: !item.isFavorite);
-    }
+  /// DELETE MANY
+  Future<void> deleteItems(List<int> ids) async {
+    final isar = await db;
+    await isar.writeTxn(() async {
+      await isar.itemModels.deleteAll(ids);
+    });
   }
 }

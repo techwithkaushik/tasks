@@ -1,24 +1,13 @@
-import 'package:equatable/equatable.dart';
+import 'package:isar_community/isar.dart';
 
-class ItemModel extends Equatable {
-  final String id;
-  final String title;
-  final bool isFavorite;
+part 'item_model.g.dart';
 
-  const ItemModel({
-    required this.id,
-    required this.title,
-    this.isFavorite = false,
-  });
+@collection
+class ItemModel {
+  Id id = Isar.autoIncrement;
 
-  ItemModel copyWith({String? id, String? title, bool? isFavorite}) {
-    return ItemModel(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      isFavorite: isFavorite ?? this.isFavorite,
-    );
-  }
+  late String title;
 
-  @override
-  List<Object?> get props => [id, title, isFavorite];
+  @Index()
+  bool isFavorite = false;
 }
