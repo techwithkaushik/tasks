@@ -41,6 +41,15 @@ class _AddTaskPageState extends State<AddTaskPage> {
       ).showSnackBar(SnackBar(content: Text("User is not authenticated")));
       return;
     }
+    DateTime? finalDue;
+    if (_dueDate != null) {
+      final now = DateTime.now();
+      finalDue = _dueDate!.copyWith(
+        second: now.second,
+        millisecond: now.millisecond,
+        microsecond: now.microsecond,
+      );
+    }
     final task = Task(
       id: '',
       userId: authState.user.uid,
@@ -50,7 +59,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
       priority: _priority,
       status: TaskStatus.pending,
       createdAt: DateTime.now(),
-      dueDate: _dueDate,
+      dueDate: finalDue,
       completedAt: null,
       estimatedMinutes: _estimatedMinutes,
     );
@@ -127,19 +136,38 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 title: Text(
                   _dueDate == null
                       ? l.noDueDate
-                      : '${l.due}: ${_dueDate!.toLocal()}'.split(' ')[0],
+                      : '${l.due}: ${_formatDueDate(_dueDate!)}',
                 ),
                 trailing: const Icon(Icons.calendar_today),
                 onTap: () async {
-                  final picked = await showDatePicker(
+                  var picked = await showDatePicker(
                     context: context,
                     firstDate: DateTime.now(),
+                    barrierDismissible: false,
                     lastDate: DateTime.now().add(const Duration(days: 365)),
                     initialDate: _dueDate ?? DateTime.now(),
                   );
 
-                  if (picked != null) {
-                    setState(() => _dueDate = picked);
+                  if (picked != null && context.mounted) {
+                    final pickedTime = await showTimePicker(
+                      context: context,
+                      barrierDismissible: false,
+                      initialTime: TimeOfDay.now(),
+                    );
+                    if (pickedTime != null) {
+                      final now = DateTime.now();
+                      picked = picked.copyWith(
+                        hour: pickedTime.hour,
+                        minute: pickedTime.minute,
+                        second: now.second,
+                        millisecond: now.millisecond,
+                        microsecond: now.microsecond,
+                        isUtc: now.isUtc,
+                      );
+                      setState(() {
+                        _dueDate = picked;
+                      });
+                    }
                   }
                 },
               ),
@@ -154,4 +182,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
       ),
     );
   }
+}
+
+String _formatDueDate(DateTime dt) {
+  return "${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} "
+      "${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}";
 }
