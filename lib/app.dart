@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:tasks/src/core/constants/language.dart';
-import 'package:tasks/src/features/home/cubit/nav_cubit.dart';
-
 import 'package:tasks/src/features/settings/presentation/cubit/dynamic_color_cubit.dart';
 import 'package:tasks/src/features/settings/presentation/cubit/language_cubit.dart';
 import 'package:tasks/src/features/settings/presentation/cubit/theme_cubit.dart';
@@ -25,7 +23,6 @@ class App extends StatelessWidget {
         BlocProvider(create: (_) => DynamicColorCubit()),
         BlocProvider(create: (_) => ThemeCubit()),
         BlocProvider(create: (_) => LanguageCubit()),
-        BlocProvider(create: (_) => NavCubit()),
         BlocProvider(create: (_) => sl<TaskBloc>()..add(LoadTasksEvent())),
       ],
       child: DynamicColorBuilder(
