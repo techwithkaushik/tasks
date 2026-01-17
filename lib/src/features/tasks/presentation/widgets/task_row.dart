@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tasks/src/core/utils/utils.dart';
 import 'package:tasks/src/features/tasks/presentation/utils/task_pills.dart';
 
 import '../../domain/entities/task_entity.dart';
@@ -53,7 +54,7 @@ class TaskRow extends StatelessWidget {
                   children: [
                     // TITLE
                     Text(
-                      task.title,
+                      task.title.capitalize(),
                       style: TextStyle(
                         fontSize: 14.5,
                         fontWeight: FontWeight.w600,
