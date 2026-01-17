@@ -9,6 +9,7 @@ class DueTextWidget extends StatelessWidget {
     if (due == null) return const Text("No due date");
 
     return StreamBuilder<int>(
+      key: ValueKey(due),
       stream: Stream.periodic(const Duration(seconds: 1), (x) => x),
       builder: (_, _) {
         final now = DateTime.now();

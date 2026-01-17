@@ -9,9 +9,10 @@ class TaskModel {
     "type": task.type.name,
     "priority": task.priority.name,
     "status": task.status.name,
+    "lastStatus": task.lastStatus.name,
     "createdAt": task.createdAt,
     "dueDate": task.dueDate,
-    "completedAt": task.completedAt,
+    "updatedAt": task.updatedAt,
     "estimatedMinutes": task.estimatedMinutes,
     "actualMinutes": task.actualMinutes,
     "tags": task.tags,
@@ -29,12 +30,13 @@ class TaskModel {
       type: TaskType.values.byName(d["type"]),
       priority: TaskPriority.values.byName(d["priority"]),
       status: TaskStatus.values.byName(d["status"]),
+      lastStatus: TaskStatus.values.byName(d["lastStatus"]),
       createdAt: (d["createdAt"] as Timestamp).toDate(),
       dueDate: d["dueDate"] != null
           ? (d["dueDate"] as Timestamp).toDate()
           : null,
-      completedAt: d["completedAt"] != null
-          ? (d["completedAt"] as Timestamp).toDate()
+      updatedAt: d["updatedAt"] != null
+          ? (d["updatedAt"] as Timestamp).toDate()
           : null,
       estimatedMinutes: d["estimatedMinutes"],
       actualMinutes: d["actualMinutes"],

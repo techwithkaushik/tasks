@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tasks/l10n/app_localizations.dart';
 import 'package:tasks/src/features/about/about_page.dart';
 import 'package:tasks/src/features/home/cubit/nav_cubit.dart';
 import 'package:tasks/src/features/home/home_page_widgets.dart';
 import 'package:tasks/src/features/settings/settings_page.dart';
+import 'package:tasks/src/features/tasks/domain/entities/task_entity.dart';
 import 'package:tasks/src/features/tasks/presentation/bloc/task_bloc.dart';
 import 'package:tasks/src/features/tasks/presentation/pages/task_page.dart';
-import 'package:tasks/l10n/app_localizations.dart';
 
 class HomeContentPage extends StatelessWidget {
   const HomeContentPage({super.key});
@@ -30,7 +31,6 @@ class HomeContentPage extends StatelessWidget {
             },
             child: IndexedStack(index: state, children: pages),
           ),
-
           bottomNavigationBar: NavigationBar(
             labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
             selectedIndex: context.read<NavCubit>().state,
@@ -38,9 +38,13 @@ class HomeContentPage extends StatelessWidget {
               NavigationDestination(
                 icon: BlocBuilder<TaskBloc, TaskState>(
                   buildWhen: (previous, current) =>
-                      current is TaskLoaded || previous is TaskLoaded,
+                      current.tasks.isNotEmpty || previous.tasks.isNotEmpty,
                   builder: (context, state) {
-                    int count = state is TaskLoaded ? state.tasks.length : 0;
+                    int count = state.tasks.isNotEmpty
+                        ? state.tasks
+                              .where((t) => t.status != TaskStatus.deleted)
+                              .length
+                        : 0;
                     return AnimatedBadge(
                       color: ColorScheme.of(context).tertiaryContainer,
                       icon: Icons.list,

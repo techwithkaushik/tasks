@@ -58,9 +58,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
       type: _type,
       priority: _priority,
       status: TaskStatus.pending,
+      lastStatus: TaskStatus.pending,
       createdAt: DateTime.now(),
       dueDate: finalDue,
-      completedAt: null,
+      updatedAt: null,
       estimatedMinutes: _estimatedMinutes,
     );
     context.read<TaskBloc>().add(AddTaskEvent(task));

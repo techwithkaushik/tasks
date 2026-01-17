@@ -26,7 +26,6 @@ class TaskRow extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // ICON / TYPE INDICATOR
               ClipRRect(
                 borderRadius: BorderRadius.circular(50),
                 child: Container(
@@ -44,15 +43,11 @@ class TaskRow extends StatelessWidget {
                   ),
                 ),
               ),
-
               const SizedBox(width: 12),
-
-              // MAIN CONTENT
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // TITLE
                     Text(
                       task.title.capitalize(),
                       style: TextStyle(
@@ -61,10 +56,7 @@ class TaskRow extends StatelessWidget {
                         color: onSurface,
                       ),
                     ),
-
                     const SizedBox(height: 2),
-
-                    // DESCRIPTION
                     if (task.description != null)
                       Text(
                         task.description!,
@@ -75,10 +67,7 @@ class TaskRow extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-
                     const SizedBox(height: 6),
-
-                    // METADATA + PILLS
                     Wrap(
                       spacing: 4,
                       runSpacing: 4,

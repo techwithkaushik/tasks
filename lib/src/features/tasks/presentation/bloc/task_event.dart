@@ -20,11 +20,20 @@ class AddTaskEvent extends TaskEvent {
 
 class UpdateTaskEvent extends TaskEvent {
   final Task task;
-  final TaskStatus to;
 
-  const UpdateTaskEvent(this.task, this.to);
+  const UpdateTaskEvent(this.task);
   @override
-  List<Object?> get props => [task, to];
+  List<Object?> get props => [task];
+}
+
+class UpdateTaskStatusEvent extends TaskEvent {
+  final String taskId;
+  final TaskStatus status;
+  final bool showSnackBar;
+
+  const UpdateTaskStatusEvent(this.taskId, this.status, this.showSnackBar);
+  @override
+  List<Object?> get props => [taskId, status, showSnackBar];
 }
 
 class DeleteTaskEvent extends TaskEvent {
@@ -33,11 +42,3 @@ class DeleteTaskEvent extends TaskEvent {
   @override
   List<Object?> get props => [id];
 }
-
-// class TasksUpdatedEvent extends TaskEvent {
-//   final List<Task> tasks;
-//   const TasksUpdatedEvent(this.tasks);
-
-//   @override
-//   List<Object> get props => [List<Object?>.from(tasks)];
-// }
