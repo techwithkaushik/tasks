@@ -26,69 +26,26 @@ class AppSettingsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 18),
       onTap: () {
-        // If it's a switch tile → toggle the switch when tile is tapped
         if (hasSwitch) {
           onChanged!(!value!);
         } else {
-          // Otherwise perform action
           onTap?.call();
         }
       },
-
-      borderRadius: BorderRadius.circular(10),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 14),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // LEFT SIDE
-            Flexible(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4, right: 16),
-                    child: Icon(icon),
-                  ),
-
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        if (description != null && description!.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 3),
-                            child: Text(
-                              description!,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[700],
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // RIGHT SIDE: switch or arrow
-            if (hasSwitch)
-              Switch(value: value!, onChanged: onChanged)
-            else if (onTap != null)
-              Container(),
-          ],
-        ),
+      leading: Icon(icon),
+      trailing: hasSwitch
+          ? Switch(value: value!, onChanged: onChanged)
+          : SizedBox.shrink(child: Text("no ontap")),
+      title: Text(
+        title,
+        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+      ),
+      subtitle: Text(
+        description!,
+        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
       ),
     );
   }
