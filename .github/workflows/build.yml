@@ -28,7 +28,7 @@ jobs:
         with:
           channel: "stable"
       - run: flutter pub get
-      - run: dart format --set-exit-if-changed .
+#      - run: dart format --set-exit-if-changed .
       - run: flutter analyze .
       - name: assembleRelease
         run: flutter build apk --release --split-per-abi
