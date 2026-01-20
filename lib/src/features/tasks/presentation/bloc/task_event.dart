@@ -1,44 +1,15 @@
 part of 'task_bloc.dart';
 
-sealed class TaskEvent extends Equatable {
-  const TaskEvent();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class LoadTasksEvent extends TaskEvent {}
-
-class StopTasksEvent extends TaskEvent {}
-
-class AddTaskEvent extends TaskEvent {
-  final Task task;
-  const AddTaskEvent(this.task);
-  @override
-  List<Object?> get props => [task];
-}
-
-class UpdateTaskEvent extends TaskEvent {
-  final Task task;
-
-  const UpdateTaskEvent(this.task);
-  @override
-  List<Object?> get props => [task];
-}
-
-class UpdateTaskStatusEvent extends TaskEvent {
-  final String taskId;
-  final TaskStatus status;
-  final bool showSnackBar;
-
-  const UpdateTaskStatusEvent(this.taskId, this.status, this.showSnackBar);
-  @override
-  List<Object?> get props => [taskId, status, showSnackBar];
-}
-
-class DeleteTaskEvent extends TaskEvent {
-  final String id;
-  const DeleteTaskEvent(this.id);
-  @override
-  List<Object?> get props => [id];
+@Freezed()
+sealed class TaskEvent with _$TaskEvent {
+  const factory TaskEvent.load() = _Load;
+  const factory TaskEvent.stop() = _Stop;
+  const factory TaskEvent.add(Task task) = _Add;
+  const factory TaskEvent.update(Task task) = _Update;
+  const factory TaskEvent.updateStatus({
+    required String taskId,
+    required TaskStatus status,
+    @Default(false) bool showSnackBar,
+  }) = _UpdateStatus;
+  const factory TaskEvent.delete(String taskId) = _Delete;
 }

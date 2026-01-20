@@ -1,24 +1,12 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:tasks/src/features/app_auth/domain/entities/user_entity.dart';
 
-abstract class AppAuthState extends Equatable {
-  const AppAuthState();
+part 'app_auth_state.freezed.dart';
 
-  @override
-  List<Object?> get props => [];
+@Freezed()
+sealed class AppAuthState with _$AppAuthState {
+  const factory AppAuthState.loading() = _Loading;
+  const factory AppAuthState.authenticated(UserEntity user) = _Authenticated;
+  const factory AppAuthState.unauthenticated() = _Unauthenticated;
+  const factory AppAuthState.error(String message) = _Error;
 }
-
-class AppAuthInitial extends AppAuthState {}
-
-class AppAuthLoading extends AppAuthState {}
-
-class AppAuthAuthenticated extends AppAuthState {
-  final UserEntity user;
-
-  const AppAuthAuthenticated(this.user);
-
-  @override
-  List<Object?> get props => [user];
-}
-
-class AppAuthUnauthenticated extends AppAuthState {}

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/l10n/app_localizations.dart';
 import 'package:tasks/service_locator.dart';
 import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth/app_auth_bloc.dart';
-import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth/app_auth_state.dart';
 import 'package:tasks/src/features/tasks/domain/entities/task_entity.dart';
 import 'package:tasks/src/features/tasks/presentation/bloc/task_bloc.dart';
 
@@ -34,38 +33,42 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
-    final authState = sl<AppAuthBloc>().state;
-    if (authState is! AppAuthAuthenticated) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("User is not authenticated")));
-      return;
-    }
-    DateTime? finalDue;
-    if (_dueDate != null) {
-      final now = DateTime.now();
-      finalDue = _dueDate!.copyWith(
-        second: now.second,
-        millisecond: now.millisecond,
-        microsecond: now.microsecond,
-      );
-    }
-    final task = Task(
-      id: '',
-      userId: authState.user.uid,
-      title: _titleController.text.trim(),
-      description: _descriptionController.text.trim(),
-      type: _type,
-      priority: _priority,
-      status: TaskStatus.pending,
-      lastStatus: TaskStatus.pending,
-      createdAt: DateTime.now(),
-      dueDate: finalDue,
-      updatedAt: null,
-      estimatedMinutes: _estimatedMinutes,
+    final auth = sl<AppAuthBloc>().state;
+    auth.mapOrNull(
+      unauthenticated: (value) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Error: $value")));
+        return;
+      },
+      authenticated: (value) {
+        DateTime? finalDue;
+        if (_dueDate != null) {
+          final now = DateTime.now();
+          finalDue = _dueDate!.copyWith(
+            second: now.second,
+            millisecond: now.millisecond,
+            microsecond: now.microsecond,
+          );
+        }
+        final task = Task(
+          id: '',
+          userId: value.user.uid,
+          title: _titleController.text.trim(),
+          description: _descriptionController.text.trim(),
+          type: _type,
+          priority: _priority,
+          status: TaskStatus.pending,
+          lastStatus: TaskStatus.pending,
+          createdAt: DateTime.now(),
+          dueDate: finalDue,
+          updatedAt: null,
+          estimatedMinutes: _estimatedMinutes,
+        );
+        context.read<TaskBloc>().add(TaskEvent.add(task));
+        Navigator.of(context).pop();
+      },
     );
-    context.read<TaskBloc>().add(AddTaskEvent(task));
-    Navigator.of(context).pop();
   }
 
   @override
@@ -161,9 +164,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
                         hour: pickedTime.hour,
                         minute: pickedTime.minute,
                         second: now.second,
-                        millisecond: now.millisecond,
-                        microsecond: now.microsecond,
-                        isUtc: now.isUtc,
                       );
                       setState(() {
                         _dueDate = picked;

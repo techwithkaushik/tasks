@@ -11,52 +11,67 @@ class RecycleBinPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("Recycle Bin")),
       body: BlocBuilder<TaskBloc, TaskState>(
+        buildWhen: (_, curr) {
+          return curr.maybeMap(effect: (_) => false, orElse: () => true);
+        },
         builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          return state.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (msg) => Center(child: Text(msg)),
+            effect: (_, _, _) {
+              // We ignore effect here (no rebuild)
+              return const SizedBox.shrink();
+            },
+            data: (tasks) {
+              final deletedTasks = tasks
+                  .where((t) => t.status == TaskStatus.deleted)
+                  .toList();
 
-          final deletedTasks = state.tasks
-              .where((t) => t.status == TaskStatus.deleted)
-              .toList();
+              if (deletedTasks.isEmpty) {
+                return const Center(child: Text("Recycle bin is empty"));
+              }
 
-          if (deletedTasks.isEmpty) {
-            return const Center(child: Text("Recycle bin is empty"));
-          }
+              return ListView.builder(
+                itemCount: deletedTasks.length,
+                itemBuilder: (_, i) {
+                  final task = deletedTasks[i];
+                  final deletedTime = task.updatedAt ?? task.createdAt;
 
-          return ListView.builder(
-            itemCount: deletedTasks.length,
-            itemBuilder: (_, i) {
-              final task = deletedTasks[i];
-              return ListTile(
-                title: Text(task.title),
-                subtitle: Text(
-                  "Deleted on ${task.updatedAt ?? task.createdAt}",
-                ),
-                trailing: PopupMenuButton(
-                  onSelected: (value) {
-                    if (value == 'restore') {
-                      context.read<TaskBloc>().add(
-                        UpdateTaskStatusEvent(task.id, task.lastStatus, false),
-                      );
-                    } else if (value == 'delete_forever') {
-                      context.read<TaskBloc>().add(DeleteTaskEvent(task.id));
-                    }
-                  },
-                  itemBuilder: (_) => [
-                    const PopupMenuItem(
-                      value: 'restore',
-                      child: Text("Restore"),
+                  return ListTile(
+                    title: Text(task.title),
+                    subtitle: Text("Deleted on $deletedTime"),
+                    trailing: PopupMenuButton(
+                      onSelected: (value) {
+                        switch (value) {
+                          case 'restore':
+                            context.read<TaskBloc>().add(
+                              TaskEvent.updateStatus(
+                                taskId: task.id,
+                                status: task.lastStatus,
+                                showSnackBar: false, // 🔥 important
+                              ),
+                            );
+                            break;
+                          case 'delete_forever':
+                            context.read<TaskBloc>().add(
+                              TaskEvent.delete(task.id),
+                            );
+                            break;
+                        }
+                      },
+                      itemBuilder: (_) => const [
+                        PopupMenuItem(value: 'restore', child: Text("Restore")),
+                        PopupMenuItem(
+                          value: 'delete_forever',
+                          child: Text(
+                            "Delete permanently",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
                     ),
-                    const PopupMenuItem(
-                      value: 'delete_forever',
-                      child: Text(
-                        "Delete permanently",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
-                  ],
-                ),
+                  );
+                },
               );
             },
           );

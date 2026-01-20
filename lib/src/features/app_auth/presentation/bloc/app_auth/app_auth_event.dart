@@ -1,14 +1,9 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-abstract class AppAuthEvent extends Equatable {
-  const AppAuthEvent();
+part 'app_auth_event.freezed.dart';
 
-  @override
-  List<Object?> get props => [];
+@Freezed()
+sealed class AppAuthEvent with _$AppAuthEvent {
+  const factory AppAuthEvent.started() = _Started;
+  const factory AppAuthEvent.userChanged() = _UserChanged;
 }
-
-/// Fired when app starts
-class AppAuthStarted extends AppAuthEvent {}
-
-/// Fired when auth state may have changed
-class AppAuthUserChanged extends AppAuthEvent {}

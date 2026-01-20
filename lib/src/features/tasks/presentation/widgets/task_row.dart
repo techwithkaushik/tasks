@@ -19,7 +19,6 @@ class TaskRow extends StatelessWidget {
       borderRadius: BorderRadius.circular(8),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-        color: Theme.of(context).colorScheme.surfaceContainerHigh,
         child: InkWell(
           onTap: onTap,
           child: Row(
@@ -34,7 +33,7 @@ class TaskRow extends StatelessWidget {
                   color: Colors.blueGrey.shade200,
                   alignment: Alignment.center,
                   child: Text(
-                    task.type.name.substring(0, 1).toUpperCase(),
+                    task.type.name[0].toUpperCase(),
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -57,7 +56,7 @@ class TaskRow extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    if (task.description != null)
+                    if (task.description!.isNotEmpty)
                       Text(
                         task.description!,
                         style: TextStyle(
@@ -68,12 +67,7 @@ class TaskRow extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     const SizedBox(height: 6),
-                    Wrap(
-                      spacing: 4,
-                      runSpacing: 4,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [...taskPills(task, context)],
-                    ),
+                    TaskPills(task: task),
                   ],
                 ),
               ),

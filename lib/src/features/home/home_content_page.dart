@@ -3,10 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/l10n/app_localizations.dart';
 import 'package:tasks/src/features/about/about_page.dart';
 import 'package:tasks/src/features/home/cubit/nav_cubit.dart';
-import 'package:tasks/src/features/home/home_page_widgets.dart';
 import 'package:tasks/src/features/settings/settings_page.dart';
-import 'package:tasks/src/features/tasks/domain/entities/task_entity.dart';
-import 'package:tasks/src/features/tasks/presentation/bloc/task_bloc.dart';
 import 'package:tasks/src/features/tasks/presentation/pages/task_page.dart';
 
 class HomeContentPage extends StatelessWidget {
@@ -35,25 +32,7 @@ class HomeContentPage extends StatelessWidget {
             labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
             selectedIndex: context.read<NavCubit>().state,
             destinations: [
-              NavigationDestination(
-                icon: BlocBuilder<TaskBloc, TaskState>(
-                  buildWhen: (previous, current) =>
-                      current.tasks.isNotEmpty || previous.tasks.isNotEmpty,
-                  builder: (context, state) {
-                    int count = state.tasks.isNotEmpty
-                        ? state.tasks
-                              .where((t) => t.status != TaskStatus.deleted)
-                              .length
-                        : 0;
-                    return AnimatedBadge(
-                      color: ColorScheme.of(context).tertiaryContainer,
-                      icon: Icons.list,
-                      count: count,
-                    );
-                  },
-                ),
-                label: l.appTitle,
-              ),
+              _navigationDestination(Icons.list, l.appTitle),
               _navigationDestination(Icons.settings, l.settingsTitle),
               _navigationDestination(Icons.info, l.about),
             ],

@@ -20,10 +20,11 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (_) => sl<AppAuthBloc>()),
         BlocProvider(create: (_) => DynamicColorCubit()),
         BlocProvider(create: (_) => ThemeCubit()),
         BlocProvider(create: (_) => LanguageCubit()),
-        BlocProvider(create: (_) => sl<TaskBloc>()..add(LoadTasksEvent())),
+        BlocProvider(create: (_) => sl<TaskBloc>()..add(TaskEvent.load())),
       ],
       child: DynamicColorBuilder(
         builder: (lightDynamic, darkDynamic) {

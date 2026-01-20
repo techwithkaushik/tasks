@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:implicitly_animated_list/implicitly_animated_list.dart';
 import 'package:tasks/service_locator.dart';
-import 'package:tasks/src/core/utils/utils.dart';
 import 'package:tasks/src/features/app_auth/presentation/bloc/sign_out/sign_out_bloc.dart';
 import 'package:tasks/src/features/task_add/presentation/pages/task_add_page.dart';
 import 'package:tasks/src/features/tasks/domain/entities/task_entity.dart';
@@ -22,7 +22,7 @@ class TaskPage extends StatelessWidget {
         leading: Builder(
           builder: (context) {
             return IconButton(
-              icon: Icon(Icons.menu),
+              icon: const Icon(Icons.menu),
               onPressed: () => Scaffold.of(context).openDrawer(),
             );
           },
@@ -33,138 +33,152 @@ class TaskPage extends StatelessWidget {
             bloc: signOutBloc,
             builder: (context, state) {
               if (state is SignOutLoading) {
-                return CircularProgressIndicator();
+                return const Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: CircularProgressIndicator(),
+                );
               }
               return TextButton(
-                onPressed: () {
-                  signOutBloc.add(SignOutRequested());
-                },
-                child: Text("Logout"),
+                onPressed: () => signOutBloc.add(SignOutRequested()),
+                child: const Text("Logout"),
               );
             },
           ),
         ],
       ),
-      body: BlocConsumer<TaskBloc, TaskState>(
-        listenWhen: (previous, current) =>
-            previous.showSnackBar != current.showSnackBar ||
-            previous.undoStatus != current.undoStatus,
-        listener: (context, state) {
-          if (state.showSnackBar) {
-            final messenger = ScaffoldMessenger.of(context);
-            final undoTask = state.tasks.firstWhere(
-              (t) => t.id == state.undoTaskId,
+
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: BlocListener<TaskBloc, TaskState>(
+          listenWhen: (_, current) =>
+              current.maybeMap(effect: (_) => true, orElse: () => false),
+          listener: (_, state) {
+            state.whenOrNull(
+              effect: (message, taskId, previous) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(message),
+                    duration: const Duration(seconds: 3),
+                    persist: false,
+                    action: SnackBarAction(
+                      label: "Undo",
+                      onPressed: () {
+                        context.read<TaskBloc>().add(
+                          TaskEvent.updateStatus(
+                            taskId: taskId,
+                            status: previous,
+                            showSnackBar: false,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
             );
-            messenger.hideCurrentSnackBar();
-            messenger.showSnackBar(
-              SnackBar(
-                content: Text(undoTask.status.name.capitalize()),
-                duration: Duration(seconds: 2),
-                persist: false,
-                action: SnackBarAction(
-                  label: "Undo",
-                  onPressed: () {
-                    context.read<TaskBloc>().add(
-                      UpdateTaskStatusEvent(
-                        state.undoTaskId,
-                        undoTask.lastStatus,
-                        false,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            );
-          }
-        },
-        builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (state.error.isNotEmpty) {
-            return Center(child: Text("Error at $state : ${state.error}"));
-          }
-          final taskList = state.tasks.where(
-            (t) => t.status != TaskStatus.deleted,
-          );
-          if (taskList.isEmpty) {
-            return const Center(child: Text("No Tasks Yet"));
-          }
-          if (taskList.isNotEmpty) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: ListView.separated(
-                separatorBuilder: (context, index) => const SizedBox(height: 5),
-                itemCount: taskList.length,
-                itemBuilder: (context, index) {
-                  Task task = taskList.elementAt(index);
-                  double progress = 0;
-                  return StatefulBuilder(
-                    builder: (context, setState) {
-                      return Dismissible(
-                        key: ValueKey(task),
-                        onUpdate: (details) =>
-                            setState(() => progress = details.progress),
-                        onDismissed: (direction) {
-                          progress = 0;
-                          return;
-                        },
-                        background: SwipeableBackground(
-                          progress: progress,
-                          alignment: Alignment.centerLeft,
-                          backgroundColor: Theme.of(context).colorScheme.error,
-                          iconData: Icons.delete_outline,
-                          iconColor: Theme.of(context).colorScheme.onError,
-                        ),
-                        secondaryBackground: SwipeableBackground(
-                          progress: progress,
-                          alignment: Alignment.centerRight,
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.primary,
-                          iconData: Icons.done_all,
-                          iconColor: Theme.of(context).colorScheme.onPrimary,
-                        ),
-                        confirmDismiss: (directcion) async {
-                          if (directcion == DismissDirection.startToEnd) {
-                            context.read<TaskBloc>().add(
-                              UpdateTaskStatusEvent(
-                                task.id,
-                                TaskStatus.deleted,
-                                true,
+          },
+          child: BlocBuilder<TaskBloc, TaskState>(
+            buildWhen: (_, current) =>
+                current.maybeMap(data: (_) => true, orElse: () => false),
+            builder: (context, state) {
+              return state.when(
+                loading: () {
+                  return const Center(child: CircularProgressIndicator());
+                },
+                error: (msg) => Center(child: Text("Error: $msg")),
+
+                effect: (_, _, _) => const SizedBox.shrink(),
+
+                data: (tasks) {
+                  final taskList = tasks
+                      .where((t) => t.status != TaskStatus.deleted)
+                      .toList();
+
+                  if (taskList.isEmpty) {
+                    return const Center(child: Text("No Tasks Yet"));
+                  }
+
+                  return ImplicitlyAnimatedList(
+                    itemData: taskList,
+                    itemEquality: (a, b) => a.id == b.id,
+                    itemBuilder: (context, task) {
+                      double progress = 0.0;
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: StatefulBuilder(
+                          builder: (context, setState) {
+                            return Dismissible(
+                              key: ValueKey(task),
+                              onUpdate: (details) =>
+                                  setState(() => progress = details.progress),
+                              onDismissed: (_) => progress = 0,
+                              background: SwipeableBackground(
+                                progress: progress,
+                                alignment: Alignment.centerLeft,
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.error,
+                                iconData: Icons.delete_outline,
+                                iconColor: Theme.of(
+                                  context,
+                                ).colorScheme.onError,
                               ),
-                            );
-                          } else if (directcion ==
-                              DismissDirection.endToStart) {
-                            context.read<TaskBloc>().add(
-                              UpdateTaskStatusEvent(
-                                task.id,
-                                TaskStatus.completed,
-                                true,
+                              secondaryBackground: SwipeableBackground(
+                                progress: progress,
+                                alignment: Alignment.centerRight,
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.primary,
+                                iconData: Icons.done_all,
+                                iconColor: Theme.of(
+                                  context,
+                                ).colorScheme.onPrimary,
                               ),
+                              confirmDismiss: (direction) async {
+                                if (direction == DismissDirection.startToEnd) {
+                                  context.read<TaskBloc>().add(
+                                    TaskEvent.updateStatus(
+                                      taskId: task.id,
+                                      status: TaskStatus.deleted,
+                                      showSnackBar: true,
+                                    ),
+                                  );
+                                  return true;
+                                } else if (direction ==
+                                    DismissDirection.endToStart) {
+                                  context.read<TaskBloc>().add(
+                                    TaskEvent.updateStatus(
+                                      taskId: task.id,
+                                      status: TaskStatus.completed,
+                                      showSnackBar: true,
+                                    ),
+                                  );
+                                }
+                                return false;
+                              },
+                              child: TaskRow(task: task),
                             );
-                          }
-                          return false;
-                        },
-                        child: TaskRow(task: task),
+                          },
+                        ),
                       );
                     },
                   );
                 },
-              ),
-            );
-          }
-          return Center(child: Text("Something went wrong $state"));
-        },
+              );
+            },
+          ),
+        ),
       ),
+
       drawer: sideDrawer(context),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.of(
             context,
-          ).push(MaterialPageRoute(builder: (_) => AddTaskPage()));
+          ).push(MaterialPageRoute(builder: (_) => const AddTaskPage()));
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

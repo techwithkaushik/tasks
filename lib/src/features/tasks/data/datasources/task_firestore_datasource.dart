@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:tasks/src/features/tasks/data/models/task_model.dart';
@@ -12,12 +14,15 @@ class TaskFirestoreDataSource {
       .where("userId", isEqualTo: userId)
       .orderBy("createdAt", descending: true)
       .snapshots()
-      .map((s) => s.docs.map(TaskModel.fromDoc).toList());
+      .map(
+        (snap) => snap.docs
+            .map((doc) => TaskModel.fromDoc(doc).toEntity(doc.id))
+            .toList(),
+      );
 
-  Future<void> addTask(Task task) => _ref.add(TaskModel.toJson(task));
+  Future<void> addTask(Task task) => _ref.add(task.toJson());
 
-  Future<void> updateTask(Task task) =>
-      _ref.doc(task.id).update(TaskModel.toJson(task));
+  Future<void> updateTask(Task task) => _ref.doc(task.id).update(task.toJson());
 
   Future<void> deleteTask(String id) => _ref.doc(id).delete();
 }
