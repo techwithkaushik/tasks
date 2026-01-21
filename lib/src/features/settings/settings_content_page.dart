@@ -61,7 +61,7 @@ class SettingsContentPage extends StatelessWidget {
                     icon: Icons.translate,
                     title: l.language,
                     description: languageLabel(locale, l),
-                    onTap: () => showLanguageDialog(context, locale, l),
+                onTap: () => showLanguageSheet(context, l),
                   );
                 },
               ),

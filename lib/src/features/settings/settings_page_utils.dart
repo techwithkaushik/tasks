@@ -4,52 +4,65 @@ import 'package:tasks/l10n/app_localizations.dart';
 import 'package:tasks/src/core/constants/language.dart';
 import 'package:tasks/src/features/settings/presentation/cubit/language_cubit.dart';
 
-void showLanguageDialog(
-  BuildContext context,
-  Locale? currentLocale,
-  AppLocalizations l,
-) {
-  final mediaQuery = MediaQuery.of(context);
-  showDialog(
+void showLanguageSheet(BuildContext context, AppLocalizations l) {
+  showModalBottomSheet(
+    showDragHandle: true,
     context: context,
-    builder: (dialogContext) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text(
-          l.chooseLanguage,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        content: SizedBox(
-          height: mediaQuery.size.height,
-          width: mediaQuery.size.width,
-          child: ListView(
-            shrinkWrap: true,
-            children: [
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+    ),
+    builder: (_) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: BlocBuilder<LanguageCubit, Locale?>(
+          builder: (_, currentLocale) {
+            final items = [
               _languageTile(
                 context,
                 title: l.systemDefault,
                 selected: currentLocale == null,
-                onTap: () => context.read<LanguageCubit>().setLocale(null),
-                dialogContext: dialogContext,
+                onTap: () {
+                  context.read<LanguageCubit>().setLocale(null);
+                  Navigator.pop(context);
+                },
               ),
               _languageTile(
                 context,
                 title: Language.en.nativeName,
                 selected: currentLocale?.languageCode == Language.en.code,
-                onTap: () =>
-                    context.read<LanguageCubit>().setLocale(Language.en.locale),
-                dialogContext: dialogContext,
+                onTap: () {
+                  context.read<LanguageCubit>().setLocale(Language.en.locale);
+                  Navigator.pop(context);
+                },
               ),
               _languageTile(
                 context,
                 title: Language.hi.nativeName,
                 selected: currentLocale?.languageCode == Language.hi.code,
-                onTap: () =>
-                    context.read<LanguageCubit>().setLocale(Language.hi.locale),
-                dialogContext: dialogContext,
+                onTap: () {
+                  context.read<LanguageCubit>().setLocale(Language.hi.locale);
+                  Navigator.pop(context);
+                },
               ),
-            ],
-          ),
+              // add more languages here...
+            ];
+
+            return Column(
+              children: [
+                Text(
+                  l.chooseLanguage,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (_, i) => items[i],
+                  ),
+                ),
+              ],
+            );
+          },
         ),
       );
     },
@@ -61,17 +74,26 @@ Widget _languageTile(
   required String title,
   required bool selected,
   required VoidCallback onTap,
-  required BuildContext dialogContext,
 }) {
+  Color? selectedColor = selected
+      ? Theme.of(context).colorScheme.primary
+      : null;
   return ListTile(
-    title: Text(title),
+    title: Text(
+      title,
+
+      style: TextStyle(
+        color: selectedColor,
+        fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+      ),
+    ),
     trailing: selected
-        ? Icon(Icons.check, color: Theme.of(context).colorScheme.primary)
+        ? Icon(
+            Icons.check,
+            color: selected ? Theme.of(context).colorScheme.primary : null,
+          )
         : null,
-    onTap: () {
-      onTap();
-      Navigator.of(dialogContext).pop();
-    },
+    onTap: onTap,
   );
 }
 
