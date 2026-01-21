@@ -28,9 +28,9 @@ class App extends StatelessWidget {
       ],
       child: DynamicColorBuilder(
         builder: (lightDynamic, darkDynamic) {
-          return BlocSelector<ThemeCubit, ThemeMode, ThemeMode>(
-            selector: (state) => state,
-            builder: (_, themeMode) {
+          return BlocSelector<ThemeCubit, (ThemeMode, bool), (ThemeMode, bool)>(
+            selector: (state) => (state.$1, state.$2),
+            builder: (_, themeCubitData) {
               return BlocSelector<DynamicColorCubit, bool, bool>(
                 selector: (state) => state,
                 builder: (_, useDynamic) {
@@ -56,13 +56,15 @@ class App extends StatelessWidget {
                           useDynamic: useDynamic,
                           colorScheme: lightDynamic,
                           brightness: Brightness.light,
+                          isPureDark: false,
                         ),
                         darkTheme: themeData(
                           useDynamic: useDynamic,
                           colorScheme: darkDynamic,
                           brightness: Brightness.dark,
+                          isPureDark: themeCubitData.$2,
                         ),
-                        themeMode: themeMode,
+                        themeMode: themeCubitData.$1,
                         home: BlocProvider.value(
                           value: sl<AppAuthBloc>(),
                           child: AppAuthPage(),

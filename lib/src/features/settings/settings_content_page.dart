@@ -15,59 +15,81 @@ class SettingsContentPage extends StatelessWidget {
     final l = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(l.settingsTitle)),
-      body: BlocBuilder<ThemeCubit, ThemeMode>(
-        builder: (_, themeMode) {
-          final isSystemMode = themeMode == ThemeMode.system;
-          return ListView(
-            children: [
-              AppSettingsTile(
+      body: ListView(
+        children: [
+          BlocBuilder<ThemeCubit, (ThemeMode, bool)>(
+            builder: (_, themeCubitData) {
+              return AppSettingsTile(
                 icon: Icons.contrast,
                 title: l.followSystemTheme,
                 description: l.followSystemThemeDescription,
-                value: isSystemMode,
+                value: themeCubitData.$1 == ThemeMode.system,
                 onChanged: (value) =>
                     context.read<ThemeCubit>().setSystemMode(value),
-              ),
-              SizedBox(height: 5),
-              AppSettingsTile(
+              );
+            },
+          ),
+          SizedBox(height: 5),
+          BlocBuilder<ThemeCubit, (ThemeMode, bool)>(
+            builder: (_, themeCubitData) {
+              final isSystemMode = themeCubitData.$1 == ThemeMode.system;
+              return AppSettingsTile(
                 icon: Icons.dark_mode,
                 title: l.darkMode,
                 description: isSystemMode
                     ? l.darkModeDescriptionDisabled
                     : l.darkModeDescriptionEnabled,
-                value: themeMode == ThemeMode.dark,
+                value: themeCubitData.$1 == ThemeMode.dark,
                 onChanged: isSystemMode
                     ? null
                     : (value) => context.read<ThemeCubit>().setDarkMode(value),
-              ),
-              SizedBox(height: 5),
-              BlocBuilder<DynamicColorCubit, bool>(
-                builder: (_, useDynamic) {
-                  return AppSettingsTile(
-                    icon: Icons.color_lens,
-                    title: l.dynamicColor,
-                    description: l.dynamicColorDescription,
-                    value: useDynamic,
-                    onChanged: (value) {
-                      context.read<DynamicColorCubit>().setDynamicColor(value);
-                    },
-                  );
+              );
+            },
+          ),
+          SizedBox(height: 5),
+          BlocBuilder<ThemeCubit, (ThemeMode, bool)>(
+            builder: (_, themeCubitData) {
+              final isEffectiveDark = context
+                  .read<ThemeCubit>()
+                  .isEffectiveDark;
+              final isPureDark = themeCubitData.$2;
+              return AppSettingsTile(
+                icon: Icons.display_settings,
+                title: "Pure Black Dark",
+                description: "Use AMOLED pure black theme",
+                value: isPureDark,
+                onChanged: !isEffectiveDark
+                    ? null
+                    : (v) => context.read<ThemeCubit>().setPureBlack(v),
+              );
+            },
+          ),
+          SizedBox(height: 5),
+          BlocBuilder<DynamicColorCubit, bool>(
+            builder: (_, useDynamic) {
+              return AppSettingsTile(
+                icon: Icons.color_lens,
+                title: l.dynamicColor,
+                description: l.dynamicColorDescription,
+                value: useDynamic,
+                onChanged: (value) {
+                  context.read<DynamicColorCubit>().setDynamicColor(value);
                 },
-              ),
-              Divider(),
-              BlocBuilder<LanguageCubit, Locale?>(
-                builder: (context, locale) {
-                  return AppSettingsTile(
-                    icon: Icons.translate,
-                    title: l.language,
-                    description: languageLabel(locale, l),
+              );
+            },
+          ),
+          Divider(),
+          BlocBuilder<LanguageCubit, Locale?>(
+            builder: (_, locale) {
+              return AppSettingsTile(
+                icon: Icons.translate,
+                title: l.language,
+                description: languageLabel(locale, l),
                 onTap: () => showLanguageSheet(context, l),
-                  );
-                },
-              ),
-            ],
-          );
-        },
+              );
+            },
+          ),
+        ],
       ),
     );
   }
