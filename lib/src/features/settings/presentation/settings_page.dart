@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/src/features/settings/presentation/cubit/dynamic_color_cubit.dart';
 import 'package:tasks/src/features/settings/presentation/cubit/language_cubit.dart';
 import 'package:tasks/src/features/settings/presentation/cubit/theme_cubit.dart';
-import 'package:tasks/src/features/settings/settings_page_utils.dart';
-import 'package:tasks/src/features/settings/settings_page_widgets.dart';
+import 'package:tasks/src/features/settings/presentation/settings_page_utils.dart';
+import 'package:tasks/src/features/settings/presentation/settings_page_widgets.dart';
 import 'package:tasks/l10n/app_localizations.dart';
 
-class SettingsContentPage extends StatelessWidget {
-  const SettingsContentPage({super.key});
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
