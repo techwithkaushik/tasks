@@ -55,7 +55,9 @@ class TaskPage extends StatelessWidget {
           listener: (_, state) {
             state.whenOrNull(
               effect: (message, taskId, previous) {
-                ScaffoldMessenger.of(context).showSnackBar(
+                final messenger = ScaffoldMessenger.of(context);
+                messenger.hideCurrentSnackBar();
+                messenger.showSnackBar(
                   SnackBar(
                     content: Text(message),
                     duration: const Duration(seconds: 3),
@@ -101,6 +103,7 @@ class TaskPage extends StatelessWidget {
                   return ImplicitlyAnimatedList(
                     itemData: taskList,
                     itemEquality: (a, b) => a.id == b.id,
+                    initialAnimation: true,
                     itemBuilder: (context, task) {
                       double progress = 0.0;
                       return Padding(
