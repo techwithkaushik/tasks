@@ -65,10 +65,7 @@ class App extends StatelessWidget {
                           isPureDark: themeCubitData.$2,
                         ),
                         themeMode: themeCubitData.$1,
-                        home: BlocProvider.value(
-                          value: sl<AppAuthBloc>(),
-                          child: AppAuthPage(),
-                        ),
+                        home: AppAuthPage(),
                       );
                     },
                   );
