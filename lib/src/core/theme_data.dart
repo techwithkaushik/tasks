@@ -5,17 +5,17 @@ ThemeData themeData({
   required ColorScheme? colorScheme,
   required Brightness brightness,
 }) {
-  Color dynamicColor = Colors.blue;
-  if (colorScheme != null) {
-    dynamicColor = colorScheme.primary;
-  }
-
+  Color dynamicColor = colorScheme?.primary ?? Colors.blue;
   Color seedColor = useDynamic ? dynamicColor : Colors.teal;
 
+  final baseScheme = ColorScheme.fromSeed(
+    seedColor: seedColor,
+    brightness: brightness,
+  );
+
   return ThemeData(
-    colorScheme: ColorScheme.fromSeed(
-      brightness: brightness,
-      seedColor: seedColor,
-    ),
+    colorScheme: baseScheme,
+    brightness: brightness,
+    useMaterial3: true,
   );
 }
