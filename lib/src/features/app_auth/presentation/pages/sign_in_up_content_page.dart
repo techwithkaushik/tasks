@@ -77,8 +77,8 @@ class SignInUpContentPage extends StatelessWidget {
                         ? IconButton(
                             icon: Icon(
                               state.obscureText
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                             ),
                             onPressed: () {
                               authFormBloc.add(ObscureTextChanged());
@@ -111,8 +111,8 @@ class SignInUpContentPage extends StatelessWidget {
                               ? IconButton(
                                   icon: Icon(
                                     state.obscureText
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
                                   ),
                                   onPressed: () {
                                     authFormBloc.add(ObscureTextChanged());
