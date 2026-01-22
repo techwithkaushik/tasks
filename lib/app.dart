@@ -63,10 +63,7 @@ class App extends StatelessWidget {
                           brightness: Brightness.dark,
                         ),
                         themeMode: themeMode,
-                        home: BlocProvider.value(
-                          value: sl<AppAuthBloc>(),
-                          child: AppAuthPage(),
-                        ),
+                        home: AppAuthPage(),
                       );
                     },
                   );
