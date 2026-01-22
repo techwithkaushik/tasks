@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/service_locator.dart';
 import 'package:tasks/src/features/app_auth/presentation/bloc/auth_form/auth_form_bloc.dart';
 import 'package:tasks/src/features/app_auth/presentation/pages/sign_in_up_content_page.dart';
-import 'package:tasks/src/features/settings/settings_page.dart';
+import 'package:tasks/src/features/settings/presentation/settings_page.dart';
 
 class SignInUpPage extends StatelessWidget {
   const SignInUpPage({super.key});

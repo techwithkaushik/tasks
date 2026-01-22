@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/l10n/app_localizations.dart';
 import 'package:tasks/src/features/about/about_page.dart';
 import 'package:tasks/src/features/home/cubit/nav_cubit.dart';
-import 'package:tasks/src/features/settings/settings_page.dart';
+import 'package:tasks/src/features/settings/presentation/settings_page.dart';
 import 'package:tasks/src/features/tasks/presentation/pages/task_page.dart';
 
 class HomeContentPage extends StatelessWidget {
