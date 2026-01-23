@@ -1,3 +1,15 @@
+/// Widget that displays a single task in the task list
+///
+/// Shows:
+/// - Task title with priority indicator
+/// - Task type badge
+/// - Due date if available
+/// - Completion indicator
+/// - Time estimate
+///
+/// Used in the animated task list on TaskPage
+library;
+
 import 'package:flutter/material.dart';
 import 'package:tasks/src/core/utils/utils.dart';
 import 'package:tasks/src/features/tasks/presentation/utils/task_pills.dart';

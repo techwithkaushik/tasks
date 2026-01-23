@@ -12,7 +12,8 @@ part of 'task_bloc.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$TaskEvent {
@@ -23,11 +24,13 @@ mixin _$TaskEvent {
     required TResult Function(Task task) add,
     required TResult Function(Task task) update,
     required TResult Function(
-            String taskId, TaskStatus status, bool showSnackBar)
-        updateStatus,
+      String taskId,
+      TaskStatus status,
+      bool showSnackBar,
+    )
+    updateStatus,
     required TResult Function(String taskId) delete,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? load,
@@ -35,10 +38,9 @@ mixin _$TaskEvent {
     TResult? Function(Task task)? add,
     TResult? Function(Task task)? update,
     TResult? Function(String taskId, TaskStatus status, bool showSnackBar)?
-        updateStatus,
+    updateStatus,
     TResult? Function(String taskId)? delete,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? load,
@@ -46,11 +48,10 @@ mixin _$TaskEvent {
     TResult Function(Task task)? add,
     TResult Function(Task task)? update,
     TResult Function(String taskId, TaskStatus status, bool showSnackBar)?
-        updateStatus,
+    updateStatus,
     TResult Function(String taskId)? delete,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Load value) load,
@@ -59,8 +60,7 @@ mixin _$TaskEvent {
     required TResult Function(_Update value) update,
     required TResult Function(_UpdateStatus value) updateStatus,
     required TResult Function(_Delete value) delete,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Load value)? load,
@@ -69,8 +69,7 @@ mixin _$TaskEvent {
     TResult? Function(_Update value)? update,
     TResult? Function(_UpdateStatus value)? updateStatus,
     TResult? Function(_Delete value)? delete,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Load value)? load,
@@ -80,8 +79,7 @@ mixin _$TaskEvent {
     TResult Function(_UpdateStatus value)? updateStatus,
     TResult Function(_Delete value)? delete,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -104,8 +102,9 @@ class _$TaskEventCopyWithImpl<$Res, $Val extends TaskEvent>
 /// @nodoc
 abstract class _$$LoadImplCopyWith<$Res> {
   factory _$$LoadImplCopyWith(
-          _$LoadImpl value, $Res Function(_$LoadImpl) then) =
-      __$$LoadImplCopyWithImpl<$Res>;
+    _$LoadImpl value,
+    $Res Function(_$LoadImpl) then,
+  ) = __$$LoadImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
@@ -113,7 +112,7 @@ class __$$LoadImplCopyWithImpl<$Res>
     extends _$TaskEventCopyWithImpl<$Res, _$LoadImpl>
     implements _$$LoadImplCopyWith<$Res> {
   __$$LoadImplCopyWithImpl(_$LoadImpl _value, $Res Function(_$LoadImpl) _then)
-      : super(_value, _then);
+    : super(_value, _then);
 }
 
 /// @nodoc
@@ -143,8 +142,11 @@ class _$LoadImpl implements _Load {
     required TResult Function(Task task) add,
     required TResult Function(Task task) update,
     required TResult Function(
-            String taskId, TaskStatus status, bool showSnackBar)
-        updateStatus,
+      String taskId,
+      TaskStatus status,
+      bool showSnackBar,
+    )
+    updateStatus,
     required TResult Function(String taskId) delete,
   }) {
     return load();
@@ -158,7 +160,7 @@ class _$LoadImpl implements _Load {
     TResult? Function(Task task)? add,
     TResult? Function(Task task)? update,
     TResult? Function(String taskId, TaskStatus status, bool showSnackBar)?
-        updateStatus,
+    updateStatus,
     TResult? Function(String taskId)? delete,
   }) {
     return load?.call();
@@ -172,7 +174,7 @@ class _$LoadImpl implements _Load {
     TResult Function(Task task)? add,
     TResult Function(Task task)? update,
     TResult Function(String taskId, TaskStatus status, bool showSnackBar)?
-        updateStatus,
+    updateStatus,
     TResult Function(String taskId)? delete,
     required TResult orElse(),
   }) {
@@ -233,8 +235,9 @@ abstract class _Load implements TaskEvent {
 /// @nodoc
 abstract class _$$StopImplCopyWith<$Res> {
   factory _$$StopImplCopyWith(
-          _$StopImpl value, $Res Function(_$StopImpl) then) =
-      __$$StopImplCopyWithImpl<$Res>;
+    _$StopImpl value,
+    $Res Function(_$StopImpl) then,
+  ) = __$$StopImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
@@ -242,7 +245,7 @@ class __$$StopImplCopyWithImpl<$Res>
     extends _$TaskEventCopyWithImpl<$Res, _$StopImpl>
     implements _$$StopImplCopyWith<$Res> {
   __$$StopImplCopyWithImpl(_$StopImpl _value, $Res Function(_$StopImpl) _then)
-      : super(_value, _then);
+    : super(_value, _then);
 }
 
 /// @nodoc
@@ -272,8 +275,11 @@ class _$StopImpl implements _Stop {
     required TResult Function(Task task) add,
     required TResult Function(Task task) update,
     required TResult Function(
-            String taskId, TaskStatus status, bool showSnackBar)
-        updateStatus,
+      String taskId,
+      TaskStatus status,
+      bool showSnackBar,
+    )
+    updateStatus,
     required TResult Function(String taskId) delete,
   }) {
     return stop();
@@ -287,7 +293,7 @@ class _$StopImpl implements _Stop {
     TResult? Function(Task task)? add,
     TResult? Function(Task task)? update,
     TResult? Function(String taskId, TaskStatus status, bool showSnackBar)?
-        updateStatus,
+    updateStatus,
     TResult? Function(String taskId)? delete,
   }) {
     return stop?.call();
@@ -301,7 +307,7 @@ class _$StopImpl implements _Stop {
     TResult Function(Task task)? add,
     TResult Function(Task task)? update,
     TResult Function(String taskId, TaskStatus status, bool showSnackBar)?
-        updateStatus,
+    updateStatus,
     TResult Function(String taskId)? delete,
     required TResult orElse(),
   }) {
@@ -374,19 +380,19 @@ class __$$AddImplCopyWithImpl<$Res>
     extends _$TaskEventCopyWithImpl<$Res, _$AddImpl>
     implements _$$AddImplCopyWith<$Res> {
   __$$AddImplCopyWithImpl(_$AddImpl _value, $Res Function(_$AddImpl) _then)
-      : super(_value, _then);
+    : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? task = null,
-  }) {
-    return _then(_$AddImpl(
-      null == task
-          ? _value.task
-          : task // ignore: cast_nullable_to_non_nullable
-              as Task,
-    ));
+  $Res call({Object? task = null}) {
+    return _then(
+      _$AddImpl(
+        null == task
+            ? _value.task
+            : task // ignore: cast_nullable_to_non_nullable
+                  as Task,
+      ),
+    );
   }
 
   @override
@@ -436,8 +442,11 @@ class _$AddImpl implements _Add {
     required TResult Function(Task task) add,
     required TResult Function(Task task) update,
     required TResult Function(
-            String taskId, TaskStatus status, bool showSnackBar)
-        updateStatus,
+      String taskId,
+      TaskStatus status,
+      bool showSnackBar,
+    )
+    updateStatus,
     required TResult Function(String taskId) delete,
   }) {
     return add(task);
@@ -451,7 +460,7 @@ class _$AddImpl implements _Add {
     TResult? Function(Task task)? add,
     TResult? Function(Task task)? update,
     TResult? Function(String taskId, TaskStatus status, bool showSnackBar)?
-        updateStatus,
+    updateStatus,
     TResult? Function(String taskId)? delete,
   }) {
     return add?.call(task);
@@ -465,7 +474,7 @@ class _$AddImpl implements _Add {
     TResult Function(Task task)? add,
     TResult Function(Task task)? update,
     TResult Function(String taskId, TaskStatus status, bool showSnackBar)?
-        updateStatus,
+    updateStatus,
     TResult Function(String taskId)? delete,
     required TResult orElse(),
   }) {
@@ -531,8 +540,9 @@ abstract class _Add implements TaskEvent {
 /// @nodoc
 abstract class _$$UpdateImplCopyWith<$Res> {
   factory _$$UpdateImplCopyWith(
-          _$UpdateImpl value, $Res Function(_$UpdateImpl) then) =
-      __$$UpdateImplCopyWithImpl<$Res>;
+    _$UpdateImpl value,
+    $Res Function(_$UpdateImpl) then,
+  ) = __$$UpdateImplCopyWithImpl<$Res>;
   @useResult
   $Res call({Task task});
 
@@ -544,20 +554,21 @@ class __$$UpdateImplCopyWithImpl<$Res>
     extends _$TaskEventCopyWithImpl<$Res, _$UpdateImpl>
     implements _$$UpdateImplCopyWith<$Res> {
   __$$UpdateImplCopyWithImpl(
-      _$UpdateImpl _value, $Res Function(_$UpdateImpl) _then)
-      : super(_value, _then);
+    _$UpdateImpl _value,
+    $Res Function(_$UpdateImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? task = null,
-  }) {
-    return _then(_$UpdateImpl(
-      null == task
-          ? _value.task
-          : task // ignore: cast_nullable_to_non_nullable
-              as Task,
-    ));
+  $Res call({Object? task = null}) {
+    return _then(
+      _$UpdateImpl(
+        null == task
+            ? _value.task
+            : task // ignore: cast_nullable_to_non_nullable
+                  as Task,
+      ),
+    );
   }
 
   @override
@@ -607,8 +618,11 @@ class _$UpdateImpl implements _Update {
     required TResult Function(Task task) add,
     required TResult Function(Task task) update,
     required TResult Function(
-            String taskId, TaskStatus status, bool showSnackBar)
-        updateStatus,
+      String taskId,
+      TaskStatus status,
+      bool showSnackBar,
+    )
+    updateStatus,
     required TResult Function(String taskId) delete,
   }) {
     return update(task);
@@ -622,7 +636,7 @@ class _$UpdateImpl implements _Update {
     TResult? Function(Task task)? add,
     TResult? Function(Task task)? update,
     TResult? Function(String taskId, TaskStatus status, bool showSnackBar)?
-        updateStatus,
+    updateStatus,
     TResult? Function(String taskId)? delete,
   }) {
     return update?.call(task);
@@ -636,7 +650,7 @@ class _$UpdateImpl implements _Update {
     TResult Function(Task task)? add,
     TResult Function(Task task)? update,
     TResult Function(String taskId, TaskStatus status, bool showSnackBar)?
-        updateStatus,
+    updateStatus,
     TResult Function(String taskId)? delete,
     required TResult orElse(),
   }) {
@@ -702,8 +716,9 @@ abstract class _Update implements TaskEvent {
 /// @nodoc
 abstract class _$$UpdateStatusImplCopyWith<$Res> {
   factory _$$UpdateStatusImplCopyWith(
-          _$UpdateStatusImpl value, $Res Function(_$UpdateStatusImpl) then) =
-      __$$UpdateStatusImplCopyWithImpl<$Res>;
+    _$UpdateStatusImpl value,
+    $Res Function(_$UpdateStatusImpl) then,
+  ) = __$$UpdateStatusImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String taskId, TaskStatus status, bool showSnackBar});
 }
@@ -713,8 +728,9 @@ class __$$UpdateStatusImplCopyWithImpl<$Res>
     extends _$TaskEventCopyWithImpl<$Res, _$UpdateStatusImpl>
     implements _$$UpdateStatusImplCopyWith<$Res> {
   __$$UpdateStatusImplCopyWithImpl(
-      _$UpdateStatusImpl _value, $Res Function(_$UpdateStatusImpl) _then)
-      : super(_value, _then);
+    _$UpdateStatusImpl _value,
+    $Res Function(_$UpdateStatusImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -723,28 +739,33 @@ class __$$UpdateStatusImplCopyWithImpl<$Res>
     Object? status = null,
     Object? showSnackBar = null,
   }) {
-    return _then(_$UpdateStatusImpl(
-      taskId: null == taskId
-          ? _value.taskId
-          : taskId // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as TaskStatus,
-      showSnackBar: null == showSnackBar
-          ? _value.showSnackBar
-          : showSnackBar // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
+    return _then(
+      _$UpdateStatusImpl(
+        taskId: null == taskId
+            ? _value.taskId
+            : taskId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as TaskStatus,
+        showSnackBar: null == showSnackBar
+            ? _value.showSnackBar
+            : showSnackBar // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$UpdateStatusImpl implements _UpdateStatus {
-  const _$UpdateStatusImpl(
-      {required this.taskId, required this.status, this.showSnackBar = false});
+  const _$UpdateStatusImpl({
+    required this.taskId,
+    required this.status,
+    this.showSnackBar = false,
+  });
 
   @override
   final String taskId;
@@ -787,8 +808,11 @@ class _$UpdateStatusImpl implements _UpdateStatus {
     required TResult Function(Task task) add,
     required TResult Function(Task task) update,
     required TResult Function(
-            String taskId, TaskStatus status, bool showSnackBar)
-        updateStatus,
+      String taskId,
+      TaskStatus status,
+      bool showSnackBar,
+    )
+    updateStatus,
     required TResult Function(String taskId) delete,
   }) {
     return updateStatus(taskId, status, showSnackBar);
@@ -802,7 +826,7 @@ class _$UpdateStatusImpl implements _UpdateStatus {
     TResult? Function(Task task)? add,
     TResult? Function(Task task)? update,
     TResult? Function(String taskId, TaskStatus status, bool showSnackBar)?
-        updateStatus,
+    updateStatus,
     TResult? Function(String taskId)? delete,
   }) {
     return updateStatus?.call(taskId, status, showSnackBar);
@@ -816,7 +840,7 @@ class _$UpdateStatusImpl implements _UpdateStatus {
     TResult Function(Task task)? add,
     TResult Function(Task task)? update,
     TResult Function(String taskId, TaskStatus status, bool showSnackBar)?
-        updateStatus,
+    updateStatus,
     TResult Function(String taskId)? delete,
     required TResult orElse(),
   }) {
@@ -871,10 +895,11 @@ class _$UpdateStatusImpl implements _UpdateStatus {
 }
 
 abstract class _UpdateStatus implements TaskEvent {
-  const factory _UpdateStatus(
-      {required final String taskId,
-      required final TaskStatus status,
-      final bool showSnackBar}) = _$UpdateStatusImpl;
+  const factory _UpdateStatus({
+    required final String taskId,
+    required final TaskStatus status,
+    final bool showSnackBar,
+  }) = _$UpdateStatusImpl;
 
   String get taskId;
   TaskStatus get status;
@@ -887,8 +912,9 @@ abstract class _UpdateStatus implements TaskEvent {
 /// @nodoc
 abstract class _$$DeleteImplCopyWith<$Res> {
   factory _$$DeleteImplCopyWith(
-          _$DeleteImpl value, $Res Function(_$DeleteImpl) then) =
-      __$$DeleteImplCopyWithImpl<$Res>;
+    _$DeleteImpl value,
+    $Res Function(_$DeleteImpl) then,
+  ) = __$$DeleteImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String taskId});
 }
@@ -898,20 +924,21 @@ class __$$DeleteImplCopyWithImpl<$Res>
     extends _$TaskEventCopyWithImpl<$Res, _$DeleteImpl>
     implements _$$DeleteImplCopyWith<$Res> {
   __$$DeleteImplCopyWithImpl(
-      _$DeleteImpl _value, $Res Function(_$DeleteImpl) _then)
-      : super(_value, _then);
+    _$DeleteImpl _value,
+    $Res Function(_$DeleteImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? taskId = null,
-  }) {
-    return _then(_$DeleteImpl(
-      null == taskId
-          ? _value.taskId
-          : taskId // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+  $Res call({Object? taskId = null}) {
+    return _then(
+      _$DeleteImpl(
+        null == taskId
+            ? _value.taskId
+            : taskId // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
   }
 }
 
@@ -953,8 +980,11 @@ class _$DeleteImpl implements _Delete {
     required TResult Function(Task task) add,
     required TResult Function(Task task) update,
     required TResult Function(
-            String taskId, TaskStatus status, bool showSnackBar)
-        updateStatus,
+      String taskId,
+      TaskStatus status,
+      bool showSnackBar,
+    )
+    updateStatus,
     required TResult Function(String taskId) delete,
   }) {
     return delete(taskId);
@@ -968,7 +998,7 @@ class _$DeleteImpl implements _Delete {
     TResult? Function(Task task)? add,
     TResult? Function(Task task)? update,
     TResult? Function(String taskId, TaskStatus status, bool showSnackBar)?
-        updateStatus,
+    updateStatus,
     TResult? Function(String taskId)? delete,
   }) {
     return delete?.call(taskId);
@@ -982,7 +1012,7 @@ class _$DeleteImpl implements _Delete {
     TResult Function(Task task)? add,
     TResult Function(Task task)? update,
     TResult Function(String taskId, TaskStatus status, bool showSnackBar)?
-        updateStatus,
+    updateStatus,
     TResult Function(String taskId)? delete,
     required TResult orElse(),
   }) {
@@ -1053,45 +1083,43 @@ mixin _$TaskState {
     required TResult Function(List<Task> tasks) data,
     required TResult Function(String message) error,
     required TResult Function(
-            String message, String taskId, TaskStatus previous)
-        effect,
-  }) =>
-      throw _privateConstructorUsedError;
+      String message,
+      String taskId,
+      TaskStatus previous,
+    )
+    effect,
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loading,
     TResult? Function(List<Task> tasks)? data,
     TResult? Function(String message)? error,
     TResult? Function(String message, String taskId, TaskStatus previous)?
-        effect,
-  }) =>
-      throw _privateConstructorUsedError;
+    effect,
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loading,
     TResult Function(List<Task> tasks)? data,
     TResult Function(String message)? error,
     TResult Function(String message, String taskId, TaskStatus previous)?
-        effect,
+    effect,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Loading value) loading,
     required TResult Function(_Data value) data,
     required TResult Function(_Error value) error,
     required TResult Function(_Effect value) effect,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Loading value)? loading,
     TResult? Function(_Data value)? data,
     TResult? Function(_Error value)? error,
     TResult? Function(_Effect value)? effect,
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Loading value)? loading,
@@ -1099,8 +1127,7 @@ mixin _$TaskState {
     TResult Function(_Error value)? error,
     TResult Function(_Effect value)? effect,
     required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  }) => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -1123,8 +1150,9 @@ class _$TaskStateCopyWithImpl<$Res, $Val extends TaskState>
 /// @nodoc
 abstract class _$$LoadingImplCopyWith<$Res> {
   factory _$$LoadingImplCopyWith(
-          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
-      __$$LoadingImplCopyWithImpl<$Res>;
+    _$LoadingImpl value,
+    $Res Function(_$LoadingImpl) then,
+  ) = __$$LoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
@@ -1132,8 +1160,9 @@ class __$$LoadingImplCopyWithImpl<$Res>
     extends _$TaskStateCopyWithImpl<$Res, _$LoadingImpl>
     implements _$$LoadingImplCopyWith<$Res> {
   __$$LoadingImplCopyWithImpl(
-      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
-      : super(_value, _then);
+    _$LoadingImpl _value,
+    $Res Function(_$LoadingImpl) _then,
+  ) : super(_value, _then);
 }
 
 /// @nodoc
@@ -1162,8 +1191,11 @@ class _$LoadingImpl implements _Loading {
     required TResult Function(List<Task> tasks) data,
     required TResult Function(String message) error,
     required TResult Function(
-            String message, String taskId, TaskStatus previous)
-        effect,
+      String message,
+      String taskId,
+      TaskStatus previous,
+    )
+    effect,
   }) {
     return loading();
   }
@@ -1175,7 +1207,7 @@ class _$LoadingImpl implements _Loading {
     TResult? Function(List<Task> tasks)? data,
     TResult? Function(String message)? error,
     TResult? Function(String message, String taskId, TaskStatus previous)?
-        effect,
+    effect,
   }) {
     return loading?.call();
   }
@@ -1187,7 +1219,7 @@ class _$LoadingImpl implements _Loading {
     TResult Function(List<Task> tasks)? data,
     TResult Function(String message)? error,
     TResult Function(String message, String taskId, TaskStatus previous)?
-        effect,
+    effect,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -1241,8 +1273,9 @@ abstract class _Loading implements TaskState {
 /// @nodoc
 abstract class _$$DataImplCopyWith<$Res> {
   factory _$$DataImplCopyWith(
-          _$DataImpl value, $Res Function(_$DataImpl) then) =
-      __$$DataImplCopyWithImpl<$Res>;
+    _$DataImpl value,
+    $Res Function(_$DataImpl) then,
+  ) = __$$DataImplCopyWithImpl<$Res>;
   @useResult
   $Res call({List<Task> tasks});
 }
@@ -1252,19 +1285,19 @@ class __$$DataImplCopyWithImpl<$Res>
     extends _$TaskStateCopyWithImpl<$Res, _$DataImpl>
     implements _$$DataImplCopyWith<$Res> {
   __$$DataImplCopyWithImpl(_$DataImpl _value, $Res Function(_$DataImpl) _then)
-      : super(_value, _then);
+    : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? tasks = null,
-  }) {
-    return _then(_$DataImpl(
-      tasks: null == tasks
-          ? _value._tasks
-          : tasks // ignore: cast_nullable_to_non_nullable
-              as List<Task>,
-    ));
+  $Res call({Object? tasks = null}) {
+    return _then(
+      _$DataImpl(
+        tasks: null == tasks
+            ? _value._tasks
+            : tasks // ignore: cast_nullable_to_non_nullable
+                  as List<Task>,
+      ),
+    );
   }
 }
 
@@ -1311,8 +1344,11 @@ class _$DataImpl implements _Data {
     required TResult Function(List<Task> tasks) data,
     required TResult Function(String message) error,
     required TResult Function(
-            String message, String taskId, TaskStatus previous)
-        effect,
+      String message,
+      String taskId,
+      TaskStatus previous,
+    )
+    effect,
   }) {
     return data(tasks);
   }
@@ -1324,7 +1360,7 @@ class _$DataImpl implements _Data {
     TResult? Function(List<Task> tasks)? data,
     TResult? Function(String message)? error,
     TResult? Function(String message, String taskId, TaskStatus previous)?
-        effect,
+    effect,
   }) {
     return data?.call(tasks);
   }
@@ -1336,7 +1372,7 @@ class _$DataImpl implements _Data {
     TResult Function(List<Task> tasks)? data,
     TResult Function(String message)? error,
     TResult Function(String message, String taskId, TaskStatus previous)?
-        effect,
+    effect,
     required TResult orElse(),
   }) {
     if (data != null) {
@@ -1395,8 +1431,9 @@ abstract class _Data implements TaskState {
 /// @nodoc
 abstract class _$$ErrorImplCopyWith<$Res> {
   factory _$$ErrorImplCopyWith(
-          _$ErrorImpl value, $Res Function(_$ErrorImpl) then) =
-      __$$ErrorImplCopyWithImpl<$Res>;
+    _$ErrorImpl value,
+    $Res Function(_$ErrorImpl) then,
+  ) = __$$ErrorImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String message});
 }
@@ -1406,20 +1443,21 @@ class __$$ErrorImplCopyWithImpl<$Res>
     extends _$TaskStateCopyWithImpl<$Res, _$ErrorImpl>
     implements _$$ErrorImplCopyWith<$Res> {
   __$$ErrorImplCopyWithImpl(
-      _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
-      : super(_value, _then);
+    _$ErrorImpl _value,
+    $Res Function(_$ErrorImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? message = null,
-  }) {
-    return _then(_$ErrorImpl(
-      null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+  $Res call({Object? message = null}) {
+    return _then(
+      _$ErrorImpl(
+        null == message
+            ? _value.message
+            : message // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
   }
 }
 
@@ -1460,8 +1498,11 @@ class _$ErrorImpl implements _Error {
     required TResult Function(List<Task> tasks) data,
     required TResult Function(String message) error,
     required TResult Function(
-            String message, String taskId, TaskStatus previous)
-        effect,
+      String message,
+      String taskId,
+      TaskStatus previous,
+    )
+    effect,
   }) {
     return error(message);
   }
@@ -1473,7 +1514,7 @@ class _$ErrorImpl implements _Error {
     TResult? Function(List<Task> tasks)? data,
     TResult? Function(String message)? error,
     TResult? Function(String message, String taskId, TaskStatus previous)?
-        effect,
+    effect,
   }) {
     return error?.call(message);
   }
@@ -1485,7 +1526,7 @@ class _$ErrorImpl implements _Error {
     TResult Function(List<Task> tasks)? data,
     TResult Function(String message)? error,
     TResult Function(String message, String taskId, TaskStatus previous)?
-        effect,
+    effect,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1544,8 +1585,9 @@ abstract class _Error implements TaskState {
 /// @nodoc
 abstract class _$$EffectImplCopyWith<$Res> {
   factory _$$EffectImplCopyWith(
-          _$EffectImpl value, $Res Function(_$EffectImpl) then) =
-      __$$EffectImplCopyWithImpl<$Res>;
+    _$EffectImpl value,
+    $Res Function(_$EffectImpl) then,
+  ) = __$$EffectImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String message, String taskId, TaskStatus previous});
 }
@@ -1555,8 +1597,9 @@ class __$$EffectImplCopyWithImpl<$Res>
     extends _$TaskStateCopyWithImpl<$Res, _$EffectImpl>
     implements _$$EffectImplCopyWith<$Res> {
   __$$EffectImplCopyWithImpl(
-      _$EffectImpl _value, $Res Function(_$EffectImpl) _then)
-      : super(_value, _then);
+    _$EffectImpl _value,
+    $Res Function(_$EffectImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -1565,28 +1608,33 @@ class __$$EffectImplCopyWithImpl<$Res>
     Object? taskId = null,
     Object? previous = null,
   }) {
-    return _then(_$EffectImpl(
-      message: null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-      taskId: null == taskId
-          ? _value.taskId
-          : taskId // ignore: cast_nullable_to_non_nullable
-              as String,
-      previous: null == previous
-          ? _value.previous
-          : previous // ignore: cast_nullable_to_non_nullable
-              as TaskStatus,
-    ));
+    return _then(
+      _$EffectImpl(
+        message: null == message
+            ? _value.message
+            : message // ignore: cast_nullable_to_non_nullable
+                  as String,
+        taskId: null == taskId
+            ? _value.taskId
+            : taskId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        previous: null == previous
+            ? _value.previous
+            : previous // ignore: cast_nullable_to_non_nullable
+                  as TaskStatus,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$EffectImpl implements _Effect {
-  const _$EffectImpl(
-      {required this.message, required this.taskId, required this.previous});
+  const _$EffectImpl({
+    required this.message,
+    required this.taskId,
+    required this.previous,
+  });
 
   @override
   final String message;
@@ -1627,8 +1675,11 @@ class _$EffectImpl implements _Effect {
     required TResult Function(List<Task> tasks) data,
     required TResult Function(String message) error,
     required TResult Function(
-            String message, String taskId, TaskStatus previous)
-        effect,
+      String message,
+      String taskId,
+      TaskStatus previous,
+    )
+    effect,
   }) {
     return effect(message, taskId, previous);
   }
@@ -1640,7 +1691,7 @@ class _$EffectImpl implements _Effect {
     TResult? Function(List<Task> tasks)? data,
     TResult? Function(String message)? error,
     TResult? Function(String message, String taskId, TaskStatus previous)?
-        effect,
+    effect,
   }) {
     return effect?.call(message, taskId, previous);
   }
@@ -1652,7 +1703,7 @@ class _$EffectImpl implements _Effect {
     TResult Function(List<Task> tasks)? data,
     TResult Function(String message)? error,
     TResult Function(String message, String taskId, TaskStatus previous)?
-        effect,
+    effect,
     required TResult orElse(),
   }) {
     if (effect != null) {
@@ -1700,10 +1751,11 @@ class _$EffectImpl implements _Effect {
 }
 
 abstract class _Effect implements TaskState {
-  const factory _Effect(
-      {required final String message,
-      required final String taskId,
-      required final TaskStatus previous}) = _$EffectImpl;
+  const factory _Effect({
+    required final String message,
+    required final String taskId,
+    required final TaskStatus previous,
+  }) = _$EffectImpl;
 
   String get message;
   String get taskId;

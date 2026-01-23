@@ -12,7 +12,8 @@ part of 'task_entity.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 /// @nodoc
 mixin _$Task {
@@ -42,23 +43,24 @@ abstract class $TaskCopyWith<$Res> {
   factory $TaskCopyWith(Task value, $Res Function(Task) then) =
       _$TaskCopyWithImpl<$Res, Task>;
   @useResult
-  $Res call(
-      {String id,
-      String userId,
-      String title,
-      String? description,
-      TaskType type,
-      TaskPriority priority,
-      TaskStatus status,
-      TaskStatus lastStatus,
-      DateTime? createdAt,
-      DateTime? dueDate,
-      DateTime? updatedAt,
-      int estimatedMinutes,
-      int? actualMinutes,
-      List<String> tags,
-      bool isPrivate,
-      Map<String, dynamic> metadata});
+  $Res call({
+    String id,
+    String userId,
+    String title,
+    String? description,
+    TaskType type,
+    TaskPriority priority,
+    TaskStatus status,
+    TaskStatus lastStatus,
+    DateTime? createdAt,
+    DateTime? dueDate,
+    DateTime? updatedAt,
+    int estimatedMinutes,
+    int? actualMinutes,
+    List<String> tags,
+    bool isPrivate,
+    Map<String, dynamic> metadata,
+  });
 }
 
 /// @nodoc
@@ -91,99 +93,104 @@ class _$TaskCopyWithImpl<$Res, $Val extends Task>
     Object? isPrivate = null,
     Object? metadata = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as TaskType,
-      priority: null == priority
-          ? _value.priority
-          : priority // ignore: cast_nullable_to_non_nullable
-              as TaskPriority,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as TaskStatus,
-      lastStatus: null == lastStatus
-          ? _value.lastStatus
-          : lastStatus // ignore: cast_nullable_to_non_nullable
-              as TaskStatus,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      dueDate: freezed == dueDate
-          ? _value.dueDate
-          : dueDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      estimatedMinutes: null == estimatedMinutes
-          ? _value.estimatedMinutes
-          : estimatedMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      actualMinutes: freezed == actualMinutes
-          ? _value.actualMinutes
-          : actualMinutes // ignore: cast_nullable_to_non_nullable
-              as int?,
-      tags: null == tags
-          ? _value.tags
-          : tags // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      isPrivate: null == isPrivate
-          ? _value.isPrivate
-          : isPrivate // ignore: cast_nullable_to_non_nullable
-              as bool,
-      metadata: null == metadata
-          ? _value.metadata
-          : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            userId: null == userId
+                ? _value.userId
+                : userId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            title: null == title
+                ? _value.title
+                : title // ignore: cast_nullable_to_non_nullable
+                      as String,
+            description: freezed == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as TaskType,
+            priority: null == priority
+                ? _value.priority
+                : priority // ignore: cast_nullable_to_non_nullable
+                      as TaskPriority,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as TaskStatus,
+            lastStatus: null == lastStatus
+                ? _value.lastStatus
+                : lastStatus // ignore: cast_nullable_to_non_nullable
+                      as TaskStatus,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            dueDate: freezed == dueDate
+                ? _value.dueDate
+                : dueDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            updatedAt: freezed == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            estimatedMinutes: null == estimatedMinutes
+                ? _value.estimatedMinutes
+                : estimatedMinutes // ignore: cast_nullable_to_non_nullable
+                      as int,
+            actualMinutes: freezed == actualMinutes
+                ? _value.actualMinutes
+                : actualMinutes // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            tags: null == tags
+                ? _value.tags
+                : tags // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            isPrivate: null == isPrivate
+                ? _value.isPrivate
+                : isPrivate // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            metadata: null == metadata
+                ? _value.metadata
+                : metadata // ignore: cast_nullable_to_non_nullable
+                      as Map<String, dynamic>,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$TaskImplCopyWith<$Res> implements $TaskCopyWith<$Res> {
   factory _$$TaskImplCopyWith(
-          _$TaskImpl value, $Res Function(_$TaskImpl) then) =
-      __$$TaskImplCopyWithImpl<$Res>;
+    _$TaskImpl value,
+    $Res Function(_$TaskImpl) then,
+  ) = __$$TaskImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String userId,
-      String title,
-      String? description,
-      TaskType type,
-      TaskPriority priority,
-      TaskStatus status,
-      TaskStatus lastStatus,
-      DateTime? createdAt,
-      DateTime? dueDate,
-      DateTime? updatedAt,
-      int estimatedMinutes,
-      int? actualMinutes,
-      List<String> tags,
-      bool isPrivate,
-      Map<String, dynamic> metadata});
+  $Res call({
+    String id,
+    String userId,
+    String title,
+    String? description,
+    TaskType type,
+    TaskPriority priority,
+    TaskStatus status,
+    TaskStatus lastStatus,
+    DateTime? createdAt,
+    DateTime? dueDate,
+    DateTime? updatedAt,
+    int estimatedMinutes,
+    int? actualMinutes,
+    List<String> tags,
+    bool isPrivate,
+    Map<String, dynamic> metadata,
+  });
 }
 
 /// @nodoc
@@ -191,7 +198,7 @@ class __$$TaskImplCopyWithImpl<$Res>
     extends _$TaskCopyWithImpl<$Res, _$TaskImpl>
     implements _$$TaskImplCopyWith<$Res> {
   __$$TaskImplCopyWithImpl(_$TaskImpl _value, $Res Function(_$TaskImpl) _then)
-      : super(_value, _then);
+    : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -213,97 +220,99 @@ class __$$TaskImplCopyWithImpl<$Res>
     Object? isPrivate = null,
     Object? metadata = null,
   }) {
-    return _then(_$TaskImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as TaskType,
-      priority: null == priority
-          ? _value.priority
-          : priority // ignore: cast_nullable_to_non_nullable
-              as TaskPriority,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as TaskStatus,
-      lastStatus: null == lastStatus
-          ? _value.lastStatus
-          : lastStatus // ignore: cast_nullable_to_non_nullable
-              as TaskStatus,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      dueDate: freezed == dueDate
-          ? _value.dueDate
-          : dueDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      estimatedMinutes: null == estimatedMinutes
-          ? _value.estimatedMinutes
-          : estimatedMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      actualMinutes: freezed == actualMinutes
-          ? _value.actualMinutes
-          : actualMinutes // ignore: cast_nullable_to_non_nullable
-              as int?,
-      tags: null == tags
-          ? _value._tags
-          : tags // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      isPrivate: null == isPrivate
-          ? _value.isPrivate
-          : isPrivate // ignore: cast_nullable_to_non_nullable
-              as bool,
-      metadata: null == metadata
-          ? _value._metadata
-          : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>,
-    ));
+    return _then(
+      _$TaskImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        userId: null == userId
+            ? _value.userId
+            : userId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        title: null == title
+            ? _value.title
+            : title // ignore: cast_nullable_to_non_nullable
+                  as String,
+        description: freezed == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as TaskType,
+        priority: null == priority
+            ? _value.priority
+            : priority // ignore: cast_nullable_to_non_nullable
+                  as TaskPriority,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as TaskStatus,
+        lastStatus: null == lastStatus
+            ? _value.lastStatus
+            : lastStatus // ignore: cast_nullable_to_non_nullable
+                  as TaskStatus,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        dueDate: freezed == dueDate
+            ? _value.dueDate
+            : dueDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        updatedAt: freezed == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        estimatedMinutes: null == estimatedMinutes
+            ? _value.estimatedMinutes
+            : estimatedMinutes // ignore: cast_nullable_to_non_nullable
+                  as int,
+        actualMinutes: freezed == actualMinutes
+            ? _value.actualMinutes
+            : actualMinutes // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        tags: null == tags
+            ? _value._tags
+            : tags // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        isPrivate: null == isPrivate
+            ? _value.isPrivate
+            : isPrivate // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        metadata: null == metadata
+            ? _value._metadata
+            : metadata // ignore: cast_nullable_to_non_nullable
+                  as Map<String, dynamic>,
+      ),
+    );
   }
 }
 
 /// @nodoc
 
 class _$TaskImpl implements _Task {
-  const _$TaskImpl(
-      {required this.id,
-      required this.userId,
-      required this.title,
-      this.description,
-      required this.type,
-      required this.priority,
-      required this.status,
-      required this.lastStatus,
-      this.createdAt,
-      this.dueDate,
-      this.updatedAt,
-      required this.estimatedMinutes,
-      this.actualMinutes,
-      final List<String> tags = const [],
-      this.isPrivate = false,
-      final Map<String, dynamic> metadata = const {}})
-      : _tags = tags,
-        _metadata = metadata;
+  const _$TaskImpl({
+    required this.id,
+    required this.userId,
+    required this.title,
+    this.description,
+    required this.type,
+    required this.priority,
+    required this.status,
+    required this.lastStatus,
+    this.createdAt,
+    this.dueDate,
+    this.updatedAt,
+    required this.estimatedMinutes,
+    this.actualMinutes,
+    final List<String> tags = const [],
+    this.isPrivate = false,
+    final Map<String, dynamic> metadata = const {},
+  }) : _tags = tags,
+       _metadata = metadata;
 
   @override
   final String id;
@@ -390,23 +399,24 @@ class _$TaskImpl implements _Task {
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      userId,
-      title,
-      description,
-      type,
-      priority,
-      status,
-      lastStatus,
-      createdAt,
-      dueDate,
-      updatedAt,
-      estimatedMinutes,
-      actualMinutes,
-      const DeepCollectionEquality().hash(_tags),
-      isPrivate,
-      const DeepCollectionEquality().hash(_metadata));
+    runtimeType,
+    id,
+    userId,
+    title,
+    description,
+    type,
+    priority,
+    status,
+    lastStatus,
+    createdAt,
+    dueDate,
+    updatedAt,
+    estimatedMinutes,
+    actualMinutes,
+    const DeepCollectionEquality().hash(_tags),
+    isPrivate,
+    const DeepCollectionEquality().hash(_metadata),
+  );
 
   @JsonKey(ignore: true)
   @override
@@ -416,23 +426,24 @@ class _$TaskImpl implements _Task {
 }
 
 abstract class _Task implements Task {
-  const factory _Task(
-      {required final String id,
-      required final String userId,
-      required final String title,
-      final String? description,
-      required final TaskType type,
-      required final TaskPriority priority,
-      required final TaskStatus status,
-      required final TaskStatus lastStatus,
-      final DateTime? createdAt,
-      final DateTime? dueDate,
-      final DateTime? updatedAt,
-      required final int estimatedMinutes,
-      final int? actualMinutes,
-      final List<String> tags,
-      final bool isPrivate,
-      final Map<String, dynamic> metadata}) = _$TaskImpl;
+  const factory _Task({
+    required final String id,
+    required final String userId,
+    required final String title,
+    final String? description,
+    required final TaskType type,
+    required final TaskPriority priority,
+    required final TaskStatus status,
+    required final TaskStatus lastStatus,
+    final DateTime? createdAt,
+    final DateTime? dueDate,
+    final DateTime? updatedAt,
+    required final int estimatedMinutes,
+    final int? actualMinutes,
+    final List<String> tags,
+    final bool isPrivate,
+    final Map<String, dynamic> metadata,
+  }) = _$TaskImpl;
 
   @override
   String get id;

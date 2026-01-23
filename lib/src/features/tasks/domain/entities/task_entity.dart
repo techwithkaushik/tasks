@@ -1,7 +1,19 @@
+/// Domain entity representing a task
+///
+/// Contains all task information and metadata
+/// Used throughout the app for type safety and data integrity
+library;
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'task_entity.freezed.dart';
 
+/// Type of task
+/// - `single`: One-time task
+/// - `habit`: Recurring daily habit
+/// - `focus`: Deep work/focused session
+/// - `recurring`: Repeats on custom schedule
+/// - `location`: Location-based reminder
 enum TaskType { single, habit, focus, recurring, location }
 
 enum TaskPriority { low, medium, high, critical }

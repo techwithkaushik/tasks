@@ -12,7 +12,8 @@ part of 'task_model.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 TaskModel _$TaskModelFromJson(Map<String, dynamic> json) {
   return _TaskModel.fromJson(json);
@@ -50,22 +51,23 @@ abstract class $TaskModelCopyWith<$Res> {
   factory $TaskModelCopyWith(TaskModel value, $Res Function(TaskModel) then) =
       _$TaskModelCopyWithImpl<$Res, TaskModel>;
   @useResult
-  $Res call(
-      {String userId,
-      String title,
-      String? description,
-      String type,
-      String priority,
-      String status,
-      String lastStatus,
-      @TimestampConverter() DateTime? createdAt,
-      @TimestampConverter() DateTime? dueDate,
-      @TimestampConverter() DateTime? updatedAt,
-      int estimatedMinutes,
-      int? actualMinutes,
-      List<String> tags,
-      bool isPrivate,
-      Map<String, dynamic> metadata});
+  $Res call({
+    String userId,
+    String title,
+    String? description,
+    String type,
+    String priority,
+    String status,
+    String lastStatus,
+    @TimestampConverter() DateTime? createdAt,
+    @TimestampConverter() DateTime? dueDate,
+    @TimestampConverter() DateTime? updatedAt,
+    int estimatedMinutes,
+    int? actualMinutes,
+    List<String> tags,
+    bool isPrivate,
+    Map<String, dynamic> metadata,
+  });
 }
 
 /// @nodoc
@@ -97,68 +99,71 @@ class _$TaskModelCopyWithImpl<$Res, $Val extends TaskModel>
     Object? isPrivate = null,
     Object? metadata = null,
   }) {
-    return _then(_value.copyWith(
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      priority: null == priority
-          ? _value.priority
-          : priority // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      lastStatus: null == lastStatus
-          ? _value.lastStatus
-          : lastStatus // ignore: cast_nullable_to_non_nullable
-              as String,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      dueDate: freezed == dueDate
-          ? _value.dueDate
-          : dueDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      estimatedMinutes: null == estimatedMinutes
-          ? _value.estimatedMinutes
-          : estimatedMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      actualMinutes: freezed == actualMinutes
-          ? _value.actualMinutes
-          : actualMinutes // ignore: cast_nullable_to_non_nullable
-              as int?,
-      tags: null == tags
-          ? _value.tags
-          : tags // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      isPrivate: null == isPrivate
-          ? _value.isPrivate
-          : isPrivate // ignore: cast_nullable_to_non_nullable
-              as bool,
-      metadata: null == metadata
-          ? _value.metadata
-          : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            userId: null == userId
+                ? _value.userId
+                : userId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            title: null == title
+                ? _value.title
+                : title // ignore: cast_nullable_to_non_nullable
+                      as String,
+            description: freezed == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as String,
+            priority: null == priority
+                ? _value.priority
+                : priority // ignore: cast_nullable_to_non_nullable
+                      as String,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String,
+            lastStatus: null == lastStatus
+                ? _value.lastStatus
+                : lastStatus // ignore: cast_nullable_to_non_nullable
+                      as String,
+            createdAt: freezed == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            dueDate: freezed == dueDate
+                ? _value.dueDate
+                : dueDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            updatedAt: freezed == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            estimatedMinutes: null == estimatedMinutes
+                ? _value.estimatedMinutes
+                : estimatedMinutes // ignore: cast_nullable_to_non_nullable
+                      as int,
+            actualMinutes: freezed == actualMinutes
+                ? _value.actualMinutes
+                : actualMinutes // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            tags: null == tags
+                ? _value.tags
+                : tags // ignore: cast_nullable_to_non_nullable
+                      as List<String>,
+            isPrivate: null == isPrivate
+                ? _value.isPrivate
+                : isPrivate // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            metadata: null == metadata
+                ? _value.metadata
+                : metadata // ignore: cast_nullable_to_non_nullable
+                      as Map<String, dynamic>,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -166,26 +171,28 @@ class _$TaskModelCopyWithImpl<$Res, $Val extends TaskModel>
 abstract class _$$TaskModelImplCopyWith<$Res>
     implements $TaskModelCopyWith<$Res> {
   factory _$$TaskModelImplCopyWith(
-          _$TaskModelImpl value, $Res Function(_$TaskModelImpl) then) =
-      __$$TaskModelImplCopyWithImpl<$Res>;
+    _$TaskModelImpl value,
+    $Res Function(_$TaskModelImpl) then,
+  ) = __$$TaskModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String userId,
-      String title,
-      String? description,
-      String type,
-      String priority,
-      String status,
-      String lastStatus,
-      @TimestampConverter() DateTime? createdAt,
-      @TimestampConverter() DateTime? dueDate,
-      @TimestampConverter() DateTime? updatedAt,
-      int estimatedMinutes,
-      int? actualMinutes,
-      List<String> tags,
-      bool isPrivate,
-      Map<String, dynamic> metadata});
+  $Res call({
+    String userId,
+    String title,
+    String? description,
+    String type,
+    String priority,
+    String status,
+    String lastStatus,
+    @TimestampConverter() DateTime? createdAt,
+    @TimestampConverter() DateTime? dueDate,
+    @TimestampConverter() DateTime? updatedAt,
+    int estimatedMinutes,
+    int? actualMinutes,
+    List<String> tags,
+    bool isPrivate,
+    Map<String, dynamic> metadata,
+  });
 }
 
 /// @nodoc
@@ -193,8 +200,9 @@ class __$$TaskModelImplCopyWithImpl<$Res>
     extends _$TaskModelCopyWithImpl<$Res, _$TaskModelImpl>
     implements _$$TaskModelImplCopyWith<$Res> {
   __$$TaskModelImplCopyWithImpl(
-      _$TaskModelImpl _value, $Res Function(_$TaskModelImpl) _then)
-      : super(_value, _then);
+    _$TaskModelImpl _value,
+    $Res Function(_$TaskModelImpl) _then,
+  ) : super(_value, _then);
 
   @pragma('vm:prefer-inline')
   @override
@@ -215,92 +223,94 @@ class __$$TaskModelImplCopyWithImpl<$Res>
     Object? isPrivate = null,
     Object? metadata = null,
   }) {
-    return _then(_$TaskModelImpl(
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      priority: null == priority
-          ? _value.priority
-          : priority // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      lastStatus: null == lastStatus
-          ? _value.lastStatus
-          : lastStatus // ignore: cast_nullable_to_non_nullable
-              as String,
-      createdAt: freezed == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      dueDate: freezed == dueDate
-          ? _value.dueDate
-          : dueDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      estimatedMinutes: null == estimatedMinutes
-          ? _value.estimatedMinutes
-          : estimatedMinutes // ignore: cast_nullable_to_non_nullable
-              as int,
-      actualMinutes: freezed == actualMinutes
-          ? _value.actualMinutes
-          : actualMinutes // ignore: cast_nullable_to_non_nullable
-              as int?,
-      tags: null == tags
-          ? _value._tags
-          : tags // ignore: cast_nullable_to_non_nullable
-              as List<String>,
-      isPrivate: null == isPrivate
-          ? _value.isPrivate
-          : isPrivate // ignore: cast_nullable_to_non_nullable
-              as bool,
-      metadata: null == metadata
-          ? _value._metadata
-          : metadata // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>,
-    ));
+    return _then(
+      _$TaskModelImpl(
+        userId: null == userId
+            ? _value.userId
+            : userId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        title: null == title
+            ? _value.title
+            : title // ignore: cast_nullable_to_non_nullable
+                  as String,
+        description: freezed == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as String,
+        priority: null == priority
+            ? _value.priority
+            : priority // ignore: cast_nullable_to_non_nullable
+                  as String,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String,
+        lastStatus: null == lastStatus
+            ? _value.lastStatus
+            : lastStatus // ignore: cast_nullable_to_non_nullable
+                  as String,
+        createdAt: freezed == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        dueDate: freezed == dueDate
+            ? _value.dueDate
+            : dueDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        updatedAt: freezed == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        estimatedMinutes: null == estimatedMinutes
+            ? _value.estimatedMinutes
+            : estimatedMinutes // ignore: cast_nullable_to_non_nullable
+                  as int,
+        actualMinutes: freezed == actualMinutes
+            ? _value.actualMinutes
+            : actualMinutes // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        tags: null == tags
+            ? _value._tags
+            : tags // ignore: cast_nullable_to_non_nullable
+                  as List<String>,
+        isPrivate: null == isPrivate
+            ? _value.isPrivate
+            : isPrivate // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        metadata: null == metadata
+            ? _value._metadata
+            : metadata // ignore: cast_nullable_to_non_nullable
+                  as Map<String, dynamic>,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$TaskModelImpl implements _TaskModel {
-  const _$TaskModelImpl(
-      {required this.userId,
-      required this.title,
-      this.description,
-      required this.type,
-      required this.priority,
-      required this.status,
-      required this.lastStatus,
-      @TimestampConverter() this.createdAt,
-      @TimestampConverter() this.dueDate,
-      @TimestampConverter() this.updatedAt,
-      required this.estimatedMinutes,
-      this.actualMinutes,
-      final List<String> tags = const [],
-      this.isPrivate = false,
-      final Map<String, dynamic> metadata = const {}})
-      : _tags = tags,
-        _metadata = metadata;
+  const _$TaskModelImpl({
+    required this.userId,
+    required this.title,
+    this.description,
+    required this.type,
+    required this.priority,
+    required this.status,
+    required this.lastStatus,
+    @TimestampConverter() this.createdAt,
+    @TimestampConverter() this.dueDate,
+    @TimestampConverter() this.updatedAt,
+    required this.estimatedMinutes,
+    this.actualMinutes,
+    final List<String> tags = const [],
+    this.isPrivate = false,
+    final Map<String, dynamic> metadata = const {},
+  }) : _tags = tags,
+       _metadata = metadata;
 
   factory _$TaskModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$TaskModelImplFromJson(json);
@@ -391,22 +401,23 @@ class _$TaskModelImpl implements _TaskModel {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      userId,
-      title,
-      description,
-      type,
-      priority,
-      status,
-      lastStatus,
-      createdAt,
-      dueDate,
-      updatedAt,
-      estimatedMinutes,
-      actualMinutes,
-      const DeepCollectionEquality().hash(_tags),
-      isPrivate,
-      const DeepCollectionEquality().hash(_metadata));
+    runtimeType,
+    userId,
+    title,
+    description,
+    type,
+    priority,
+    status,
+    lastStatus,
+    createdAt,
+    dueDate,
+    updatedAt,
+    estimatedMinutes,
+    actualMinutes,
+    const DeepCollectionEquality().hash(_tags),
+    isPrivate,
+    const DeepCollectionEquality().hash(_metadata),
+  );
 
   @JsonKey(ignore: true)
   @override
@@ -416,29 +427,28 @@ class _$TaskModelImpl implements _TaskModel {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$TaskModelImplToJson(
-      this,
-    );
+    return _$$TaskModelImplToJson(this);
   }
 }
 
 abstract class _TaskModel implements TaskModel {
-  const factory _TaskModel(
-      {required final String userId,
-      required final String title,
-      final String? description,
-      required final String type,
-      required final String priority,
-      required final String status,
-      required final String lastStatus,
-      @TimestampConverter() final DateTime? createdAt,
-      @TimestampConverter() final DateTime? dueDate,
-      @TimestampConverter() final DateTime? updatedAt,
-      required final int estimatedMinutes,
-      final int? actualMinutes,
-      final List<String> tags,
-      final bool isPrivate,
-      final Map<String, dynamic> metadata}) = _$TaskModelImpl;
+  const factory _TaskModel({
+    required final String userId,
+    required final String title,
+    final String? description,
+    required final String type,
+    required final String priority,
+    required final String status,
+    required final String lastStatus,
+    @TimestampConverter() final DateTime? createdAt,
+    @TimestampConverter() final DateTime? dueDate,
+    @TimestampConverter() final DateTime? updatedAt,
+    required final int estimatedMinutes,
+    final int? actualMinutes,
+    final List<String> tags,
+    final bool isPrivate,
+    final Map<String, dynamic> metadata,
+  }) = _$TaskModelImpl;
 
   factory _TaskModel.fromJson(Map<String, dynamic> json) =
       _$TaskModelImpl.fromJson;

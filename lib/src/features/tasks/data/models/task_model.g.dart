@@ -22,7 +22,7 @@ _$TaskModelImpl _$$TaskModelImplFromJson(Map<String, dynamic> json) =>
       actualMinutes: (json['actualMinutes'] as num?)?.toInt(),
       tags:
           (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
-              const [],
+          const [],
       isPrivate: json['isPrivate'] as bool? ?? false,
       metadata: json['metadata'] as Map<String, dynamic>? ?? const {},
     );
