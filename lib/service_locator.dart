@@ -1,3 +1,20 @@
+/// Service Locator for dependency injection
+///
+/// This file sets up all dependencies using GetIt package:
+/// - Firebase services (Auth, Firestore)
+/// - Repository implementations
+/// - Use cases
+/// - BLoCs and Cubits
+///
+/// Usage: sl&lt;ClassName&gt;() to get any registered dependency
+///
+/// Architecture: Follows clean architecture with:
+/// - External: Firebase
+/// - Data layer: DataSources and Repositories
+/// - Domain layer: Entities and UseCase interfaces
+/// - Presentation layer: BLoCs and Cubits
+library;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,8 +30,6 @@ import 'package:tasks/src/features/app_auth/domain/usecases/sign_in_usecase.dart
 import 'package:tasks/src/features/app_auth/domain/usecases/sign_out_usecase.dart';
 import 'package:tasks/src/features/app_auth/domain/usecases/sign_up_usecase.dart';
 import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth/app_auth_bloc.dart';
-import 'package:tasks/src/features/app_auth/presentation/bloc/auth_form/auth_form_bloc.dart';
-import 'package:tasks/src/features/app_auth/presentation/bloc/sign_out/sign_out_bloc.dart';
 import 'package:tasks/src/features/tasks/data/datasources/task_firestore_datasource.dart';
 import 'package:tasks/src/features/tasks/data/repositories/task_repository_impl.dart';
 import 'package:tasks/src/features/tasks/domain/repositories/task_repository.dart';
@@ -55,17 +70,16 @@ Future<void> setupServiceLocator() async {
     () => SendEmailVerificationUseCase(sl()),
   );
 
-  // 🔹 App-level Auth Bloc (GLOBAL)
-  sl.registerLazySingleton<AppAuthBloc>(() => AppAuthBloc(sl()));
-  sl.registerFactory<AuthFormBloc>(
-    () => AuthFormBloc(
+  // 🔹 App-level Auth Bloc (GLOBAL) — unified auth handler
+  sl.registerLazySingleton<AppAuthBloc>(
+    () => AppAuthBloc(
+      repository: sl(),
       signInUseCase: sl(),
       signUpUseCase: sl(),
+      signOutUseCase: sl(),
       resetPasswordUseCase: sl(),
     ),
   );
-
-  sl.registerFactory<SignOutBloc>(() => SignOutBloc(signOutUseCase: sl()));
 
   // Firestore
   sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);

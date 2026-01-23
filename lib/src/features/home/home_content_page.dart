@@ -1,3 +1,13 @@
+/// Main content area with bottom navigation
+///
+/// Displays:
+/// - Tasks page (tab 0)
+/// - Settings page (tab 1)
+/// - About page (tab 2)
+///
+/// Uses NavCubit for tab management and back navigation
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/l10n/app_localizations.dart';

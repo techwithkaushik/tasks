@@ -1,3 +1,9 @@
+/// Home page container that provides navigation management
+///
+/// Wraps HomeContentPage with NavCubit for tab navigation
+/// Handles switching between main pages (Tasks, Settings, About)
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/src/features/home/cubit/nav_cubit.dart';

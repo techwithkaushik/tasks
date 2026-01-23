@@ -1,5 +1,21 @@
+/// Cubit for managing bottom navigation state and history
+///
+/// Manages:
+/// - Current selected tab index (0 = Tasks, 1 = Settings, 2 = About)
+/// - Navigation history for back button handling
+/// - Prevents unnecessary rebuilds when selecting the same tab
+library;
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+/// Controls bottom navigation and maintains navigation history
+///
+/// State: int (current tab index)
+///
+/// Features:
+/// - Tracks navigation history
+/// - Prevents duplicate entries
+/// - Handles back navigation with proper history management
 class NavCubit extends Cubit<int> {
   NavCubit() : super(0);
   final List<int> _history = [0];
