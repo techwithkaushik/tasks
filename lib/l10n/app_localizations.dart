@@ -391,6 +391,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Due'**
   String get due;
+
+  /// Error message when user is not authenticated
+  ///
+  /// In en, this message translates to:
+  /// **'You must be authenticated to add a task'**
+  String get mustBeAuthenticated;
 }
 
 class _AppLocalizationsDelegate

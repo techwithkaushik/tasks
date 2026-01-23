@@ -1,199 +1,203 @@
 {
   "@@locale": "hi",
-  "about": "जानकारी",
+  "about": "के बारे में",
   "@about": {
-    "description": "ऐप की जानकारी"
+    "description": "about the app"
   },
   "add": "जोड़ें",
   "@add": {
-    "description": "नया कार्य जोड़ने के लिए बटन लेबल"
+    "description": "Button label to add a new task"
   },
   "addTask": "कार्य जोड़ें",
   "@addTask": {
-    "description": "नया कार्य जोड़ने का शीर्षक या क्रिया"
+    "description": "Title or action text for adding a new task"
   },
   "appTitle": "कार्य",
   "@appTitle": {
-    "description": "ऐप बार और लॉन्चर में दिखने वाला ऐप शीर्षक"
+    "description": "Application title shown in app bar and launcher"
   },
   "cancel": "रद्द करें",
   "@cancel": {
-    "description": "वर्तमान क्रिया रद्द करने के लिए बटन लेबल"
+    "description": "Button label to cancel the current action"
   },
   "chooseLanguage": "भाषा चुनें",
   "@chooseLanguage": {
-    "description": "ऐप की भाषा चुनने का संकेत"
+    "description": "Prompt to select application language"
   },
   "completed": "पूर्ण",
   "@completed": {
-    "description": "कार्य की स्थिति जो पूर्ण होने को दर्शाती है"
+    "description": "Task status indicating completion"
   },
-  "content": "विवरण",
+  "content": "सामग्री",
   "@content": {
-    "description": "कार्य के विवरण या सामग्री का लेबल"
+    "description": "Label for task description or content field"
   },
   "created": "बनाया गया",
   "@created": {
-    "description": "कार्य बनने की स्थिति या तिथि दर्शाने वाला लेबल"
+    "description": "Label indicating task creation date or status"
   },
-  "darkMode": "डार्क थीम सक्षम करें",
+  "darkMode": "गहरा विषय सक्षम करें",
   "@darkMode": {
-    "description": "मैन्युअल रूप से डार्क मोड सक्षम करने का विकल्प"
+    "description": "Toggle label to enable dark mode manually"
   },
-  "darkModeDescriptionEnabled": "मैन्युअल रूप से डार्क थीम पर स्विच करें",
+  "darkModeDescriptionEnabled": "मैन्युअल रूप से गहरे विषय पर स्विच करें",
   "@darkModeDescriptionEnabled": {
-    "description": "डार्क मोड विकल्प का विवरण"
+    "description": "Explanation text for dark mode toggle"
   },
-  "darkModeDescriptionDisabled": "डार्क थीम मैन्युअल रूप से सक्षम करने के लिए सिस्टम थीम का पालन बंद करें",
+  "darkModeDescriptionDisabled": "मैन्युअल रूप से गहरे विषय को सक्षम करने के लिए सिस्टम विषय का अनुसरण करें",
   "@darkModeDescriptionDisabled": {
-    "description": "डार्क मोड विकल्प का विवरण"
+    "description": "Explanation text for dark mode toggle"
   },
-  "dynamicColor": "डायनामिक रंग",
+  "dynamicColor": "गतिशील रंग",
   "@dynamicColor": {
-    "description": "डायनामिक सिस्टम रंगों का विकल्प"
+    "description": "Toggle label for dynamic system colors"
   },
-  "dynamicColorDescription": "वॉलपेपर आधारित सिस्टम रंग उपयोग करें",
+  "dynamicColorDescription": "वॉलपेपर-आधारित सिस्टम रंग का उपयोग करें",
   "@dynamicColorDescription": {
-    "description": "डायनामिक रंग विकल्प का विवरण"
+    "description": "Explanation text for dynamic color option"
   },
-  "english": "अंग्रेज़ी",
+  "english": "अंग्रेजी",
   "@english": {
-    "description": "अंग्रेज़ी भाषा का विकल्प"
+    "description": "Language option for English"
   },
   "error": "त्रुटि",
   "@error": {
-    "description": "सामान्य त्रुटि संदेश या शीर्षक"
+    "description": "Generic error title or label"
   },
-  "followSystemTheme": "सिस्टम थीम का पालन करें",
+  "followSystemTheme": "सिस्टम विषय का अनुसरण करें",
   "@followSystemTheme": {
-    "description": "सिस्टम थीम के अनुसार थीम बदलने का विकल्प"
+    "description": "Toggle label to follow system theme"
   },
-  "followSystemThemeDescription": "सिस्टम डार्क मोड के अनुसार अपने आप बदलें",
+  "followSystemThemeDescription": "स्वचालित रूप से सिस्टम गहरे मोड से मेल खाएँ",
   "@followSystemThemeDescription": {
-    "description": "सिस्टम थीम विकल्प का विवरण"
+    "description": "Explanation text for system theme option"
   },
   "hindi": "हिंदी",
   "@hindi": {
-    "description": "हिंदी भाषा का विकल्प"
+    "description": "Language option for Hindi"
   },
   "language": "भाषा",
   "@language": {
-    "description": "भाषा सेटिंग का लेबल"
+    "description": "Label for language setting"
   },
-  "languageDescription": "ऐप की भाषा चुनें",
+  "languageDescription": "ऐप्लिकेशन भाषा चुनें",
   "@languageDescription": {
-    "description": "भाषा चयन विकल्प का विवरण"
+    "description": "Explanation text for language selection"
   },
-  "noTaskAdded": "अभी तक कोई कार्य नहीं जोड़ा गया है।",
+  "noTaskAdded": "अभी तक कोई कार्य नहीं जोड़ा गया।",
   "@noTaskAdded": {
-    "description": "जब कोई कार्य मौजूद न हो तब दिखने वाला संदेश"
+    "description": "Empty state message when no tasks exist"
   },
-  "noTaskCompleted": "अभी तक कोई कार्य पूर्ण नहीं हुआ है।",
+  "noTaskCompleted": "अभी तक कोई कार्य पूर्ण नहीं हुआ।",
   "@noTaskCompleted": {
-    "description": "जब कोई कार्य पूरा न हुआ हो तब दिखने वाला संदेश"
+    "description": "Empty state message when no tasks are completed"
   },
   "pending": "लंबित",
   "@pending": {
-    "description": "कार्य की स्थिति जो लंबित होने को दर्शाती है"
+    "description": "Task status indicating pending state"
   },
   "settingsTitle": "सेटिंग्स",
   "@settingsTitle": {
-    "description": "सेटिंग्स स्क्रीन का शीर्षक"
+    "description": "Title of the settings screen"
   },
   "status": "स्थिति",
   "@status": {
-    "description": "कार्य की स्थिति का लेबल"
+    "description": "Label for task status field"
   },
   "systemDefault": "सिस्टम डिफ़ॉल्ट",
   "@systemDefault": {
-    "description": "सिस्टम की डिफ़ॉल्ट भाषा का विकल्प"
+    "description": "Language option to follow system default"
   },
   "title": "शीर्षक",
   "@title": {
-    "description": "कार्य के शीर्षक का लेबल"
+    "description": "Label for task title field"
   },
-  "welcomeBack": "वापसी पर स्वागत है",
+  "welcomeBack": "स्वागत है",
   "@welcomeBack": {
-    "description": "साइन इन करने के लिए स्वागत संदेश"
+    "description": "welcome note for signin"
   },
   "createAccount": "खाता बनाएं",
   "@createAccount": {
-    "description": "टास्क ऐप के लिए खाता बनाएं"
+    "description": "create account for tasks app"
   },
-  "signin": "साइन इन",
+  "signin": "साइन इन करें",
   "@signin": {
-    "description": "खाते में साइन इन करें"
+    "description": "signin account"
   },
-  "signup": "साइन अप",
+  "signup": "साइन अप करें",
   "@signup": {
-    "description": "खाते में साइन अप करें"
+    "description": "signup account"
   },
   "forgotPassword": "पासवर्ड भूल गए",
   "@forgotPassword": {
-    "description": "खाते का पासवर्ड भूल गए"
+    "description": "forgot password of account"
   },
   "email": "ईमेल",
   "@email": {
-    "description": "ईमेल खाता"
+    "description": "email account"
   },
   "password": "पासवर्ड",
   "@password": {
-    "description": "खाते के लिए पासवर्ड"
+    "description": "password for account"
   },
   "dontHaveAnAccount": "खाता नहीं है? ",
   "@dontHaveAnAccount": {
-    "description": "खाता नहीं है"
+    "description": "dont have an account"
   },
-  "alreadyHaveAnAccount": "क्या पहले से एक खाता मौजूद है? ",
+  "alreadyHaveAnAccount": "पहले से खाता है? ",
   "@alreadyHaveAnAccount": {
-    "description": "क्या आपके पास पहले से एक खाता मौजूद है?"
+    "description": "already have an account"
   },
-  "confirmPassword": "पासवर्ड की पुष्टि कीजिये",
+  "confirmPassword": "पासवर्ड की पुष्टि करें",
   "@confirmPassword": {
-    "description": "पासवर्ड की पुष्टि कीजिये"
+    "description": "confirm password"
   },
   "passwordResetEmailSent": "पासवर्ड रीसेट ईमेल भेजा गया",
   "@passwordResetEmailSent": {
-    "description": "पासवर्ड रीसेट ईमेल भेजा गया"
+    "description": "Password reset email sent"
   },
-  "invalidEmail": "ईमेल अमान्य है",
+  "invalidEmail": "अमान्य ईमेल",
   "@invalidEmail": {
-    "description": "ईमेल अमान्य है"
+    "description": "Invalid email"
   },
-  "min6characters": "कम से कम 6 अक्षर डालें",
+  "min6characters": "न्यूनतम 6 वर्ण",
   "@min6characters": {
-    "description": "कम से कम 6 अक्षर डालें"
+    "description": "Min 6 characters"
   },
-  "passwordsDoNotMatch": "पासवर्ड मेल नहीं खा रहा",
+  "passwordsDoNotMatch": "पासवर्ड मेल नहीं खाते",
   "@passwordsDoNotMatch": {
-    "description": "पासवर्ड मेल नहीं खा रहा"
+    "description": "Passwords do not match"
   },
   "required": "आवश्यक",
   "@required": {
-    "description": "क्षेत्र आवश्यक हे।"
+    "description": "field is required"
   },
   "description": "विवरण",
   "@description": {
-    "description": "क्षेत्र विवरण"
+    "description": "filed description"
   },
-  "taskType": "कार्य का प्रकार",
+  "taskType": "कार्य प्रकार",
   "@taskType": {
-    "description": "कार्य का प्रकार"
+    "description": "taskType in field"
   },
   "priority": "प्राथमिकता",
   "@priority": {
-    "description": "कार्य प्राथमिकता"
+    "description": "task priority"
   },
   "estimatedMinutes": "अनुमानित मिनट",
   "@estimatedMinutes": {
-    "description": "अनुमानित मिनट"
+    "description": "estimated Minutes"
   },
-  "noDueDate": "कोई देय तारीख नहीं",
+  "noDueDate": "कोई निर्धारित तारीख नहीं",
   "@noDueDate": {
-    "description": "कोई देय तारीख नहीं"
+    "description": "noDueDate"
   },
-  "due": "देय",
+  "due": "निर्धारित",
   "@due": {
-    "description": "देय"
+    "description": "due"
+  },
+  "mustBeAuthenticated": "कार्य जोड़ने के लिए आपको प्रमाणित होना चाहिए",
+  "@mustBeAuthenticated": {
+    "description": "Error message when user is not authenticated"
   }
 }

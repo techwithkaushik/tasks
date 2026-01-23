@@ -156,4 +156,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get due => 'Due';
+
+  @override
+  String get mustBeAuthenticated => 'You must be authenticated to add a task';
 }

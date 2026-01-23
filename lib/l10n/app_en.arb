@@ -195,5 +195,9 @@
   "due": "Due",
   "@due": {
     "description": "due"
+  },
+  "mustBeAuthenticated": "You must be authenticated to add a task",
+  "@mustBeAuthenticated": {
+    "description": "Error message when user is not authenticated"
   }
 }
