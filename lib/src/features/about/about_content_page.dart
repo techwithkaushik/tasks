@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 class AboutContentPage extends StatelessWidget {
   const AboutContentPage({super.key});
-  static final navigatorKey = GlobalKey<NavigatorState>();
   @override
   Widget build(BuildContext context) {
     return Padding(
