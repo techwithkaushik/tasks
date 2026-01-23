@@ -1,3 +1,14 @@
+/// Authentication router that switches between login and home screens
+///
+/// Routes based on AppAuthBloc state:
+/// - `loading`: Shows loading spinner
+/// - `authenticated`: Shows HomePage with task list
+/// - `unauthenticated`: Shows SignInUpPage for login/signup
+/// - `error`: Shows error message
+///
+/// Entry point of the authenticated user experience
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth/app_auth_bloc.dart';
@@ -16,7 +27,7 @@ class AppAuthPage extends StatelessWidget {
           loading: () =>
               const Scaffold(body: Center(child: CircularProgressIndicator())),
           authenticated: (_) => const HomePage(),
-          unauthenticated: () => const SignInUpPage(),
+          unauthenticated: (form) => const SignInUpPage(),
           error: (_) => const Scaffold(body: Center(child: Text("Error"))),
         );
       },
