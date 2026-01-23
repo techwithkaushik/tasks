@@ -1,3 +1,12 @@
+/// Settings page for user preferences
+///
+/// Allows users to customize:
+/// - Theme mode (system/light/dark)
+/// - Pure dark mode for OLED screens
+/// - Dynamic color theming
+/// - Application language
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/src/features/settings/presentation/cubit/dynamic_color_cubit.dart';
