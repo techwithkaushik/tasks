@@ -42,7 +42,7 @@ dependencies:
   equatable: ^2.0.7
   bloc: ^9.1.0
   path_provider: ^2.1.5
-  dynamic_color: ^1.8.1
+  dynamic_color: ^2.0.0
   flutter_native_splash: ^2.4.7
   get_it: ^9.2.0
   dartz: ^0.10.1
