@@ -247,7 +247,10 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
             form: form.copyWith(isSubmitting: false, error: f.message),
           ),
         ),
-        (user) => emit(AppAuthState.authenticated(user)),
+        (user) {
+          _lastKnownUser = user;
+          emit(AppAuthState.authenticated(user));
+        },
       );
     }
   }
