@@ -46,6 +46,7 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
   }) : super(AppAuthState.loading()) {
     on<AppAuthStarted>(_onStarted);
     on<AppAuthUserChanged>(_onUserChanged);
+    on<AppAuthStreamFailed>(_onAuthStreamFailed);
     on<AppAuthEmailChanged>(_onEmailChanged);
     on<AppAuthPasswordChanged>(_onPasswordChanged);
     on<AppAuthConfirmPasswordChanged>(_onConfirmPasswordChanged);
@@ -77,11 +78,18 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
 
     // Then start listening to repository auth state changes.
     await _subscription?.cancel();
-    _subscription = repository.authStateChanges().listen((user) {
-      // Do not call emit from outside an event handler — dispatch an event
-      // that will be handled inside the bloc's event handler.
-      add(AppAuthUserChanged(user));
-    });
+    _subscription = repository.authStateChanges().listen(
+      (user) {
+        // Do not call emit from outside an event handler — dispatch an event
+        // that will be handled inside the bloc's event handler.
+        add(AppAuthUserChanged(user));
+      },
+      onError: (Object error, StackTrace stackTrace) {
+        // A stream error is not proof that the user signed out. Show a
+        // recoverable error and leave the stream subscribed for later updates.
+        add(AppAuthStreamFailed());
+      },
+    );
   }
 
   void _onUserChanged(AppAuthUserChanged event, Emitter<AppAuthState> emit) {
@@ -91,6 +99,17 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
     } else {
       emit(AppAuthState.authenticated(user));
     }
+  }
+
+  void _onAuthStreamFailed(
+    AppAuthStreamFailed event,
+    Emitter<AppAuthState> emit,
+  ) {
+    emit(
+      AppAuthState.error(
+        'Could not refresh your sign-in session. Check your connection and retry.',
+      ),
+    );
   }
 
   void _onEmailChanged(AppAuthEmailChanged e, Emitter<AppAuthState> emit) {

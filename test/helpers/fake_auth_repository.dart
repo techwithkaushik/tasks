@@ -17,6 +17,7 @@ class FakeAuthRepository implements AuthRepository {
   Stream<UserEntity?> authStateChanges() => _ctrl.stream;
 
   void emit(UserEntity? u) => _ctrl.add(u);
+  void emitStreamError(Object error) => _ctrl.addError(error);
 
   void setLoginShouldFail(bool value) => _loginShouldFail = value;
   void setRegisterShouldFail(bool value) => _registerShouldFail = value;

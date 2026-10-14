@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:tasks/src/core/errors/auth_failure.dart';
@@ -15,18 +14,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Stream<UserEntity?> authStateChanges() {
-    // Ensure upstream errors do not close the auth stream — convert errors
-    // into a `null` user so the app can react by treating the user as
-    // unauthenticated instead of crashing.
-    final safeStream = remote.authStateChanges().transform<User?>(
-      StreamTransformer<User?, User?>.fromHandlers(
-        handleError: (error, stack, sink) {
-          sink.add(null);
-        },
-      ),
-    );
-
-    return safeStream.map(
+    // Preserve stream errors instead of converting them to a null user.
+    // A transient Firebase/network error must not masquerade as a logout.
+    return remote.authStateChanges().map(
       (user) => user == null ? null : UserModel.fromFirebase(user).toEntity(),
     );
   }

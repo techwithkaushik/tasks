@@ -33,3 +33,5 @@ class AppAuthUserChanged extends AppAuthEvent {
   final UserEntity? user;
   AppAuthUserChanged(this.user);
 }
+
+class AppAuthStreamFailed extends AppAuthEvent {}
