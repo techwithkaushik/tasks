@@ -143,7 +143,7 @@ class TaskPage extends StatelessWidget {
                         child: StatefulBuilder(
                           builder: (context, setState) {
                             return Dismissible(
-                              key: ValueKey(task),
+                              key: ValueKey(task.id),
                               onUpdate: (details) =>
                                   setState(() => progress = details.progress),
                               onDismissed: (_) => progress = 0,
