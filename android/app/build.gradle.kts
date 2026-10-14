@@ -3,7 +3,7 @@ import java.util.*
 
 val keystoreProperties =
     Properties().apply {
-        var file = File("key.properties")
+        val file = File("key.properties")
         if (file.exists()) load(file.reader())
     }
 
@@ -33,10 +33,9 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        // TODO: Specify your own unique Application ID (https://flutter.dev/to/review-gradle-config).
         applicationId = "com.ask9027.tasks"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
+        // You can update these values to match your application needs.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -45,11 +44,10 @@ android {
 
     signingConfigs {
         create("release") {
-            // Read secrets from environment (set in GitHub Actions)
-            val storeFilePath   = System.getenv("SIGNING_KEY_STORE")
+            val storeFilePath = System.getenv("SIGNING_KEY_STORE")
             val storePasswordEnv = System.getenv("SIGNING_STORE_PASSWORD")
-            val keyAliasEnv      = System.getenv("SIGNING_KEY_ALIAS")
-            val keyPasswordEnv   = System.getenv("SIGNING_KEY_PASSWORD")
+            val keyAliasEnv = System.getenv("SIGNING_KEY_ALIAS")
+            val keyPasswordEnv = System.getenv("SIGNING_KEY_PASSWORD")
 
             if (
                 !storeFilePath.isNullOrBlank() &&
@@ -61,30 +59,30 @@ android {
                 storePassword = storePasswordEnv
                 keyAlias = keyAliasEnv
                 keyPassword = keyPasswordEnv
-            } else {
-                // Optional: log a warning for local builds without signing
-                println("⚠️ Release signing is NOT configured (missing env vars).")
             }
         }
     }
 
     buildTypes {
         getByName("release") {
-            // Only use release signing if env vars exist
-            val hasSigning = !System.getenv("SIGNING_KEY_STORE").isNullOrBlank()
+            val hasSigning =
+                !System.getenv("SIGNING_KEY_STORE").isNullOrBlank() &&
+                !System.getenv("SIGNING_STORE_PASSWORD").isNullOrBlank() &&
+                !System.getenv("SIGNING_KEY_ALIAS").isNullOrBlank() &&
+                !System.getenv("SIGNING_KEY_PASSWORD").isNullOrBlank()
+
             if (hasSigning) {
                 signingConfig = signingConfigs.getByName("release")
             } else {
-                // Fallback: use debug signing so `./gradlew assembleRelease` still works
-                signingConfig = signingConfigs.getByName("debug")
+                // Local release builds may be unsigned, but must never use the debug key.
+                println("Release signing is not configured; building an unsigned release APK.")
             }
-            // your other release options...
             isMinifyEnabled = true
             isShrinkResources = true
         }
 
         getByName("debug") {
-            // Keep default debug signing (no change needed)
+            // Keep default debug signing.
         }
     }
 }
