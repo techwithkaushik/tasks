@@ -104,3 +104,24 @@ test('collections outside the explicit task rule remain denied', async () => {
   await assertFails(getDoc(doc(db, 'privateProfiles', 'alice')));
   await assertFails(setDoc(doc(db, 'privateProfiles', 'new-profile'), { name: 'New' }));
 });
+
+test('task list composite index supports owner-filtered newest-first queries', async () => {
+  const indexConfig = JSON.parse(
+    await readFile(new URL('../firestore.indexes.json', import.meta.url), 'utf8'),
+  );
+  const taskListIndex = indexConfig.indexes.find((index) =>
+    index.collectionGroup === 'tasks' &&
+    index.queryScope === 'COLLECTION' &&
+    index.fields.some((field) =>
+      field.fieldPath === 'userId' && field.order === 'ASCENDING',
+    ) &&
+    index.fields.some((field) =>
+      field.fieldPath === 'createdAt' && field.order === 'DESCENDING',
+    ),
+  );
+
+  assert.ok(
+    taskListIndex,
+    'Expected tasks index for userId ASCENDING and createdAt DESCENDING',
+  );
+});
