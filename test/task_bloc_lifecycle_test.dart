@@ -144,5 +144,103 @@ void main() {
     );
   });
 
+  test('missing task IDs are ignored by status updates', () async {
+    final authBloc = _FakeAppAuthBloc(
+      AppAuthState.authenticated(
+        const UserEntity(uid: 'user-1', isEmailVerified: true),
+      ),
+    );
+    final repository = _FakeTaskRepository();
+    locator.registerSingleton<AppAuthBloc>(authBloc);
+
+    final bloc = TaskBloc(
+      LoadTaskUseCase(repository),
+      AddTaskUseCase(repository),
+      UpdateTaskUseCase(repository),
+      DeleteTaskUseCase(repository),
+    );
+
+    addTearDown(() async {
+      await bloc.close();
+      await authBloc.dispose();
+      await repository.dispose();
+    });
+
+    final task = _task();
+    repository.taskStream.add([task]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.any((item) => item.id == task.id),
+        orElse: () => false,
+      ),
+    );
+
+    bloc.add(
+      const TaskEvent.updateStatus(
+        taskId: 'removed-task',
+        status: TaskStatus.completed,
+      ),
+    );
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+
+    expect(repository.lastUpdatedTask, isNull);
+    expect(
+      bloc.state.maybeWhen(
+        data: (tasks) => tasks.single.status,
+        orElse: () => null,
+      ),
+      TaskStatus.pending,
+    );
+  });
+
+  test('failed status persistence does not publish the new status', () async {
+    final authBloc = _FakeAppAuthBloc(
+      AppAuthState.authenticated(
+        const UserEntity(uid: 'user-1', isEmailVerified: true),
+      ),
+    );
+    final repository = _FakeTaskRepository();
+    locator.registerSingleton<AppAuthBloc>(authBloc);
+
+    final bloc = TaskBloc(
+      LoadTaskUseCase(repository),
+      AddTaskUseCase(repository),
+      UpdateTaskUseCase(repository),
+      DeleteTaskUseCase(repository),
+    );
+
+    addTearDown(() async {
+      await bloc.close();
+      await authBloc.dispose();
+      await repository.dispose();
+    });
+
+    final task = _task();
+    repository.taskStream.add([task]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.any((item) => item.id == task.id),
+        orElse: () => false,
+      ),
+    );
+
+    bloc.add(
+      const TaskEvent.updateStatus(
+        taskId: 'task-1',
+        status: TaskStatus.completed,
+      ),
+    );
+    await Future<void>.delayed(Duration.zero);
+    repository.updateGate.completeError(StateError('write failed'));
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+
+    expect(
+      bloc.state.maybeWhen(
+        data: (tasks) => tasks.single.status,
+        orElse: () => null,
+      ),
+      TaskStatus.pending,
+    );
+  });
 
 }
