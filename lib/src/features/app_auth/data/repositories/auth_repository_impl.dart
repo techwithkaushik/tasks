@@ -59,9 +59,13 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<AuthFailure, UserEntity?>> getCurrentUser() async {
-    final user = await remote.getCurrentUser();
-    if (user == null) return const Right(null);
-    return Right(UserModel.fromFirebase(user).toEntity());
+    try {
+      final user = await remote.getCurrentUser();
+      if (user == null) return const Right(null);
+      return Right(UserModel.fromFirebase(user).toEntity());
+    } catch (_) {
+      return const Left(AuthFailure('Failed to check current user'));
+    }
   }
 
   @override
@@ -86,8 +90,12 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<AuthFailure, void>> signOut() async {
-    await remote.signOut();
-    return const Right(null);
+    try {
+      await remote.signOut();
+      return const Right(null);
+    } catch (_) {
+      return const Left(AuthFailure('Failed to sign out'));
+    }
   }
 
   @override
@@ -97,7 +105,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await remote.resetPassword(email);
       return const Right(null);
-    } catch (e) {
+    } catch (_) {
       return const Left(AuthFailure('Failed to send password reset email'));
     }
   }
