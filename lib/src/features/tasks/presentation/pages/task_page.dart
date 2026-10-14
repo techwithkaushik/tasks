@@ -178,7 +178,11 @@ class TaskPage extends StatelessWidget {
                                       showSnackBar: true,
                                     ),
                                   );
-                                  return true;
+                                  // Let the Firestore-backed TaskBloc state
+                                  // remove the row only after persistence
+                                  // succeeds. Dismissible must not hide it
+                                  // optimistically if the write fails.
+                                  return false;
                                 } else if (direction ==
                                     DismissDirection.endToStart) {
                                   context.read<TaskBloc>().add(
