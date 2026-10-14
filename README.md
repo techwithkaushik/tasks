@@ -58,6 +58,19 @@ Install a Flutter stable SDK compatible with the Dart constraint in `pubspec.yam
 
 The app expects Firebase Authentication and Cloud Firestore to be enabled. Task documents are scoped by `userId`; `firestore.rules` enforces ownership on the server. Review the rules and Firebase project before deploying to production.
 
+## Firestore security rules tests
+
+The Firestore rules have emulator-based regression tests for authenticated ownership, cross-user access denial, owner-only writes, immutable task ownership, unauthenticated access, and default-deny behavior for other collections.
+
+Run them locally with Node.js 22 and Java 17:
+
+```sh
+npm install
+npm run test:rules
+```
+
+The test command starts the Firestore Emulator, runs the rules tests, and shuts the emulator down when complete. It uses the demo project ID `demo-tasks-rules`; it does not connect to or modify a production Firebase project.
+
 ## Quality checks
 
 Run the same core checks used by GitHub Actions:
