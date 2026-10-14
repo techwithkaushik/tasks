@@ -2,11 +2,9 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
-import 'package:tasks/service_locator.dart';
 import 'package:tasks/src/features/app_auth/domain/entities/user_entity.dart';
 import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth/app_auth_bloc.dart';
 import 'package:tasks/src/features/app_auth/presentation/bloc/app_auth/app_auth_state.dart';
-import 'package:tasks/src/features/app_auth/presentation/models/auth_form_model.dart';
 import 'package:tasks/src/features/tasks/domain/entities/task_entity.dart';
 import 'package:tasks/src/features/tasks/domain/repositories/task_repository.dart';
 import 'package:tasks/src/features/tasks/domain/usecases/add_task_use_case.dart';
