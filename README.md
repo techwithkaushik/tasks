@@ -1,16 +1,104 @@
-# tasks
+# Tasks
 
-A new Flutter project.
+A Flutter task-management app with Firebase Authentication and Cloud Firestore. The app uses BLoC for presentation state and a layered architecture to keep UI, domain logic, and Firebase data access separate.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Email/password authentication and password reset.
+- User-scoped task loading and live Firestore updates.
+- Task priorities, types, status, due dates, estimated/actual minutes, tags, and metadata.
+- Swipe actions to complete or delete tasks, with status undo.
+- Persisted app preferences through Hydrated BLoC.
+- Separate Android release APKs for `arm64-v8a`, `armeabi-v7a`, and `x86_64`.
 
-A few resources to get you started if this is your first Flutter project:
+## Tech stack
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Flutter / Dart
+- `flutter_bloc` and BLoC
+- GetIt dependency injection
+- Firebase Authentication
+- Cloud Firestore
+- Freezed models
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Architecture
+
+The main feature code is under `lib/src/features`:
+
+- **Domain** — entities, repository contracts, and use cases.
+- **Data** — Firebase data sources, models, and repository implementations.
+- **Presentation** — BLoCs, pages, and widgets.
+
+Dependency registration is centralized in `lib/service_locator.dart`. App and Firebase initialization starts in `lib/main.dart`.
+
+## Requirements
+
+Install a Flutter stable SDK compatible with the Dart constraint in `pubspec.yaml`, Android SDK/NDK versions required by the Flutter toolchain, and a JDK compatible with the Android Gradle Plugin. CI currently uses Java 17 for the Android build.
+
+## Local setup
+
+1. Clone the repository and enter its directory.
+2. Install Flutter dependencies:
+
+   ```sh
+   flutter pub get
+   ```
+
+3. Configure Firebase for your own Firebase project if you are not using the repository's configured project. Generate/update `lib/firebase_options.dart` and `android/app/google-services.json` using the FlutterFire CLI. Do not commit private credentials or service-account keys.
+4. Deploy the Firestore security rules and indexes when setting up a Firebase project:
+
+   ```sh
+   firebase deploy --only firestore:rules,firestore:indexes
+   ```
+
+5. Run the app on a configured device:
+
+   ```sh
+   flutter run
+   ```
+
+The app expects Firebase Authentication and Cloud Firestore to be enabled. Task documents are scoped by `userId`; `firestore.rules` enforces ownership on the server. Review the rules and Firebase project before deploying to production.
+
+## Quality checks
+
+Run the same core checks used by GitHub Actions:
+
+```sh
+flutter pub get
+flutter test --reporter expanded
+flutter analyze .
+```
+
+If you change Freezed or JSON-serializable declarations, regenerate generated sources:
+
+```sh
+dart run build_runner build --delete-conflicting-outputs
+```
+
+## Android release APKs
+
+Build split APKs locally:
+
+```sh
+flutter build apk --release --split-per-abi
+```
+
+The outputs are written to `build/app/outputs/flutter-apk/`.
+
+The GitHub Actions workflow builds and uploads the three ABI-specific APKs on pushes to `main`, pull requests, scheduled runs, and manual dispatches. A signed CI release requires these repository Actions secrets:
+
+- `SIGNING_KEYSTORE` — Base64-encoded JKS keystore.
+- `SIGNING_KEY_ALIAS` — key alias.
+- `SIGNING_KEY_PASSWORD` — private key password.
+- `SIGNING_STORE_PASSWORD` — keystore password.
+
+Keep signing secrets out of source control. The workflow fails early when required signing secrets are missing.
+
+## Important files
+
+- `lib/main.dart` — application initialization.
+- `lib/service_locator.dart` — dependency injection.
+- `lib/src/features/app_auth/` — authentication.
+- `lib/src/features/tasks/` — task domain, Firestore access, BLoC, and UI.
+- `firestore.rules` — per-user Firestore authorization.
+- `firestore.indexes.json` — Firestore indexes.
+- `.github/workflows/build.yml` — tests, analysis, signed APK build, and artifact upload.
