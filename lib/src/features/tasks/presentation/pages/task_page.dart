@@ -119,7 +119,32 @@ class TaskPage extends StatelessWidget {
                 loading: () {
                   return const Center(child: CircularProgressIndicator());
                 },
-                error: (msg) => Center(child: Text("Error: $msg")),
+                error: (msg) => Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.cloud_off_outlined, size: 40),
+                        const SizedBox(height: 12),
+                        const Text(
+                          "Could not load tasks",
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(msg, textAlign: TextAlign.center),
+                        const SizedBox(height: 16),
+                        FilledButton.icon(
+                          onPressed: () => context.read<TaskBloc>().add(
+                            const TaskEvent.load(),
+                          ),
+                          icon: const Icon(Icons.refresh),
+                          label: const Text("Retry"),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
 
                 effect: (_, _, _) => const SizedBox.shrink(),
 
