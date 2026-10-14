@@ -28,12 +28,6 @@ jobs:
         with:
           channel: "stable"
 
-      - name: Show build toolchain
-        run: |
-          java -version
-          cd android
-          ./gradlew --version
-
       - name: Install dependencies
         run: flutter pub get
 
