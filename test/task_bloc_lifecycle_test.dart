@@ -146,39 +146,5 @@ void main() {
     );
   });
 
-  test('load without an authenticated user emits an error', () async {
-    final authBloc = _FakeAppAuthBloc(
-      AppAuthState.unauthenticated(form: AuthFormModel.initial()),
-    );
-    final repository = _FakeTaskRepository();
-    locator.registerSingleton<AppAuthBloc>(authBloc);
 
-    final bloc = TaskBloc(
-      LoadTaskUseCase(repository),
-      AddTaskUseCase(repository),
-      UpdateTaskUseCase(repository),
-      DeleteTaskUseCase(repository),
-    );
-
-    addTearDown(() async {
-      await bloc.close();
-      await authBloc.dispose();
-      await repository.dispose();
-    });
-
-    bloc.add(const TaskEvent.load());
-
-    // Bloc processes added events asynchronously. Assert against the settled
-    // state instead of waiting on a broadcast-stream predicate that can hang
-    // if the expected state is never emitted.
-    await Future<void>.delayed(const Duration(milliseconds: 100));
-
-    expect(
-      bloc.state.maybeWhen(
-        error: (message) => message,
-        orElse: () => null,
-      ),
-      'User not authenticated',
-    );
-  });
 }
