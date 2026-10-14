@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:tasks/src/features/tasks/data/models/task_model.dart';
@@ -14,11 +12,22 @@ class TaskFirestoreDataSource {
       .where("userId", isEqualTo: userId)
       .orderBy("createdAt", descending: true)
       .snapshots()
-      .map(
-        (snap) => snap.docs
-            .map((doc) => TaskModel.fromDoc(doc).toEntity(doc.id))
-            .toList(),
-      );
+      .map(_parseTaskSnapshot);
+
+  /// A single legacy or malformed document must not break the entire task
+  /// stream. Valid documents continue to be delivered; invalid documents are
+  /// skipped until they are repaired in Firestore.
+  List<Task> _parseTaskSnapshot(QuerySnapshot snapshot) {
+    final tasks = <Task>[];
+    for (final doc in snapshot.docs) {
+      try {
+        tasks.add(TaskModel.fromDoc(doc).toEntity(doc.id));
+      } on Object {
+        // Ignore only this document; other valid tasks remain available.
+      }
+    }
+    return tasks;
+  }
 
   Future<void> addTask(Task task) => _ref.add(task.toJson());
 
