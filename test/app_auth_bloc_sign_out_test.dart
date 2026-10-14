@@ -24,10 +24,10 @@ void main() {
       final sub = bloc.stream.listen(emitted.add);
 
       bloc.add(AppAuthStarted());
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       bloc.add(AppAuthSignOutRequested());
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       expect(
         emitted.any(
@@ -35,12 +35,14 @@ void main() {
               e is AppAuthState &&
               e.maybeWhen(unauthenticated: (_) => true, orElse: () => false),
         ),
-        true,
+        isTrue,
       );
 
       await sub.cancel();
       await bloc.close();
-      test('keeps authenticated state when sign out fails', () async {
+    });
+
+    test('keeps authenticated state when sign out fails', () async {
       final repo = FakeAuthRepository();
       final bloc = AppAuthBloc(
         repository: repo,
@@ -79,6 +81,5 @@ void main() {
       await sub.cancel();
       await bloc.close();
     });
-  });
   });
 }
