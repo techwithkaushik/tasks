@@ -85,23 +85,34 @@ class TaskPage extends StatelessWidget {
               effect: (message, taskId, previous) {
                 final messenger = ScaffoldMessenger.of(context);
                 messenger.hideCurrentSnackBar();
+                final isConnectionNotice = message.startsWith("Connection lost.");
+                final action = taskId.isEmpty
+                    ? (isConnectionNotice
+                        ? SnackBarAction(
+                            label: "Retry",
+                            onPressed: () => context.read<TaskBloc>().add(
+                              const TaskEvent.load(),
+                            ),
+                          )
+                        : null)
+                    : SnackBarAction(
+                        label: "Undo",
+                        onPressed: () {
+                          context.read<TaskBloc>().add(
+                            TaskEvent.updateStatus(
+                              taskId: taskId,
+                              status: previous,
+                              showSnackBar: false,
+                            ),
+                          );
+                        },
+                      );
                 messenger.showSnackBar(
                   SnackBar(
                     content: Text(message),
-                    duration: const Duration(seconds: 3),
+                    duration: const Duration(seconds: 4),
                     persist: false,
-                    action: SnackBarAction(
-                      label: "Undo",
-                      onPressed: () {
-                        context.read<TaskBloc>().add(
-                          TaskEvent.updateStatus(
-                            taskId: taskId,
-                            status: previous,
-                            showSnackBar: false,
-                          ),
-                        );
-                      },
-                    ),
+                    action: action,
                   ),
                 );
               },

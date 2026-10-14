@@ -53,6 +53,7 @@ class _FakeTaskRepository implements TaskRepository {
     if (updateFailure != null) {
       return Future<void>.error(updateFailure!);
     }
+    if (updateGate.isCompleted) return Future<void>.value();
     return updateGate.future;
   }
 
@@ -250,10 +251,10 @@ void main() {
 
     expect(
       bloc.state.maybeWhen(
-        data: (tasks) => tasks.single.status,
-        orElse: () => null,
+        effect: (message, _, __) => message.contains("No changes were applied"),
+        orElse: () => false,
       ),
-      TaskStatus.pending,
+      isTrue,
     );
   });
 
@@ -467,17 +468,110 @@ void main() {
 
     expect(
       bloc.state.maybeWhen(
-        data: (tasks) => tasks.map((item) => item.id).toList(),
-        orElse: () => <String>[],
+        effect: (message, _, __) => message.contains("Couldn't"),
+        orElse: () => false,
       ),
-      ['task-1'],
+      isTrue,
     );
-    expect(
-      bloc.state.maybeWhen(
-        data: (tasks) => tasks.single.title,
-        orElse: () => null,
+  });
+
+  test('status updates still work after an undo snackbar effect', () async {
+    final authBloc = _FakeAppAuthBloc(
+      AppAuthState.authenticated(
+        const UserEntity(uid: 'user-1', isEmailVerified: true),
       ),
-      'Test task',
+    );
+    final repository = _FakeTaskRepository();
+    locator.registerSingleton<AppAuthBloc>(authBloc);
+    final bloc = TaskBloc(
+      LoadTaskUseCase(repository),
+      AddTaskUseCase(repository),
+      UpdateTaskUseCase(repository),
+      DeleteTaskUseCase(repository),
+    );
+    addTearDown(() async {
+      await bloc.close();
+      await authBloc.dispose();
+      await repository.dispose();
+    });
+
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    repository.taskStream.add([_task()]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.length == 1,
+        orElse: () => false,
+      ),
+    );
+    bloc.add(const TaskEvent.updateStatus(
+      taskId: 'task-1',
+      status: TaskStatus.completed,
+      showSnackBar: true,
+    ));
+    await Future<void>.delayed(Duration.zero);
+    repository.updateGate.complete();
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        effect: (message, _, __) => message.contains('Status changed'),
+        orElse: () => false,
+      ),
+    );
+
+    bloc.add(const TaskEvent.updateStatus(
+      taskId: 'task-1',
+      status: TaskStatus.pending,
+    ));
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.single.status == TaskStatus.pending,
+        orElse: () => false,
+      ),
+    );
+    expect(repository.lastUpdatedTask?.status, TaskStatus.pending);
+  });
+
+  test('cached tasks remain available after a transient stream error', () async {
+    final authBloc = _FakeAppAuthBloc(
+      AppAuthState.authenticated(
+        const UserEntity(uid: 'user-1', isEmailVerified: true),
+      ),
+    );
+    final repository = _FakeTaskRepository();
+    locator.registerSingleton<AppAuthBloc>(authBloc);
+    final bloc = TaskBloc(
+      LoadTaskUseCase(repository),
+      AddTaskUseCase(repository),
+      UpdateTaskUseCase(repository),
+      DeleteTaskUseCase(repository),
+    );
+    addTearDown(() async {
+      await bloc.close();
+      await authBloc.dispose();
+      await repository.dispose();
+    });
+
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    repository.taskStream.add([_task()]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.length == 1,
+        orElse: () => false,
+      ),
+    );
+    repository.taskStream.addError(StateError('temporary network loss'));
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        effect: (message, _, __) => message.startsWith('Connection lost.'),
+        orElse: () => false,
+      ),
+    );
+
+    repository.taskStream.add([_task().copyWith(title: 'Recovered task')]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.single.title == 'Recovered task',
+        orElse: () => false,
+      ),
     );
   });
 

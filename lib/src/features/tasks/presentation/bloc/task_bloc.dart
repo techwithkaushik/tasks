@@ -34,6 +34,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final DeleteTaskUseCase deleteTaskUseCase;
   late StreamSubscription<AppAuthState> _authSubscription;
   UserEntity? _currentUser;
+  List<Task> _lastTasks = [];
+  String? _tasksUserId;
+  bool _hasLoadedTasks = false;
 
   TaskBloc(
     this.loadTaskUseCase,
@@ -66,11 +69,17 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         authenticated: (user) {
           if (_currentUser?.uid != user.uid) {
             _currentUser = user;
+            _lastTasks = [];
+            _tasksUserId = user.uid;
+            _hasLoadedTasks = false;
             add(const TaskEvent.load());
           }
         },
         unauthenticated: (_) {
           _currentUser = null;
+          _lastTasks = [];
+          _tasksUserId = null;
+          _hasLoadedTasks = false;
           // A new load event uses restartable() to cancel any previous user's
           // Firestore stream before displaying the signed-out state.
           add(const TaskEvent.load());
@@ -92,8 +101,16 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     // for one account to publish data after the active account changes.
     final user = _currentUser;
     if (user == null) {
+      _lastTasks = [];
+      _tasksUserId = null;
+      _hasLoadedTasks = false;
       emit(const TaskState.error("User not authenticated"));
       return;
+    }
+    if (_tasksUserId != user.uid) {
+      _lastTasks = [];
+      _tasksUserId = user.uid;
+      _hasLoadedTasks = false;
     }
 
     try {
@@ -105,6 +122,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
                 ? const TaskState.error("User not authenticated")
                 : const TaskState.loading();
           }
+          _lastTasks = tasks;
+          _hasLoadedTasks = true;
           return TaskState.data(tasks: tasks);
         },
         onError: (error, stackTrace) {
@@ -112,6 +131,13 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
             return _currentUser == null
                 ? const TaskState.error("User not authenticated")
                 : const TaskState.loading();
+          }
+          if (_hasLoadedTasks) {
+            return TaskState.effect(
+              message: "Connection lost. Showing the last synced tasks.",
+              taskId: "",
+              previous: TaskStatus.pending,
+            );
           }
           return TaskState.error(error.toString());
         },
@@ -127,6 +153,16 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     add(const TaskEvent.load());
   }
 
+  void _notifyWriteFailure(Emitter<TaskState> emit, String message) {
+    emit(
+      TaskState.effect(
+        message: message,
+        taskId: "",
+        previous: TaskStatus.pending,
+      ),
+    );
+  }
+
   Future<void> _onAdd(_Add event, Emitter<TaskState> emit) async {
     final user = _currentUser;
     if (user == null || event.task.userId != user.uid) return;
@@ -134,8 +170,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     try {
       await addTaskUseCase(event.task);
     } catch (_) {
-      // A failed write must not escape the BLoC event handler as an
-      // unhandled asynchronous error. The task stream remains authoritative.
+      if (_currentUser?.uid == user.uid) {
+        _notifyWriteFailure(
+          emit,
+          "Couldn't add the task. Check your connection and try again.",
+        );
+      }
     }
   }
 
@@ -146,7 +186,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     try {
       await updateTaskUseCase(event.task);
     } catch (_) {
-      // Firestore snapshots remain the source of truth after failed writes.
+      if (_currentUser?.uid == user.uid) {
+        _notifyWriteFailure(
+          emit,
+          "Couldn't save task changes. Check your connection and try again.",
+        );
+      }
     }
   }
 
@@ -155,15 +200,14 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     Emitter<TaskState> emit,
   ) async {
     final user = _currentUser;
-    final current = state;
-    if (user == null || current is! _Data) return;
+    if (user == null || !_hasLoadedTasks) return;
 
-    final taskIndex = current.tasks.indexWhere(
+    final taskIndex = _lastTasks.indexWhere(
       (t) => t.id == event.taskId && t.userId == user.uid,
     );
     if (taskIndex < 0) return;
 
-    final task = current.tasks[taskIndex];
+    final task = _lastTasks[taskIndex];
     if (task.status == event.status) return;
 
     final updated = task.copyWith(
@@ -177,8 +221,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     try {
       await updateTaskUseCase(updated);
     } catch (_) {
-      // Keep the current state unchanged when persistence fails. In
-      // particular, do not publish an optimistic status that was not saved.
+      if (_currentUser?.uid == user.uid) {
+        _notifyWriteFailure(
+          emit,
+          "Couldn't update task status. No changes were applied.",
+        );
+      }
       return;
     }
 
@@ -189,13 +237,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     // account's state after an authentication switch.
     if (_currentUser?.uid != user.uid) return;
 
-    final latestState = state;
-    if (latestState is _Data) {
-      final newList = latestState.tasks
-          .map((t) => t.id == updated.id && t.userId == user.uid ? updated : t)
-          .toList();
-      emit(TaskState.data(tasks: newList));
-    }
+    final newList = _lastTasks
+        .map((t) => t.id == updated.id && t.userId == user.uid ? updated : t)
+        .toList();
+    _lastTasks = newList;
+    emit(TaskState.data(tasks: newList));
 
     if (event.showSnackBar) {
       emit(
@@ -210,10 +256,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onDelete(_Delete event, Emitter<TaskState> emit) async {
     final user = _currentUser;
-    final current = state;
-    if (user == null || current is! _Data) return;
+    if (user == null || !_hasLoadedTasks) return;
 
-    final belongsToUser = current.tasks.any(
+    final belongsToUser = _lastTasks.any(
       (task) => task.id == event.taskId && task.userId == user.uid,
     );
     if (!belongsToUser) return;
@@ -221,8 +266,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     try {
       await deleteTaskUseCase(event.taskId);
     } catch (_) {
-      // Keep Firestore snapshots authoritative; failed deletes are not
-      // optimistically reflected in the visible task list.
+      if (_currentUser?.uid == user.uid) {
+        _notifyWriteFailure(
+          emit,
+          "Couldn't delete the task. Check your connection and try again.",
+        );
+      }
     }
   }
 }
