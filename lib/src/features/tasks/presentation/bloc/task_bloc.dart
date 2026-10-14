@@ -155,10 +155,16 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     // leave the UI showing a status that Firestore rejected.
     await updateTaskUseCase(updated);
 
-    final newList = current.tasks
-        .map((t) => t.id == updated.id ? updated : t)
-        .toList();
-    emit(TaskState.data(tasks: newList));
+    // A Firestore snapshot may have updated the list while the write was
+    // in flight. Apply the status change to the latest state, not the stale
+    // snapshot captured before awaiting the write.
+    final latestState = state;
+    if (latestState is _Data) {
+      final newList = latestState.tasks
+          .map((t) => t.id == updated.id ? updated : t)
+          .toList();
+      emit(TaskState.data(tasks: newList));
+    }
 
     if (event.showSnackBar) {
       emit(
