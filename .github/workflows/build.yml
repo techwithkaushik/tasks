@@ -25,6 +25,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: "stable"
+          
       - name: Install dependencies
         run: flutter pub get
         
@@ -54,20 +55,7 @@ jobs:
         uses: timheuer/base64-to-file@v2.0
         with:
           fileName: "dev_keystore.jks"
-          encodedString: ${{ secrets.SIGNING_KEYSTORE }}
-          
-      - name: Setup JDK
-        uses: actions/setup-java@v6
-        with:
-          java-version: "25.0.4+101.0.LTS"
-          distribution: "temurin"
-          
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: "stable"
-          
-      - name: Install dependencies
-        run: flutter pub get
+          encodedString: ${{ secrets.SIGNING_KEYSTORE }}   
         
       - name: Assemble release APKs
         run: flutter build apk --release --split-per-abi
