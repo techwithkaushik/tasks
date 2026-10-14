@@ -45,7 +45,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<_Stop>(_onStop);
     on<_Add>(_onAdd);
     on<_Update>(_onUpdate);
-    on<_UpdateStatus>(_onUpdateStatus);
+    on<_UpdateStatus>(_onUpdateStatus, transformer: sequential());
     on<_Delete>(_onDelete);
 
     _initializeAuthListener();
@@ -127,19 +127,40 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     add(const TaskEvent.load());
   }
 
-  Future<void> _onAdd(_Add event, _) async => addTaskUseCase(event.task);
+  Future<void> _onAdd(_Add event, Emitter<TaskState> emit) async {
+    final user = _currentUser;
+    if (user == null || event.task.userId != user.uid) return;
 
-  Future<void> _onUpdate(_Update event, _) async =>
-      updateTaskUseCase(event.task);
+    try {
+      await addTaskUseCase(event.task);
+    } catch (_) {
+      // A failed write must not escape the BLoC event handler as an
+      // unhandled asynchronous error. The task stream remains authoritative.
+    }
+  }
+
+  Future<void> _onUpdate(_Update event, Emitter<TaskState> emit) async {
+    final user = _currentUser;
+    if (user == null || event.task.userId != user.uid) return;
+
+    try {
+      await updateTaskUseCase(event.task);
+    } catch (_) {
+      // Firestore snapshots remain the source of truth after failed writes.
+    }
+  }
 
   Future<void> _onUpdateStatus(
     _UpdateStatus event,
     Emitter<TaskState> emit,
   ) async {
+    final user = _currentUser;
     final current = state;
-    if (current is! _Data) return;
+    if (user == null || current is! _Data) return;
 
-    final taskIndex = current.tasks.indexWhere((t) => t.id == event.taskId);
+    final taskIndex = current.tasks.indexWhere(
+      (t) => t.id == event.taskId && t.userId == user.uid,
+    );
     if (taskIndex < 0) return;
 
     final task = current.tasks[taskIndex];
@@ -164,10 +185,14 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     // A Firestore snapshot may have updated the list while the write was
     // in flight. Apply the status change to the latest state, not the stale
     // snapshot captured before awaiting the write.
+    // Do not let a write started for a previous account mutate the new
+    // account's state after an authentication switch.
+    if (_currentUser?.uid != user.uid) return;
+
     final latestState = state;
     if (latestState is _Data) {
       final newList = latestState.tasks
-          .map((t) => t.id == updated.id ? updated : t)
+          .map((t) => t.id == updated.id && t.userId == user.uid ? updated : t)
           .toList();
       emit(TaskState.data(tasks: newList));
     }
@@ -183,6 +208,21 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
 
-  Future<void> _onDelete(_Delete event, _) async =>
-      deleteTaskUseCase(event.taskId);
+  Future<void> _onDelete(_Delete event, Emitter<TaskState> emit) async {
+    final user = _currentUser;
+    final current = state;
+    if (user == null || current is! _Data) return;
+
+    final belongsToUser = current.tasks.any(
+      (task) => task.id == event.taskId && task.userId == user.uid,
+    );
+    if (!belongsToUser) return;
+
+    try {
+      await deleteTaskUseCase(event.taskId);
+    } catch (_) {
+      // Keep Firestore snapshots authoritative; failed deletes are not
+      // optimistically reflected in the visible task list.
+    }
+  }
 }
