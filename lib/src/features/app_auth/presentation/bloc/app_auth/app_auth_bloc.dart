@@ -96,8 +96,8 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
         add(AppAuthUserChanged(user));
       },
       onError: (Object error, StackTrace stackTrace) {
-        // A stream error is not proof that the user signed out. Show a
-        // recoverable error and leave the stream subscribed for later updates.
+        // A stream error is not proof that the user signed out. Preserve the
+        // last known session and leave the listener active for later updates.
         add(AppAuthStreamFailed());
       },
     );
