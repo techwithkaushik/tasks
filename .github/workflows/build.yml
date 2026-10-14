@@ -44,7 +44,31 @@ jobs:
       - name: Analyze
         run: flutter analyze .
 
+      - name: Prepare release metadata
+        id: release_meta
+        run: |
+          set -euo pipefail
+          VERSION_LINE="$(sed -n 's/^version:[[:space:]]*//p' pubspec.yaml | head -n 1)"
+          VERSION="${VERSION_LINE%%+*}"
+          BUILD_NUMBER="${VERSION_LINE#*+}"
+          if [ "$BUILD_NUMBER" = "$VERSION_LINE" ]; then BUILD_NUMBER=1; fi
+          SHORT_SHA="${GITHUB_SHA::12}"
+          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
+            SIGNING_MODE=unsigned
+          else
+            SIGNING_MODE=signed
+          fi
+          {
+            echo "version=$VERSION"
+            echo "build_number=$BUILD_NUMBER"
+            echo "short_sha=$SHORT_SHA"
+            echo "signing_mode=$SIGNING_MODE"
+          } >> "$GITHUB_OUTPUT"
+
+      # Pull requests (especially from forks) do not receive repository secrets.
+      # They still run a release-mode build, unsigned, after all quality gates pass.
       - name: Validate release signing secrets
+        if: github.event_name != 'pull_request'
         env:
           SIGNING_KEYSTORE: ${{ secrets.SIGNING_KEYSTORE }}
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
@@ -60,10 +84,11 @@ jobs:
           done
 
       - name: Decode Keystore
+        if: github.event_name != 'pull_request'
         id: keystore
         uses: timheuer/base64-to-file@v2.0
         with:
-          fileName: "dev_keystore.jks"
+          fileName: "release_keystore.jks"
           encodedString: ${{ secrets.SIGNING_KEYSTORE }}
 
       - name: Assemble release APKs
@@ -74,20 +99,47 @@ jobs:
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
 
+      - name: Create release manifest and checksums
+        run: |
+          set -euo pipefail
+          APK_DIR="build/app/outputs/flutter-apk"
+          cd "$APK_DIR"
+          sha256sum app-arm64-v8a-release.apk app-armeabi-v7a-release.apk app-x86_64-release.apk > SHA256SUMS
+          cat > RELEASE-METADATA.txt <<EOF
+          App version: ${{ steps.release_meta.outputs.version }}
+          Build number: ${{ steps.release_meta.outputs.build_number }}
+          Commit: $GITHUB_SHA
+          Ref: $GITHUB_REF
+          Signing: ${{ steps.release_meta.outputs.signing_mode }}
+          Workflow run: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID
+          EOF
+
       - uses: actions/upload-artifact@v7
         with:
-          name: tasks-arm64-v8a-release
+          name: tasks-v${{ steps.release_meta.outputs.version }}-${{ steps.release_meta.outputs.short_sha }}-${{ steps.release_meta.outputs.signing_mode }}-arm64-v8a
           path: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
           if-no-files-found: error
+          retention-days: 14
 
       - uses: actions/upload-artifact@v7
         with:
-          name: tasks-armeabi-v7a-release
+          name: tasks-v${{ steps.release_meta.outputs.version }}-${{ steps.release_meta.outputs.short_sha }}-${{ steps.release_meta.outputs.signing_mode }}-armeabi-v7a
           path: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
           if-no-files-found: error
+          retention-days: 14
 
       - uses: actions/upload-artifact@v7
         with:
-          name: tasks-x86_64-release
+          name: tasks-v${{ steps.release_meta.outputs.version }}-${{ steps.release_meta.outputs.short_sha }}-${{ steps.release_meta.outputs.signing_mode }}-x86_64
           path: build/app/outputs/flutter-apk/app-x86_64-release.apk
           if-no-files-found: error
+          retention-days: 14
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tasks-v${{ steps.release_meta.outputs.version }}-${{ steps.release_meta.outputs.short_sha }}-release-metadata
+          path: |
+            build/app/outputs/flutter-apk/SHA256SUMS
+            build/app/outputs/flutter-apk/RELEASE-METADATA.txt
+          if-no-files-found: error
+          retention-days: 14

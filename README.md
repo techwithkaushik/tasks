@@ -1,6 +1,6 @@
 # Tasks
 
-A Flutter task-management app with Firebase Authentication and Cloud Firestore. The app uses BLoC for presentation state and a layered architecture to keep UI, domain logic, and Firebase data access separate.
+A Flutter task-management app with Firebase Authentication and Cloud Firestore. The app uses BLoC for presentation state and a layered architecture to keep UI, domain logic, and Firebase data access separate. The current package version is maintained in `pubspec.yaml`.
 
 ## Features
 
@@ -65,7 +65,7 @@ The Firestore rules have emulator-based regression tests for authenticated owner
 Run them locally with Node.js 22 and Java 17:
 
 ```sh
-npm install
+npm ci --no-audit --no-fund
 npm run test:rules
 ```
 
@@ -97,9 +97,9 @@ Build split APKs locally:
 flutter build apk --release --split-per-abi
 ```
 
-The outputs are written to `build/app/outputs/flutter-apk/`.
+The outputs are written to `build/app/outputs/flutter-apk/`. A local build is unsigned unless all four signing environment variables are configured; never distribute an unsigned APK as a production release.
 
-The GitHub Actions workflow builds and uploads the three ABI-specific APKs on pushes to `main`, pull requests, scheduled runs, and manual dispatches. A signed CI release requires these repository Actions secrets:
+GitHub Actions runs dependency, code-generation, test/coverage, and analysis checks before building APKs. On pull requests, the release-mode APKs are unsigned because repository signing secrets are not available to forked PRs. On pushes to `main`, scheduled runs, and manual dispatches, the workflow requires signing secrets and builds signed APKs. Artifacts include the app version and commit SHA in their names and are retained for 14 days. A separate metadata artifact contains `RELEASE-METADATA.txt` and `SHA256SUMS` so you can identify the source commit and verify downloaded APK integrity. The signed CI build requires these repository Actions secrets:
 
 - `SIGNING_KEYSTORE` — Base64-encoded JKS keystore.
 - `SIGNING_KEY_ALIAS` — key alias.
