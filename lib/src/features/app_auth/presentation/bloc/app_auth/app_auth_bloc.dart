@@ -65,7 +65,7 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
     // First, check current user so UI doesn't stay on loading
     final currentEither = await repository.getCurrentUser();
     currentEither.fold(
-      (_) => emit(AppAuthState.unauthenticated(form: AuthFormModel.initial())),
+      (failure) => emit(AppAuthState.error(failure.message)),
       (user) {
         if (user == null) {
           emit(AppAuthState.unauthenticated(form: AuthFormModel.initial()));
@@ -75,8 +75,8 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
       },
     );
 
-    // Then start listening to repository auth state changes
-    _subscription?.cancel();
+    // Then start listening to repository auth state changes.
+    await _subscription?.cancel();
     _subscription = repository.authStateChanges().listen((user) {
       // Do not call emit from outside an event handler — dispatch an event
       // that will be handled inside the bloc's event handler.
