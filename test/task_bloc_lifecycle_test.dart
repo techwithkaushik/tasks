@@ -271,7 +271,7 @@ void main() {
 
     expect(
       bloc.state.maybeWhen(
-        effect: (message, _, __) => message.contains("No changes were applied"),
+        effect: (message, _, _) => message.contains("No changes were applied"),
         orElse: () => false,
       ),
       isTrue,
@@ -500,7 +500,7 @@ void main() {
 
     expect(
       bloc.state.maybeWhen(
-        effect: (message, _, __) => message.contains("Couldn't"),
+        effect: (message, _, _) => message.contains("Couldn't"),
         orElse: () => false,
       ),
       isTrue,
@@ -555,7 +555,7 @@ void main() {
     repository.updateGate.complete();
     await bloc.stream.firstWhere(
       (state) => state.maybeWhen(
-        effect: (message, _, __) => message.contains('Status changed'),
+        effect: (message, _, _) => message.contains('Status changed'),
         orElse: () => false,
       ),
     );
@@ -604,7 +604,7 @@ void main() {
     repository.taskStream.addError(StateError('temporary network loss'));
     await bloc.stream.firstWhere(
       (state) => state.maybeWhen(
-        effect: (message, _, __) => message.startsWith('Connection lost.'),
+        effect: (message, _, _) => message.startsWith('Connection lost.'),
         orElse: () => false,
       ),
     );
