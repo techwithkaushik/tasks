@@ -36,7 +36,7 @@ class _FakeAppAuthBloc implements AppAuthBloc {
 }
 
 class _FakeTaskRepository implements TaskRepository {
-  final taskStream = StreamController<List<Task>>();
+  final taskStream = StreamController<List<Task>>.broadcast();
   final updateGate = Completer<void>();
   Task? lastUpdatedTask;
 
@@ -234,6 +234,124 @@ void main() {
     repository.updateGate.completeError(StateError('write failed'));
     await Future<void>.delayed(const Duration(milliseconds: 20));
 
+    expect(
+      bloc.state.maybeWhen(
+        data: (tasks) => tasks.single.status,
+        orElse: () => null,
+      ),
+      TaskStatus.pending,
+    );
+  });
+
+
+  test('does not update a task owned by another account', () async {
+    final authBloc = _FakeAppAuthBloc(
+      AppAuthState.authenticated(
+        const UserEntity(uid: 'user-1', isEmailVerified: true),
+      ),
+    );
+    final repository = _FakeTaskRepository();
+    locator.registerSingleton<AppAuthBloc>(authBloc);
+
+    final bloc = TaskBloc(
+      LoadTaskUseCase(repository),
+      AddTaskUseCase(repository),
+      UpdateTaskUseCase(repository),
+      DeleteTaskUseCase(repository),
+    );
+
+    addTearDown(() async {
+      await bloc.close();
+      await authBloc.dispose();
+      await repository.dispose();
+    });
+
+    repository.taskStream.add([_task()]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.any((item) => item.id == 'task-1'),
+        orElse: () => false,
+      ),
+    );
+
+    bloc.add(
+      TaskEvent.update(
+        _task().copyWith(userId: 'user-2', title: 'Other account task'),
+      ),
+    );
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+
+    expect(repository.lastUpdatedTask, isNull);
+  });
+
+  test('in-flight status update cannot overwrite a switched account', () async {
+    final authBloc = _FakeAppAuthBloc(
+      AppAuthState.authenticated(
+        const UserEntity(uid: 'user-1', isEmailVerified: true),
+      ),
+    );
+    final repository = _FakeTaskRepository();
+    locator.registerSingleton<AppAuthBloc>(authBloc);
+
+    final bloc = TaskBloc(
+      LoadTaskUseCase(repository),
+      AddTaskUseCase(repository),
+      UpdateTaskUseCase(repository),
+      DeleteTaskUseCase(repository),
+    );
+
+    addTearDown(() async {
+      await bloc.close();
+      await authBloc.dispose();
+      await repository.dispose();
+    });
+
+    repository.taskStream.add([_task()]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.any((item) => item.id == 'task-1'),
+        orElse: () => false,
+      ),
+    );
+
+    bloc.add(
+      const TaskEvent.updateStatus(
+        taskId: 'task-1',
+        status: TaskStatus.completed,
+      ),
+    );
+    await Future<void>.delayed(Duration.zero);
+    expect(repository.lastUpdatedTask?.status, TaskStatus.completed);
+
+    await authBloc.emitState(
+      AppAuthState.authenticated(
+        const UserEntity(uid: 'user-2', isEmailVerified: true),
+      ),
+    );
+    repository.taskStream.add([
+      _task().copyWith(
+        id: 'task-2',
+        userId: 'user-2',
+        title: 'Account two task',
+      ),
+    ]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.any((item) => item.id == 'task-2'),
+        orElse: () => false,
+      ),
+    );
+
+    repository.updateGate.complete();
+    await Future<void>.delayed(const Duration(milliseconds: 20));
+
+    expect(
+      bloc.state.maybeWhen(
+        data: (tasks) => tasks.map((item) => item.id).toList(),
+        orElse: () => <String>[],
+      ),
+      ['task-2'],
+    );
     expect(
       bloc.state.maybeWhen(
         data: (tasks) => tasks.single.status,
