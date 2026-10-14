@@ -33,12 +33,118 @@ class _FakeAppAuthBloc implements AppAuthBloc {
 
   @override
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+
+  test('task stream recovers when a snapshot arrives after a network error', () async {
+    final authBloc = _FakeAppAuthBloc(
+      AppAuthState.authenticated(
+        const UserEntity(uid: 'user-1', isEmailVerified: true),
+      ),
+    );
+    final repository = _FakeTaskRepository();
+    locator.registerSingleton<AppAuthBloc>(authBloc);
+
+    final bloc = TaskBloc(
+      LoadTaskUseCase(repository),
+      AddTaskUseCase(repository),
+      UpdateTaskUseCase(repository),
+      DeleteTaskUseCase(repository),
+    );
+
+    addTearDown(() async {
+      await bloc.close();
+      await authBloc.dispose();
+      await repository.dispose();
+    });
+
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    repository.taskStream.addError(StateError('network unavailable'));
+
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        error: (_) => true,
+        orElse: () => false,
+      ),
+    );
+
+    repository.taskStream.add([_task()]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.length == 1 && tasks.single.id == 'task-1',
+        orElse: () => false,
+      ),
+    );
+
+    expect(
+      bloc.state.maybeWhen(data: (tasks) => tasks.single.title, orElse: () => null),
+      'Test task',
+    );
+  });
+
+  test('failed add, update, and delete writes do not change stream-backed data', () async {
+    final authBloc = _FakeAppAuthBloc(
+      AppAuthState.authenticated(
+        const UserEntity(uid: 'user-1', isEmailVerified: true),
+      ),
+    );
+    final repository = _FakeTaskRepository()
+      ..addFailure = StateError('add failed')
+      ..updateFailure = StateError('update failed')
+      ..deleteFailure = StateError('delete failed');
+    locator.registerSingleton<AppAuthBloc>(authBloc);
+
+    final bloc = TaskBloc(
+      LoadTaskUseCase(repository),
+      AddTaskUseCase(repository),
+      UpdateTaskUseCase(repository),
+      DeleteTaskUseCase(repository),
+    );
+
+    addTearDown(() async {
+      await bloc.close();
+      await authBloc.dispose();
+      await repository.dispose();
+    });
+
+    final task = _task();
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    repository.taskStream.add([task]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.length == 1 && tasks.single.id == task.id,
+        orElse: () => false,
+      ),
+    );
+
+    bloc.add(TaskEvent.add(task.copyWith(id: 'task-2', title: 'Unsaved task')));
+    bloc.add(TaskEvent.update(task.copyWith(title: 'Unsaved title')));
+    bloc.add(const TaskEvent.delete('task-1'));
+    await Future<void>.delayed(const Duration(milliseconds: 30));
+
+    expect(
+      bloc.state.maybeWhen(
+        data: (tasks) => tasks.map((item) => item.id).toList(),
+        orElse: () => <String>[],
+      ),
+      ['task-1'],
+    );
+    expect(
+      bloc.state.maybeWhen(
+        data: (tasks) => tasks.single.title,
+        orElse: () => null,
+      ),
+      'Test task',
+    );
+  });
+
 }
 
 class _FakeTaskRepository implements TaskRepository {
   final taskStream = StreamController<List<Task>>.broadcast();
   final updateGate = Completer<void>();
   Task? lastUpdatedTask;
+  Object? addFailure;
+  Object? updateFailure;
+  Object? deleteFailure;
 
   @override
   Stream<List<Task>> loadTasks(String userId) => taskStream.stream;
@@ -46,14 +152,21 @@ class _FakeTaskRepository implements TaskRepository {
   @override
   Future<void> updateTask(Task task) {
     lastUpdatedTask = task;
+    if (updateFailure case final failure?) {
+      return Future<void>.error(failure);
+    }
     return updateGate.future;
   }
 
   @override
-  Future<void> addTask(Task task) async {}
+  Future<void> addTask(Task task) async {
+    if (addFailure case final failure?) throw failure;
+  }
 
   @override
-  Future<void> deleteTask(String taskId) async {}
+  Future<void> deleteTask(String taskId) async {
+    if (deleteFailure case final failure?) throw failure;
+  }
 
   Future<void> dispose() => taskStream.close();
 }
