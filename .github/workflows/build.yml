@@ -58,7 +58,7 @@ jobs:
         with:
           fileName: "dev_keystore.jks"
           encodedString: ${{ secrets.SIGNING_KEYSTORE }}
-      - name: Setup JDK 17
+      - name: Setup JDK
         uses: actions/setup-java@v6
         with:
           java-version: "25.0.4+101.0.LTS"
@@ -83,5 +83,10 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: tasks-armeabi-v7a-release
+          path: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tasks-x86_64-release
           path: build/app/outputs/flutter-apk/app-x86_64-release.apk
           if-no-files-found: error
