@@ -28,7 +28,35 @@ class AppAuthPage extends StatelessWidget {
               const Scaffold(body: Center(child: CircularProgressIndicator())),
           authenticated: (_) => const HomePage(),
           unauthenticated: (form) => const SignInUpPage(),
-          error: (_) => const Scaffold(body: Center(child: Text("Error"))),
+          error: (message) => Scaffold(
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.cloud_off_outlined, size: 48),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Could not check your sign-in session',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(message, textAlign: TextAlign.center),
+                    const SizedBox(height: 20),
+                    FilledButton.icon(
+                      onPressed: () => context.read<AppAuthBloc>().add(
+                        AppAuthStarted(),
+                      ),
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
         );
       },
     );
