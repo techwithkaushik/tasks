@@ -283,8 +283,8 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
   }
 
   @override
-  Future<void> close() {
-    _subscription?.cancel();
-    return super.close();
+  Future<void> close() async {
+    await _subscription?.cancel();
+    await super.close();
   }
 }
