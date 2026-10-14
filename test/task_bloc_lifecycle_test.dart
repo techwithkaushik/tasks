@@ -139,11 +139,21 @@ void main() {
       TaskStatus.pending,
     );
 
+    repository.taskStream.add([task.copyWith(title: 'Server-side edit')]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.single.title == 'Server-side edit',
+        orElse: () => false,
+      ),
+    );
+
     repository.updateGate.complete();
 
     await bloc.stream.firstWhere(
       (state) => state.maybeWhen(
-        data: (tasks) => tasks.single.status == TaskStatus.completed,
+        data: (tasks) =>
+            tasks.single.status == TaskStatus.completed &&
+            tasks.single.title == 'Server-side edit',
         orElse: () => false,
       ),
     );
@@ -154,6 +164,13 @@ void main() {
         orElse: () => null,
       ),
       TaskStatus.completed,
+    );
+    expect(
+      bloc.state.maybeWhen(
+        data: (tasks) => tasks.single.title,
+        orElse: () => null,
+      ),
+      'Server-side edit',
     );
   });
 

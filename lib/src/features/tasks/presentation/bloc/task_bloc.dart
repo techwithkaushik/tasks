@@ -241,7 +241,16 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     if (_currentUser?.uid != user.uid) return;
 
     final newList = _lastTasks
-        .map((t) => t.id == updated.id && t.userId == user.uid ? updated : t)
+        .map((t) {
+          if (t.id != updated.id || t.userId != user.uid) return t;
+          // Preserve any unrelated fields delivered by a newer Firestore
+          // snapshot while the write was in flight.
+          return t.copyWith(
+            status: event.status,
+            lastStatus: t.status == event.status ? t.lastStatus : t.status,
+            updatedAt: updated.updatedAt,
+          );
+        })
         .toList();
     _lastTasks = newList;
     emit(TaskState.data(tasks: newList));
