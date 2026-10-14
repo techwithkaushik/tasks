@@ -166,14 +166,16 @@ void main() {
       await repository.dispose();
     });
 
-    bloc.add(const TaskEvent.load());
-
-    await bloc.stream.firstWhere(
+    // Subscribe before dispatching: the unauthenticated handler emits its
+    // error synchronously, so subscribing afterward can miss the broadcast.
+    final errorState = bloc.stream.firstWhere(
       (state) => state.maybeWhen(
         error: (message) => message == 'User not authenticated',
         orElse: () => false,
       ),
     );
+    bloc.add(const TaskEvent.load());
+    await errorState;
     expect(
       bloc.state.maybeWhen(
         error: (message) => message,
