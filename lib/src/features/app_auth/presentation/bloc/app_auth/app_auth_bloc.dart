@@ -45,7 +45,7 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
     required this.signOutUseCase,
     required this.resetPasswordUseCase,
   }) : super(AppAuthState.loading()) {
-    on<AppAuthStarted>(_onStarted);
+    on<AppAuthStarted>(_onStarted, transformer: droppable());
     on<AppAuthUserChanged>(_onUserChanged);
     on<AppAuthStreamFailed>(_onAuthStreamFailed);
     on<AppAuthEmailChanged>(_onEmailChanged);
