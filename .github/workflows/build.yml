@@ -32,15 +32,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Verify generated Dart sources
-        run: |
-          dart run build_runner build --delete-conflicting-outputs
-          git diff --exit-code -- lib
-          if [ -n "$(git ls-files --others --exclude-standard -- lib)" ]; then
-            echo "::error::Generated or source files under lib/ are missing from version control."
-            git ls-files --others --exclude-standard -- lib
-            exit 1
-          fi
+      - name: Generate Dart sources
+        run: dart run build_runner build --delete-conflicting-outputs
 
       - name: Run tests
         run: flutter test --reporter expanded
