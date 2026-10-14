@@ -41,6 +41,21 @@ void main() {
       isTrue,
     );
 
+    // A recoverable stream error must not permanently detach the listener.
+    repo.emit(
+      UserEntity(
+        uid: 'uid',
+        email: 'user@example.com',
+        name: 'Test User',
+        isEmailVerified: true,
+      ),
+    );
+    await Future.delayed(const Duration(milliseconds: 100));
+    expect(
+      bloc.state.maybeWhen(authenticated: (_) => true, orElse: () => false),
+      isTrue,
+    );
+
     await bloc.close();
   });
 }
