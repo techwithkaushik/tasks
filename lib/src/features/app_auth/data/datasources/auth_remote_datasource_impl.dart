@@ -27,12 +27,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           } catch (_) {}
           return null;
         }
-        // For other firebase auth errors, treat as unauthenticated instead of
-        // rethrowing to avoid bubbling stream exceptions to UI.
-        return null;
+        // A temporary network or service error does not mean the session has
+        // ended. Keep the locally cached user; only definitive account
+        // deletion/disablement above should force a sign-out.
+        return firebaseAuth.currentUser;
       } catch (_) {
-        // Any other unexpected error should not break the stream; return null
-        return null;
+        // Preserve the current session when reload fails for a transient or
+        // unexpected reason instead of falsely routing the user to sign-in.
+        return firebaseAuth.currentUser;
       }
     });
   }
