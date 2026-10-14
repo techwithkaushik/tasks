@@ -8,7 +8,7 @@ import 'package:tasks/src/features/app_auth/domain/usecases/reset_password_useca
 import 'helpers/fake_auth_repository.dart';
 
 void main() {
-  test('auth stream errors show a retryable error instead of signing out', () async {
+  test('auth stream errors preserve the active session and recover on later events', () async {
     final repo = FakeAuthRepository();
     final bloc = AppAuthBloc(
       repository: repo,
@@ -36,8 +36,21 @@ void main() {
     repo.emitStreamError(Exception('temporary network failure'));
     await Future.delayed(const Duration(milliseconds: 100));
 
+    // A stream failure is not proof of sign-out; keep the authenticated
+    // route and the existing user session instead of blocking the app.
     expect(
-      bloc.state.maybeWhen(error: (_) => true, orElse: () => false),
+      bloc.state.maybeWhen(
+        authenticated: (user) => user.uid == 'uid',
+        orElse: () => false,
+      ),
+      isTrue,
+    );
+
+    // A real signed-out event must still clear the remembered session.
+    repo.emit(null);
+    await Future.delayed(const Duration(milliseconds: 100));
+    expect(
+      bloc.state.maybeWhen(unauthenticated: (_) => true, orElse: () => false),
       isTrue,
     );
 

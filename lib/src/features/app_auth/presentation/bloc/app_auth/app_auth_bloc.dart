@@ -37,6 +37,7 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
   final ResetPasswordUseCase resetPasswordUseCase;
 
   StreamSubscription<UserEntity?>? _subscription;
+  UserEntity? _lastKnownUser;
 
   AppAuthBloc({
     required this.repository,
@@ -67,8 +68,17 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
     // First, check current user so UI doesn't stay on loading
     final currentEither = await repository.getCurrentUser();
     currentEither.fold(
-      (failure) => emit(AppAuthState.error(failure.message)),
+      (failure) {
+        // A transient refresh failure must not discard an already-known session.
+        final user = _lastKnownUser;
+        if (user != null) {
+          emit(AppAuthState.authenticated(user));
+        } else {
+          emit(AppAuthState.error(failure.message));
+        }
+      },
       (user) {
+        _lastKnownUser = user;
         if (user == null) {
           emit(AppAuthState.unauthenticated(form: AuthFormModel.initial()));
         } else {
@@ -95,6 +105,7 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
 
   void _onUserChanged(AppAuthUserChanged event, Emitter<AppAuthState> emit) {
     final user = event.user;
+    _lastKnownUser = user;
     if (user == null) {
       emit(AppAuthState.unauthenticated(form: AuthFormModel.initial()));
     } else {
@@ -106,6 +117,13 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
     AppAuthStreamFailed event,
     Emitter<AppAuthState> emit,
   ) {
+    // Stream errors are not sign-out events. Keep the last authenticated
+    // session and let subsequent auth events update it when the stream recovers.
+    final user = _lastKnownUser;
+    if (user != null) {
+      emit(AppAuthState.authenticated(user));
+      return;
+    }
     emit(
       AppAuthState.error(
         'Could not refresh your sign-in session. Check your connection and retry.',
@@ -214,7 +232,10 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
             form: form.copyWith(isSubmitting: false, error: f.message),
           ),
         ),
-        (user) => emit(AppAuthState.authenticated(user)),
+        (user) {
+          _lastKnownUser = user;
+          emit(AppAuthState.authenticated(user));
+        },
       );
     } else {
       final result = await signUpUseCase(
@@ -278,7 +299,10 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
       // Keep the current session/UI intact when the sign-out request fails.
       // A failed network request must not be presented as a successful logout.
       (_) {},
-      (_) => emit(AppAuthState.unauthenticated(form: AuthFormModel.initial())),
+      (_) {
+        _lastKnownUser = null;
+        emit(AppAuthState.unauthenticated(form: AuthFormModel.initial()));
+      },
     );
   }
 
