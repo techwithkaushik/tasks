@@ -50,20 +50,20 @@ class _FakeTaskRepository implements TaskRepository {
   @override
   Future<void> updateTask(Task task) {
     lastUpdatedTask = task;
-    if (updateFailure case final failure?) {
-      return Future<void>.error(failure);
+    if (updateFailure != null) {
+      return Future<void>.error(updateFailure!);
     }
     return updateGate.future;
   }
 
   @override
   Future<void> addTask(Task task) async {
-    if (addFailure case final failure?) throw failure;
+    if (addFailure != null) throw addFailure!;
   }
 
   @override
   Future<void> deleteTask(String taskId) async {
-    if (deleteFailure case final failure?) throw failure;
+    if (deleteFailure != null) throw deleteFailure!;
   }
 
   Future<void> dispose() => taskStream.close();
