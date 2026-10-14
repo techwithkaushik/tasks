@@ -10,6 +10,7 @@ class FakeAuthRepository implements AuthRepository {
   bool _loginShouldFail = false;
   bool _registerShouldFail = false;
   bool _resetPasswordShouldFail = false;
+  bool _signOutShouldFail = false;
 
   @override
   Stream<UserEntity?> authStateChanges() => _ctrl.stream;
@@ -20,6 +21,7 @@ class FakeAuthRepository implements AuthRepository {
   void setRegisterShouldFail(bool value) => _registerShouldFail = value;
   void setResetPasswordShouldFail(bool value) =>
       _resetPasswordShouldFail = value;
+  void setSignOutShouldFail(bool value) => _signOutShouldFail = value;
 
   @override
   Future<Either<AuthFailure, UserEntity>> login({
@@ -70,7 +72,12 @@ class FakeAuthRepository implements AuthRepository {
       const Right(true);
 
   @override
-  Future<Either<AuthFailure, void>> signOut() async => const Right(null);
+  Future<Either<AuthFailure, void>> signOut() async {
+    if (_signOutShouldFail) {
+      return Left(AuthFailure('Sign out failed'));
+    }
+    return const Right(null);
+  }
 
   @override
   Future<Either<AuthFailure, void>> resetPassword({
