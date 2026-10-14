@@ -238,6 +238,9 @@ void main() {
         orElse: () => false,
       ),
     );
+    final observedStates = <TaskState>[];
+    final stateSubscription = bloc.stream.listen(observedStates.add);
+    addTearDown(stateSubscription.cancel);
 
     bloc.add(
       const TaskEvent.updateStatus(
@@ -255,6 +258,15 @@ void main() {
         orElse: () => false,
       ),
       isTrue,
+    );
+    expect(
+      observedStates.where(
+        (state) => state.maybeWhen(
+          data: (tasks) => tasks.any((item) => item.status == TaskStatus.completed),
+          orElse: () => false,
+        ),
+      ),
+      isEmpty,
     );
   });
 
@@ -460,6 +472,9 @@ void main() {
         orElse: () => false,
       ),
     );
+    final observedStates = <TaskState>[];
+    final stateSubscription = bloc.stream.listen(observedStates.add);
+    addTearDown(stateSubscription.cancel);
 
     bloc.add(TaskEvent.add(task.copyWith(id: 'task-2', title: 'Unsaved task')));
     bloc.add(TaskEvent.update(task.copyWith(title: 'Unsaved title')));
@@ -472,6 +487,17 @@ void main() {
         orElse: () => false,
       ),
       isTrue,
+    );
+    expect(
+      observedStates.where(
+        (state) => state.maybeWhen(
+          data: (tasks) => tasks.any(
+            (item) => item.id == 'task-2' || item.title == 'Unsaved title',
+          ),
+          orElse: () => false,
+        ),
+      ),
+      isEmpty,
     );
   });
 
