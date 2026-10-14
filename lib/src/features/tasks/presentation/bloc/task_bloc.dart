@@ -95,12 +95,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   }
 
   Future<void> _onLoad(_Load event, Emitter<TaskState> emit) async {
-    emit(const TaskState.loading());
-
     // Capture the identity for this subscription. Never allow a stream started
     // for one account to publish data after the active account changes.
     final user = _currentUser;
     if (user == null) {
+      emit(const TaskState.loading());
       _lastTasks = [];
       _tasksUserId = null;
       _hasLoadedTasks = false;
@@ -112,6 +111,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       _tasksUserId = user.uid;
       _hasLoadedTasks = false;
     }
+
+    // Keep the last synced list visible while retrying a transient network
+    // failure. A fresh account or first load still shows the loading state.
+    if (!_hasLoadedTasks) emit(const TaskState.loading());
 
     try {
       await emit.forEach<List<Task>>(
