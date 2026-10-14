@@ -253,8 +253,13 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
     AppAuthSignOutRequested e,
     Emitter<AppAuthState> emit,
   ) async {
-    await signOutUseCase(const NoParams());
-    emit(AppAuthState.unauthenticated(form: AuthFormModel.initial()));
+    final result = await signOutUseCase(const NoParams());
+    result.fold(
+      // Keep the current session/UI intact when the sign-out request fails.
+      // A failed network request must not be presented as a successful logout.
+      (_) {},
+      (_) => emit(AppAuthState.unauthenticated(form: AuthFormModel.initial())),
+    );
   }
 
   @override
