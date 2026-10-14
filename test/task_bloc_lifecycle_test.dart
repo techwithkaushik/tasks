@@ -38,7 +38,7 @@ class _FakeAppAuthBloc implements AppAuthBloc {
 }
 
 class _FakeTaskRepository implements TaskRepository {
-  final taskStream = StreamController<List<Task>>.broadcast();
+  final taskStream = StreamController<List<Task>>();
   final updateGate = Completer<void>();
   Task? lastUpdatedTask;
 
