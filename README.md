@@ -76,8 +76,11 @@ The test command starts the Firestore Emulator, runs the rules tests, and shuts 
 Run the same core checks used by GitHub Actions:
 
 ```sh
-flutter pub get
-flutter test --reporter expanded
+flutter pub get --enforce-lockfile
+dart run build_runner build --delete-conflicting-outputs
+git diff --exit-code -- '**/*.freezed.dart' '**/*.g.dart'
+git diff --exit-code -- pubspec.lock
+flutter test --coverage --reporter expanded
 flutter analyze .
 ```
 
