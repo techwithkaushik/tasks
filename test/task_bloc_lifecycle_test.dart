@@ -99,6 +99,7 @@ void main() {
     });
 
     final task = _task();
+    await Future<void>.delayed(const Duration(milliseconds: 10));
     repository.taskStream.add([task]);
 
     await bloc.stream.firstWhere(
@@ -167,6 +168,7 @@ void main() {
     });
 
     final task = _task();
+    await Future<void>.delayed(const Duration(milliseconds: 10));
     repository.taskStream.add([task]);
     await bloc.stream.firstWhere(
       (state) => state.maybeWhen(
@@ -216,6 +218,7 @@ void main() {
     });
 
     final task = _task();
+    await Future<void>.delayed(const Duration(milliseconds: 10));
     repository.taskStream.add([task]);
     await bloc.stream.firstWhere(
       (state) => state.maybeWhen(
@@ -266,6 +269,7 @@ void main() {
       await repository.dispose();
     });
 
+    await Future<void>.delayed(const Duration(milliseconds: 10));
     repository.taskStream.add([_task()]);
     await bloc.stream.firstWhere(
       (state) => state.maybeWhen(
@@ -306,6 +310,7 @@ void main() {
       await repository.dispose();
     });
 
+    await Future<void>.delayed(const Duration(milliseconds: 10));
     repository.taskStream.add([_task()]);
     await bloc.stream.firstWhere(
       (state) => state.maybeWhen(
@@ -328,6 +333,7 @@ void main() {
         const UserEntity(uid: 'user-2', isEmailVerified: true),
       ),
     );
+    await Future<void>.delayed(const Duration(milliseconds: 10));
     repository.taskStream.add([
       _task().copyWith(
         id: 'task-2',
