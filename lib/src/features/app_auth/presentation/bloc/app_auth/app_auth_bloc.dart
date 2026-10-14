@@ -15,6 +15,7 @@ library;
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:tasks/src/core/validation/validators.dart';
 import 'package:tasks/src/features/app_auth/domain/entities/user_entity.dart';
 import 'package:tasks/src/features/app_auth/domain/repositories/auth_repository.dart';
@@ -51,10 +52,10 @@ class AppAuthBloc extends Bloc<AppAuthEvent, AppAuthState> {
     on<AppAuthPasswordChanged>(_onPasswordChanged);
     on<AppAuthConfirmPasswordChanged>(_onConfirmPasswordChanged);
     on<AppAuthModeToggled>(_onModeToggled);
-    on<AppAuthSubmitted>(_onSubmitted);
-    on<AppAuthForgotPassword>(_onForgotPassword);
+    on<AppAuthSubmitted>(_onSubmitted, transformer: droppable());
+    on<AppAuthForgotPassword>(_onForgotPassword, transformer: droppable());
     on<AppAuthObscureToggled>(_onObscureToggled);
-    on<AppAuthSignOutRequested>(_onSignOutRequested);
+    on<AppAuthSignOutRequested>(_onSignOutRequested, transformer: droppable());
 
     add(AppAuthStarted());
   }
