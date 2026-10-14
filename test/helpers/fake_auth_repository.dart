@@ -11,6 +11,7 @@ class FakeAuthRepository implements AuthRepository {
   bool _registerShouldFail = false;
   bool _resetPasswordShouldFail = false;
   bool _signOutShouldFail = false;
+  bool _currentUserShouldFail = false;
 
   @override
   Stream<UserEntity?> authStateChanges() => _ctrl.stream;
@@ -22,6 +23,7 @@ class FakeAuthRepository implements AuthRepository {
   void setResetPasswordShouldFail(bool value) =>
       _resetPasswordShouldFail = value;
   void setSignOutShouldFail(bool value) => _signOutShouldFail = value;
+  void setCurrentUserShouldFail(bool value) => _currentUserShouldFail = value;
 
   @override
   Future<Either<AuthFailure, UserEntity>> login({
@@ -60,8 +62,12 @@ class FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<Either<AuthFailure, UserEntity?>> getCurrentUser() async =>
-      const Right(null);
+  Future<Either<AuthFailure, UserEntity?>> getCurrentUser() async {
+    if (_currentUserShouldFail) {
+      return Left(AuthFailure('Could not check current user'));
+    }
+    return const Right(null);
+  }
 
   @override
   Future<Either<AuthFailure, void>> sendEmailVerification() async =>
