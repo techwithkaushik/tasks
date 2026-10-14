@@ -68,7 +68,7 @@ class TaskRow extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    if (task.description!.isNotEmpty)
+                    if (task.description?.isNotEmpty ?? false)
                       Text(
                         task.description!,
                         style: TextStyle(
