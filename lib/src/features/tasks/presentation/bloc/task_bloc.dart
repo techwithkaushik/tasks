@@ -6,14 +6,10 @@
 /// - Listening to authentication state changes
 /// - Automatically reloading tasks when user changes
 /// - Handling task status updates with undo functionality
-///
-/// The BLoC automatically listens to AppAuthBloc and reloads tasks when:
-/// - User first authenticates
-/// - User switches to a different account
-/// - User logs out
 library;
 
 import 'dart:async';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:tasks/service_locator.dart';
@@ -30,15 +26,7 @@ part 'task_event.dart';
 part 'task_state.dart';
 part 'task_bloc.freezed.dart';
 
-/// Manages task state and operations
-///
-/// Events:
-/// - `load`: Loads tasks for the current user
-/// - `stop`: Stops loading and clears tasks
-/// - `add`: Adds a new task
-/// - `update`: Updates an existing task
-/// - `updateStatus`: Changes a task's status (completed, pending, deleted)
-/// - `delete`: Marks a task as deleted
+/// Manages task state and operations.
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
   final LoadTaskUseCase loadTaskUseCase;
   final AddTaskUseCase addTaskUseCase;
@@ -53,28 +41,19 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     this.updateTaskUseCase,
     this.deleteTaskUseCase,
   ) : super(const TaskState.loading()) {
-    /// Register event handlers
-    on<_Load>(_onLoad);
+    on<_Load>(_onLoad, transformer: restartable());
     on<_Stop>(_onStop);
     on<_Add>(_onAdd);
     on<_Update>(_onUpdate);
     on<_UpdateStatus>(_onUpdateStatus);
     on<_Delete>(_onDelete);
 
-    // Initialize listener for auth state changes
     _initializeAuthListener();
   }
 
-  /// Sets up listener for authentication state changes
-  ///
-  /// This ensures that:
-  /// 1. Tasks are loaded when user authenticates
-  /// 2. Tasks are reloaded if user switches accounts
-  /// 3. Tasks are cleared when user logs out
   void _initializeAuthListener() {
     final authBloc = sl<AppAuthBloc>();
 
-    // Load tasks if user is already authenticated on startup
     authBloc.state.whenOrNull(
       authenticated: (user) {
         _currentUser = user;
@@ -82,58 +61,70 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       },
     );
 
-    // Listen for future auth state changes
     _authSubscription = authBloc.stream.listen((authState) {
       authState.whenOrNull(
         authenticated: (user) {
-          // If user changed, reload tasks for new user
           if (_currentUser?.uid != user.uid) {
             _currentUser = user;
             add(const TaskEvent.load());
           }
         },
-        unauthenticated: (form) {
-          // Clear current user and stop task loading
+        unauthenticated: (_) {
           _currentUser = null;
-          add(const TaskEvent.stop());
+          // A new load event uses restartable() to cancel any previous user's
+          // Firestore stream before displaying the signed-out state.
+          add(const TaskEvent.load());
         },
       );
     });
   }
 
   @override
-  Future<void> close() {
-    _authSubscription.cancel();
-    return super.close();
+  Future<void> close() async {
+    await _authSubscription.cancel();
+    await super.close();
   }
 
-  /// Loads tasks for the current authenticated user
-  ///
-  /// Emits:
-  /// - `TaskState.loading()` initially
-  /// - `TaskState.data(tasks)` when tasks are loaded
-  /// - `TaskState.error(message)` if user is not authenticated or error occurs
   Future<void> _onLoad(_Load event, Emitter<TaskState> emit) async {
     emit(const TaskState.loading());
 
-    if (_currentUser == null) {
+    // Capture the identity for this subscription. Never allow a stream started
+    // for one account to publish data after the active account changes.
+    final user = _currentUser;
+    if (user == null) {
       emit(const TaskState.error("User not authenticated"));
       return;
     }
 
     try {
       await emit.forEach<List<Task>>(
-        loadTaskUseCase(_currentUser!.uid),
-        onData: (tasks) => TaskState.data(tasks: tasks),
-        onError: (error, stackTrace) => TaskState.error(error.toString()),
+        loadTaskUseCase(user.uid),
+        onData: (tasks) {
+          if (_currentUser?.uid != user.uid) {
+            return _currentUser == null
+                ? const TaskState.error("User not authenticated")
+                : const TaskState.loading();
+          }
+          return TaskState.data(tasks: tasks);
+        },
+        onError: (error, stackTrace) {
+          if (_currentUser?.uid != user.uid) {
+            return _currentUser == null
+                ? const TaskState.error("User not authenticated")
+                : const TaskState.loading();
+          }
+          return TaskState.error(error.toString());
+        },
       );
-    } catch (e) {
-      // Ignore errors when event is interrupted
+    } catch (_) {
+      // A restarted load intentionally cancels the previous stream handler.
     }
   }
 
   Future<void> _onStop(_Stop event, Emitter<TaskState> emit) async {
-    emit(const TaskState.error("User not authenticated"));
+    // Route stop through the restartable load handler so an active task stream
+    // is cancelled before the signed-out state is emitted.
+    add(const TaskEvent.load());
   }
 
   Future<void> _onAdd(_Add event, _) async => addTaskUseCase(event.task);
@@ -148,20 +139,39 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     final current = state;
     if (current is! _Data) return;
 
-    final task = current.tasks.firstWhere((t) => t.id == event.taskId);
+    final taskIndex = current.tasks.indexWhere((t) => t.id == event.taskId);
+    if (taskIndex < 0) return;
+
+    final task = current.tasks[taskIndex];
     if (task.status == event.status) return;
+
     final updated = task.copyWith(
       status: event.status,
       lastStatus: task.status,
       updatedAt: DateTime.now(),
     );
 
-    updateTaskUseCase(updated);
+    // Persist before publishing the changed state. A failed write must not
+    // leave the UI showing a status that Firestore rejected.
+    try {
+      await updateTaskUseCase(updated);
+    } catch (_) {
+      // Keep the current state unchanged when persistence fails. In
+      // particular, do not publish an optimistic status that was not saved.
+      return;
+    }
 
-    final newList = current.tasks
-        .map((t) => t.id == updated.id ? updated : t)
-        .toList();
-    emit(TaskState.data(tasks: newList));
+    // A Firestore snapshot may have updated the list while the write was
+    // in flight. Apply the status change to the latest state, not the stale
+    // snapshot captured before awaiting the write.
+    final latestState = state;
+    if (latestState is _Data) {
+      final newList = latestState.tasks
+          .map((t) => t.id == updated.id ? updated : t)
+          .toList();
+      emit(TaskState.data(tasks: newList));
+    }
+
     if (event.showSnackBar) {
       emit(
         TaskState.effect(
