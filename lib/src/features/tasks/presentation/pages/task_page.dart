@@ -192,48 +192,14 @@ class _TaskPageState extends State<TaskPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 12, 8, 16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Your workspace',
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.w800, letterSpacing: -0.5)),
-                            const SizedBox(height: 4),
-                            Text('Stay focused. Make today count.',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                            const SizedBox(height: 18),
-                            Row(children: [
-                              Expanded(child: _TaskSummaryCard(label: 'To do', count: pendingCount,
-                                icon: Icons.radio_button_unchecked_rounded,
-                                color: Theme.of(context).colorScheme.primary)),
-                              const SizedBox(width: 8),
-                              Expanded(child: _TaskSummaryCard(label: 'In progress', count: progressCount,
-                                icon: Icons.timelapse_rounded, color: const Color(0xFF159D85))),
-                              const SizedBox(width: 8),
-                              Expanded(child: _TaskSummaryCard(label: 'Completed', count: completedCount,
-                                icon: Icons.task_alt_rounded, color: const Color(0xFF8260D8))),
-                            ]),
-                            if (overdueCount > 0) ...[
-                              const SizedBox(height: 12),
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.errorContainer,
-                                  borderRadius: BorderRadius.circular(14)),
-                                child: Row(children: [
-                                  Icon(Icons.warning_amber_rounded,
-                                    color: Theme.of(context).colorScheme.onErrorContainer),
-                                  const SizedBox(width: 8),
-                                  Expanded(child: Text('$overdueCount overdue task(s) need attention',
-                                    style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer,
-                                      fontWeight: FontWeight.w600))),
-                                ]),
-                              ),
-                            ],
-                            const SizedBox(height: 20),
+                        padding: const EdgeInsets.fromLTRB(8, 16, 8, 12),
+                        child: Text(
+                          'Find and manage your tasks',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
                             TextField(
                               onChanged: (value) => setState(() => _query = value),
                               decoration: InputDecoration(
