@@ -173,9 +173,6 @@ class _TaskPageState extends State<TaskPage> {
                   final taskList = tasks
                       .where((t) => t.status != TaskStatus.deleted && t.status != TaskStatus.archived)
                       .toList();
-                  final pendingCount = taskList.where((t) => t.status == TaskStatus.pending).length;
-                  final progressCount = taskList.where((t) => t.status == TaskStatus.inProgress).length;
-                  final completedCount = taskList.where((t) => t.status == TaskStatus.completed).length;
                   final overdueCount = taskList.where((t) =>
                     t.dueDate != null && t.dueDate!.isBefore(DateTime.now()) &&
                     t.status != TaskStatus.completed && t.status != TaskStatus.skipped
@@ -618,31 +615,3 @@ class _TaskPageState extends State<TaskPage> {
 
 enum _TaskSort { dueDate, priority, newest, oldest }
 
-class _TaskSummaryCard extends StatelessWidget {
-  final String label;
-  final int count;
-  final IconData icon;
-  final Color color;
-  const _TaskSummaryCard({required this.label, required this.count, required this.icon, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Container(
-      padding: const EdgeInsets.all(11),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: color.withValues(alpha: 0.20)),
-      ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Icon(icon, color: color, size: 20),
-        const SizedBox(height: 10),
-        Text('$count', style: theme.textTheme.headlineSmall?.copyWith(color: color, fontWeight: FontWeight.w800)),
-        const SizedBox(height: 2),
-        Text(label, maxLines: 1, overflow: TextOverflow.ellipsis,
-          style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600)),
-      ]),
-    );
-  }
-}
