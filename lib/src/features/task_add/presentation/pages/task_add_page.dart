@@ -37,7 +37,10 @@ class _AddTaskView extends StatelessWidget {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text(l.addTask)),
+        appBar: AppBar(
+          title: Text(l.addTask),
+          centerTitle: false,
+        ),
         body: Padding(
           padding: const EdgeInsets.all(16),
           child: SingleChildScrollView(
@@ -127,13 +130,76 @@ class _TaskForm extends StatelessWidget {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         children: [
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.primaryContainer,
+                  Theme.of(context).colorScheme.surfaceContainerHighest,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Icon(Icons.add_task_rounded,
+                    color: Theme.of(context).colorScheme.primary, size: 28),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Make it happen',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        )),
+                      const SizedBox(height: 4),
+                      Text('Give your next task a clear goal and priority.',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        )),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 22),
+          Text('TASK DETAILS',
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.1,
+            )),
+          const SizedBox(height: 10),
           // TITLE
           TextFormField(
             initialValue: state.title,
+            textCapitalization: TextCapitalization.sentences,
+            maxLength: 120,
             decoration: InputDecoration(
               labelText: l.title,
+              hintText: 'e.g. Finish project proposal',
+              prefixIcon: const Icon(Icons.edit_note_rounded),
               errorText: state.titleError,
               errorMaxLines: 2,
+              filled: true,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+              ),
             ),
             onChanged: onTitleChanged,
             validator: (v) => v == null || v.trim().isEmpty ? l.required : null,
@@ -149,15 +215,15 @@ class _TaskForm extends StatelessWidget {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.orange[50],
-                  border: Border.all(color: Colors.orange),
-                  borderRadius: BorderRadius.circular(4),
+                  color: Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.65),
+                  border: Border.all(color: Theme.of(context).colorScheme.error.withValues(alpha: 0.4)),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: Row(
                   children: [
                     Icon(
                       Icons.warning_outlined,
-                      color: Colors.orange[700],
+                      color: Theme.of(context).colorScheme.error,
                       size: 18,
                     ),
                     const SizedBox(width: 8),
@@ -165,7 +231,7 @@ class _TaskForm extends StatelessWidget {
                       child: Text(
                         'A task with this title already exists',
                         style: TextStyle(
-                          color: Colors.orange[700],
+                          color: Theme.of(context).colorScheme.onErrorContainer,
                           fontSize: 12,
                         ),
                       ),
@@ -180,7 +246,15 @@ class _TaskForm extends StatelessWidget {
           // DESCRIPTION
           TextFormField(
             initialValue: state.description,
-            decoration: InputDecoration(labelText: l.description),
+            textCapitalization: TextCapitalization.sentences,
+            decoration: InputDecoration(
+              labelText: l.description,
+              hintText: 'Add details or notes (optional)',
+              prefixIcon: const Icon(Icons.notes_rounded),
+              alignLabelWithHint: true,
+              filled: true,
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+            ),
             maxLines: 3,
             onChanged: onDescriptionChanged,
           ),
@@ -190,7 +264,11 @@ class _TaskForm extends StatelessWidget {
           // TYPE
           DropdownButtonFormField<TaskType>(
             initialValue: state.type,
-            decoration: InputDecoration(labelText: l.taskType),
+            decoration: InputDecoration(
+              labelText: l.taskType,
+              prefixIcon: const Icon(Icons.category_outlined),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+            ),
             items: TaskType.values
                 .map((t) => DropdownMenuItem(value: t, child: Text(t.name)))
                 .toList(),
@@ -202,7 +280,11 @@ class _TaskForm extends StatelessWidget {
           // PRIORITY
           DropdownButtonFormField<TaskPriority>(
             initialValue: state.priority,
-            decoration: InputDecoration(labelText: l.priority),
+            decoration: InputDecoration(
+              labelText: l.priority,
+              prefixIcon: const Icon(Icons.flag_outlined),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+            ),
             items: TaskPriority.values
                 .map((p) => DropdownMenuItem(value: p, child: Text(p.name)))
                 .toList(),
@@ -214,15 +296,33 @@ class _TaskForm extends StatelessWidget {
           // ESTIMATED TIME
           TextFormField(
             initialValue: state.estimatedMinutes.toString(),
-            decoration: InputDecoration(labelText: l.estimatedMinutes),
+            decoration: InputDecoration(
+              labelText: l.estimatedMinutes,
+              hintText: '30',
+              prefixIcon: const Icon(Icons.timer_outlined),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+            ),
             keyboardType: TextInputType.number,
-            onChanged: (v) => onEstimatedMinutesChanged(int.tryParse(v) ?? 30),
+            onChanged: (v) {
+              final parsed = int.tryParse(v);
+              if (parsed != null && parsed > 0 && parsed <= 1440) {
+                onEstimatedMinutesChanged(parsed);
+              }
+            },
           ),
 
           const SizedBox(height: 12),
 
           // DUE DATE
-          ListTile(
+          Card(
+            elevation: 0,
+            color: Theme.of(context).colorScheme.surfaceContainerLow,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+            ),
+            child: ListTile(
+            leading: const Icon(Icons.event_outlined),
             title: Text(
               state.dueDate == null
                   ? l.noDueDate
@@ -255,6 +355,7 @@ class _TaskForm extends StatelessWidget {
                 }
               }
             },
+            ),
           ),
 
           const SizedBox(height: 24),
@@ -263,17 +364,34 @@ class _TaskForm extends StatelessWidget {
           ElevatedButton(
             onPressed:
                 (state.isSubmitting ||
+                    state.title.trim().isEmpty ||
                     state.titleError != null ||
-                    state.isDuplicate)
+                    state.isDuplicate ||
+                    state.estimatedMinutes <= 0)
                 ? null
                 : onSubmit,
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            ),
             child: state.isSubmitting
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                ? const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(height: 20, width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2)),
+                      SizedBox(width: 10),
+                      Text('Saving task…'),
+                    ],
                   )
-                : Text(l.add),
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.add_task_rounded),
+                      const SizedBox(width: 8),
+                      Text(l.add),
+                    ],
+                  ),
           ),
         ],
       ),
