@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/service_locator.dart';
@@ -10,8 +11,20 @@ part 'task_add_state.dart';
 
 class TaskAddBloc extends Bloc<TaskAddEvent, TaskAddState> {
   final TaskBloc taskBloc;
+  late final StreamSubscription<TaskState> _taskSubscription;
 
   TaskAddBloc({required this.taskBloc}) : super(TaskAddState.initial()) {
+    _taskSubscription = taskBloc.stream.listen((taskState) {
+      taskState.whenOrNull(
+        effect: (message, taskId, previous) {
+          if (message == 'Task added successfully') {
+            add(const TaskAddPersistenceResult(success: true));
+          } else if (message.startsWith("Couldn't add the task.")) {
+            add(TaskAddPersistenceResult(success: false, message: message));
+          }
+        },
+      );
+    });
     on<TaskAddTitleChanged>(_onTitleChanged);
     on<TaskAddDescriptionChanged>(_onDescriptionChanged);
     on<TaskAddTypeChanged>(_onTypeChanged);
@@ -19,6 +32,7 @@ class TaskAddBloc extends Bloc<TaskAddEvent, TaskAddState> {
     on<TaskAddEstimatedMinutesChanged>(_onEstimatedMinutesChanged);
     on<TaskAddDueDateChanged>(_onDueDateChanged);
     on<TaskAddSubmitted>(_onSubmitted);
+    on<TaskAddPersistenceResult>(_onPersistenceResult);
     on<TaskAddReset>(_onReset);
   }
 
@@ -147,10 +161,33 @@ class TaskAddBloc extends Bloc<TaskAddEvent, TaskAddState> {
       );
 
       taskBloc.add(TaskEvent.add(task));
-      emit(state.copyWith(isSubmitting: false, isSuccess: true));
+      // Keep the form in a submitting state until TaskBloc confirms that the
+      // repository write succeeded. A failed Firestore write must not close
+      // the form or falsely report success.
     } catch (e) {
       emit(state.copyWith(isSubmitting: false, error: e.toString()));
     }
+  }
+
+  void _onPersistenceResult(
+    TaskAddPersistenceResult event,
+    Emitter<TaskAddState> emit,
+  ) {
+    if (event.success) {
+      emit(state.copyWith(isSubmitting: false, isSuccess: true, error: null));
+    } else {
+      emit(state.copyWith(
+        isSubmitting: false,
+        isSuccess: false,
+        error: event.message ?? "Couldn't add the task. Please try again.",
+      ));
+    }
+  }
+
+  @override
+  Future<void> close() async {
+    await _taskSubscription.cancel();
+    await super.close();
   }
 
   void _onReset(TaskAddReset event, Emitter<TaskAddState> emit) {
