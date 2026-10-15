@@ -230,8 +230,7 @@ class TaskPage extends StatelessWidget {
                       if (taskList.isEmpty)
                         const Expanded(child: Center(child: Text('No tasks yet. Tap + to create one.')))
                       else
-                        Expanded(child: 
-                  return ImplicitlyAnimatedList(
+                        Expanded(child: ImplicitlyAnimatedList(
                     itemData: taskList,
                     itemEquality: (a, b) => a.id == b.id,
                     initialAnimation: true,
@@ -300,11 +299,10 @@ class TaskPage extends StatelessWidget {
                         ),
                       );
                     },
-                  );
+                  ),
                         ),
                     ],
                   );
-                },
                 },
               );
             },
