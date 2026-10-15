@@ -1,9 +1,10 @@
 /// Main content area with bottom navigation
 ///
 /// Displays:
-/// - Tasks page (tab 0)
-/// - Settings page (tab 1)
-/// - About page (tab 2)
+/// - Dashboard page (tab 0)
+/// - Tasks page (tab 1)
+/// - Settings page (tab 2)
+/// - About page (tab 3)
 ///
 /// Uses NavCubit for tab management and back navigation
 library;
@@ -13,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/l10n/app_localizations.dart';
 import 'package:tasks/src/features/about/about_page.dart';
 import 'package:tasks/src/features/home/cubit/nav_cubit.dart';
+import 'package:tasks/src/features/home/dashboard_page.dart';
 import 'package:tasks/src/features/settings/presentation/settings_page.dart';
 import 'package:tasks/src/features/tasks/presentation/pages/task_page.dart';
 
@@ -23,8 +25,9 @@ class HomeContentPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final pages = [
+      const DashboardPage(),
       TaskPage(title: l.appTitle),
-      SettingsPage(),
+      const SettingsPage(),
       AboutPage(l.about),
     ];
 
@@ -42,9 +45,10 @@ class HomeContentPage extends StatelessWidget {
             labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
             selectedIndex: context.read<NavCubit>().state,
             destinations: [
-              _navigationDestination(Icons.list, l.appTitle),
-              _navigationDestination(Icons.settings, l.settingsTitle),
-              _navigationDestination(Icons.info, l.about),
+              _navigationDestination(Icons.dashboard_rounded, 'Dashboard'),
+              _navigationDestination(Icons.checklist_rounded, 'Tasks'),
+              _navigationDestination(Icons.settings_rounded, l.settingsTitle),
+              _navigationDestination(Icons.info_outline_rounded, l.about),
             ],
             onDestinationSelected: (value) {
               return context.read<NavCubit>().setIndex(value);
