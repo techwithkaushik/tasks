@@ -380,7 +380,7 @@ class _TaskPageState extends State<TaskPage> {
                                 }
                                 return false;
                               },
-                              child: TaskRow(task: task),
+                              child: TaskRow(task: task, onTap: () => _showTaskDetails(context, task)),
                             );
                           },
                         ),
@@ -409,8 +409,111 @@ class _TaskPageState extends State<TaskPage> {
       ),
     );
   }
-}
 
+  Future<void> _showTaskDetails(BuildContext context, Task task) async {
+    final colors = Theme.of(context).colorScheme;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        task.title,
+                        style: Theme.of(sheetContext).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Close details',
+                      onPressed: () => Navigator.of(sheetContext).pop(),
+                      icon: const Icon(Icons.close_rounded),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _detailChip(sheetContext, task.status.name, Icons.circle_outlined),
+                    _detailChip(sheetContext, task.priority.name, Icons.flag_outlined),
+                    _detailChip(sheetContext, task.type.name, Icons.category_outlined),
+                    _detailChip(sheetContext, '${task.estimatedMinutes} min', Icons.timer_outlined),
+                  ],
+                ),
+                if ((task.description ?? '').trim().isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  Text('Description',
+                    style: Theme.of(sheetContext).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 6),
+                  Text(task.description!.trim(),
+                    style: Theme.of(sheetContext).textTheme.bodyMedium),
+                ],
+                if (task.dueDate != null) ...[
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Icon(Icons.event_outlined, color: colors.primary),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'Due ${MaterialLocalizations.of(sheetContext).formatMediumDate(task.dueDate!)} · ${MaterialLocalizations.of(sheetContext).formatTimeOfDay(TimeOfDay.fromDateTime(task.dueDate!))}',
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                if (task.tags.isNotEmpty) ...[
+                  const SizedBox(height: 18),
+                  Wrap(
+                    spacing: 8,
+                    children: task.tags.map((tag) => Chip(label: Text('#$tag'))).toList(),
+                  ),
+                ],
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: task.status == TaskStatus.completed
+                        ? null
+                        : () {
+                            context.read<TaskBloc>().add(TaskEvent.updateStatus(
+                              taskId: task.id,
+                              status: TaskStatus.completed,
+                              showSnackBar: true,
+                            ));
+                            Navigator.of(sheetContext).pop();
+                          },
+                    icon: const Icon(Icons.task_alt_rounded),
+                    label: const Text('Mark completed'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _detailChip(BuildContext context, String label, IconData icon) {
+    return Chip(
+      avatar: Icon(icon, size: 17),
+      label: Text(label),
+      side: BorderSide.none,
+    );
+  }
 
   Widget _buildFilterChip(String label, TaskStatus? status) {
     final selected = _statusFilter == status;
