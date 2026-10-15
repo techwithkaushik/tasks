@@ -45,6 +45,8 @@ class TaskPage extends StatefulWidget {
 class _TaskPageState extends State<TaskPage> {
   String _query = '';
   TaskStatus? _statusFilter;
+  bool _overdueOnly = false;
+  _TaskSort _sortBy = _TaskSort.dueDate;
 
   @override
   Widget build(BuildContext context) {
@@ -179,14 +181,38 @@ class _TaskPageState extends State<TaskPage> {
                     t.status != TaskStatus.completed && t.status != TaskStatus.skipped
                   ).length;
                   final query = _query.trim().toLowerCase();
+                  final now = DateTime.now();
                   final visibleTasks = taskList.where((task) {
                     final matchesQuery = query.isEmpty ||
                         task.title.toLowerCase().contains(query) ||
                         (task.description ?? '').toLowerCase().contains(query) ||
                         task.tags.any((tag) => tag.toLowerCase().contains(query));
                     final matchesStatus = _statusFilter == null || task.status == _statusFilter;
-                    return matchesQuery && matchesStatus;
-                  }).toList();
+                    final isOverdue = task.dueDate != null &&
+                        task.dueDate!.isBefore(now) &&
+                        task.status != TaskStatus.completed &&
+                        task.status != TaskStatus.skipped;
+                    return matchesQuery &&
+                        matchesStatus &&
+                        (!_overdueOnly || isOverdue);
+                  }).toList()
+                    ..sort((a, b) {
+                      switch (_sortBy) {
+                        case _TaskSort.dueDate:
+                          if (a.dueDate == null && b.dueDate == null) return 0;
+                          if (a.dueDate == null) return 1;
+                          if (b.dueDate == null) return -1;
+                          return a.dueDate!.compareTo(b.dueDate!);
+                        case _TaskSort.priority:
+                          return b.priority.index.compareTo(a.priority.index);
+                        case _TaskSort.newest:
+                          return (b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0))
+                              .compareTo(a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0));
+                        case _TaskSort.oldest:
+                          return (a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0))
+                              .compareTo(b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0));
+                      }
+                    });
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,8 +258,59 @@ class _TaskPageState extends State<TaskPage> {
                                   _buildFilterChip('In progress', TaskStatus.inProgress),
                                   const SizedBox(width: 8),
                                   _buildFilterChip('Completed', TaskStatus.completed),
+                                  const SizedBox(width: 8),
+                                  _buildFilterChip('Skipped', TaskStatus.skipped),
                                 ],
                               ),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                FilterChip(
+                                  avatar: Icon(
+                                    Icons.warning_amber_rounded,
+                                    size: 18,
+                                    color: _overdueOnly
+                                        ? Theme.of(context).colorScheme.onErrorContainer
+                                        : Theme.of(context).colorScheme.error,
+                                  ),
+                                  label: Text('Overdue ($overdueCount)'),
+                                  selected: _overdueOnly,
+                                  onSelected: (selected) =>
+                                      setState(() => _overdueOnly = selected),
+                                ),
+                                const Spacer(),
+                                const Text('Sort: '),
+                                const SizedBox(width: 6),
+                                DropdownButton<_TaskSort>(
+                                  value: _sortBy,
+                                  underline: const SizedBox.shrink(),
+                                  borderRadius: BorderRadius.circular(12),
+                                  items: const [
+                                    DropdownMenuItem(
+                                      value: _TaskSort.dueDate,
+                                      child: Text('Due date'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: _TaskSort.priority,
+                                      child: Text('Priority'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: _TaskSort.newest,
+                                      child: Text('Newest'),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: _TaskSort.oldest,
+                                      child: Text('Oldest'),
+                                    ),
+                                  ],
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      setState(() => _sortBy = value);
+                                    }
+                                  },
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 16),
                             Row(children: [
@@ -261,18 +338,23 @@ class _TaskPageState extends State<TaskPage> {
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
-                                    query.isEmpty && _statusFilter == null
+                                    query.isEmpty &&
+                                            _statusFilter == null &&
+                                            !_overdueOnly
                                         ? 'No tasks yet. Tap + to create one.'
                                         : 'No tasks match your filters',
                                     textAlign: TextAlign.center,
                                     style: Theme.of(context).textTheme.titleMedium,
                                   ),
-                                  if (query.isNotEmpty || _statusFilter != null) ...[
+                                  if (query.isNotEmpty ||
+                                      _statusFilter != null ||
+                                      _overdueOnly) ...[
                                     const SizedBox(height: 8),
                                     TextButton(
                                       onPressed: () => setState(() {
                                         _query = '';
                                         _statusFilter = null;
+                                        _overdueOnly = false;
                                       }),
                                       child: const Text('Clear filters'),
                                     ),
@@ -494,6 +576,8 @@ class _TaskPageState extends State<TaskPage> {
     );
   }
 }
+
+enum _TaskSort { dueDate, priority, newest, oldest }
 
 class _TaskSummaryCard extends StatelessWidget {
   final String label;
