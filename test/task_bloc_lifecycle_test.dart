@@ -137,6 +137,55 @@ void main() {
     expect(repository.addCalls, 0);
   });
 
+  test('rapid duplicate submissions are blocked until Firestore syncs the first', () async {
+    final authBloc = _FakeAppAuthBloc(
+      AppAuthState.authenticated(
+        const UserEntity(uid: 'user-1', isEmailVerified: true),
+      ),
+    );
+    final repository = _FakeTaskRepository();
+    locator.registerSingleton<AppAuthBloc>(authBloc);
+    final bloc = TaskBloc(
+      LoadTaskUseCase(repository),
+      AddTaskUseCase(repository),
+      UpdateTaskUseCase(repository),
+      DeleteTaskUseCase(repository),
+    );
+    addTearDown(() async {
+      await bloc.close();
+      await authBloc.dispose();
+      await repository.dispose();
+    });
+
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    repository.taskStream.add(<Task>[]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.isEmpty,
+        orElse: () => false,
+      ),
+    );
+
+    final first = _task().copyWith(id: '', title: 'New task');
+    bloc.add(TaskEvent.add(first));
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        effect: (message, _, _) => message == 'Task added successfully',
+        orElse: () => false,
+      ),
+    );
+
+    bloc.add(TaskEvent.add(first.copyWith(title: '  NEW   TASK ')));
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        effect: (message, _, _) => message.contains('already exists'),
+        orElse: () => false,
+      ),
+    );
+
+    expect(repository.addCalls, 1);
+  });
+
   test('status is not emitted until the update is persisted', () async {
     final authBloc = _FakeAppAuthBloc(
       AppAuthState.authenticated(
