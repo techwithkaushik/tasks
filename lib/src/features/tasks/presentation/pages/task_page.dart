@@ -34,9 +34,17 @@ import 'package:tasks/src/features/tasks/presentation/widgets/task_row.dart';
 /// - Swipe gestures for quick actions
 /// - Real-time updates as tasks change
 /// - Error handling and loading states
-class TaskPage extends StatelessWidget {
+class TaskPage extends StatefulWidget {
   final String title;
   const TaskPage({super.key, required this.title});
+
+  @override
+  State<TaskPage> createState() => _TaskPageState();
+}
+
+class _TaskPageState extends State<TaskPage> {
+  String _query = '';
+  TaskStatus? _statusFilter;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +59,7 @@ class TaskPage extends StatelessWidget {
             );
           },
         ),
-        title: Text(title),
+        title: Text(widget.title),
         actions: [
           BlocBuilder<AppAuthBloc, AppAuthState>(
             bloc: authBloc,
@@ -170,6 +178,15 @@ class TaskPage extends StatelessWidget {
                     t.dueDate != null && t.dueDate!.isBefore(DateTime.now()) &&
                     t.status != TaskStatus.completed && t.status != TaskStatus.skipped
                   ).length;
+                  final query = _query.trim().toLowerCase();
+                  final visibleTasks = taskList.where((task) {
+                    final matchesQuery = query.isEmpty ||
+                        task.title.toLowerCase().contains(query) ||
+                        (task.description ?? '').toLowerCase().contains(query) ||
+                        task.tags.any((tag) => tag.toLowerCase().contains(query));
+                    final matchesStatus = _statusFilter == null || task.status == _statusFilter;
+                    return matchesQuery && matchesStatus;
+                  }).toList();
 
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,6 +234,42 @@ class TaskPage extends StatelessWidget {
                               ),
                             ],
                             const SizedBox(height: 20),
+                            TextField(
+                              onChanged: (value) => setState(() => _query = value),
+                              decoration: InputDecoration(
+                                hintText: 'Search tasks, notes or tags',
+                                prefixIcon: const Icon(Icons.search_rounded),
+                                suffixIcon: _query.isEmpty
+                                    ? null
+                                    : IconButton(
+                                        tooltip: 'Clear search',
+                                        onPressed: () => setState(() => _query = ''),
+                                        icon: const Icon(Icons.close_rounded),
+                                      ),
+                                filled: true,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  borderSide: BorderSide.none,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  _buildFilterChip('All', null),
+                                  const SizedBox(width: 8),
+                                  _buildFilterChip('To do', TaskStatus.pending),
+                                  const SizedBox(width: 8),
+                                  _buildFilterChip('In progress', TaskStatus.inProgress),
+                                  const SizedBox(width: 8),
+                                  _buildFilterChip('Completed', TaskStatus.completed),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
                             Row(children: [
                               Expanded(child: Text('Your tasks',
                                 style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800))),
@@ -227,11 +280,45 @@ class TaskPage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      if (taskList.isEmpty)
-                        const Expanded(child: Center(child: Text('No tasks yet. Tap + to create one.')))
+                      if (visibleTasks.isEmpty)
+                        Expanded(
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    query.isEmpty ? Icons.task_alt_rounded : Icons.search_off_rounded,
+                                    size: 44,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    query.isEmpty && _statusFilter == null
+                                        ? 'No tasks yet. Tap + to create one.'
+                                        : 'No tasks match your filters',
+                                    textAlign: TextAlign.center,
+                                    style: Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  if (query.isNotEmpty || _statusFilter != null) ...[
+                                    const SizedBox(height: 8),
+                                    TextButton(
+                                      onPressed: () => setState(() {
+                                        _query = '';
+                                        _statusFilter = null;
+                                      }),
+                                      child: const Text('Clear filters'),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
                       else
                         Expanded(child: ImplicitlyAnimatedList(
-                    itemData: taskList,
+                    itemData: visibleTasks,
                     itemEquality: (a, b) => a.id == b.id,
                     initialAnimation: true,
                     itemBuilder: (context, task) {
@@ -324,6 +411,20 @@ class TaskPage extends StatelessWidget {
   }
 }
 
+
+  Widget _buildFilterChip(String label, TaskStatus? status) {
+    final selected = _statusFilter == status;
+    return ChoiceChip(
+      label: Text(label),
+      selected: selected,
+      showCheckmark: false,
+      onSelected: (_) => setState(() => _statusFilter = status),
+      avatar: selected
+          ? const Icon(Icons.check_rounded, size: 16)
+          : null,
+    );
+  }
+}
 
 class _TaskSummaryCard extends StatelessWidget {
   final String label;
