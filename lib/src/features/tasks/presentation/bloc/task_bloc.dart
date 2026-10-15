@@ -179,6 +179,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     try {
       await addTaskUseCase(event.task);
       if (_currentUser?.uid != user.uid) return;
+
+      // Emit the latest list state before the one-shot UI effect. This keeps
+      // dashboards and counters rebuilding even if Firestore delivered its
+      // snapshot before the write future completed.
+      emit(TaskState.data(tasks: _lastTasks));
       emit(
         TaskState.effect(
           message: "Task added successfully",
