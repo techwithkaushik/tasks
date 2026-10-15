@@ -161,13 +161,76 @@ class TaskPage extends StatelessWidget {
 
                 data: (tasks) {
                   final taskList = tasks
-                      .where((t) => t.status != TaskStatus.deleted)
+                      .where((t) => t.status != TaskStatus.deleted && t.status != TaskStatus.archived)
                       .toList();
+                  final pendingCount = taskList.where((t) => t.status == TaskStatus.pending).length;
+                  final progressCount = taskList.where((t) => t.status == TaskStatus.inProgress).length;
+                  final completedCount = taskList.where((t) => t.status == TaskStatus.completed).length;
+                  final overdueCount = taskList.where((t) =>
+                    t.dueDate != null && t.dueDate!.isBefore(DateTime.now()) &&
+                    t.status != TaskStatus.completed && t.status != TaskStatus.skipped
+                  ).length;
 
-                  if (taskList.isEmpty) {
-                    return const Center(child: Text("No Tasks Yet"));
-                  }
-
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 12, 8, 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Your workspace',
+                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.w800, letterSpacing: -0.5)),
+                            const SizedBox(height: 4),
+                            Text('Stay focused. Make today count.',
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                            const SizedBox(height: 18),
+                            Row(children: [
+                              Expanded(child: _TaskSummaryCard(label: 'To do', count: pendingCount,
+                                icon: Icons.radio_button_unchecked_rounded,
+                                color: Theme.of(context).colorScheme.primary)),
+                              const SizedBox(width: 8),
+                              Expanded(child: _TaskSummaryCard(label: 'In progress', count: progressCount,
+                                icon: Icons.timelapse_rounded, color: const Color(0xFF159D85))),
+                              const SizedBox(width: 8),
+                              Expanded(child: _TaskSummaryCard(label: 'Completed', count: completedCount,
+                                icon: Icons.task_alt_rounded, color: const Color(0xFF8260D8))),
+                            ]),
+                            if (overdueCount > 0) ...[
+                              const SizedBox(height: 12),
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.errorContainer,
+                                  borderRadius: BorderRadius.circular(14)),
+                                child: Row(children: [
+                                  Icon(Icons.warning_amber_rounded,
+                                    color: Theme.of(context).colorScheme.onErrorContainer),
+                                  const SizedBox(width: 8),
+                                  Expanded(child: Text('$overdueCount overdue task(s) need attention',
+                                    style: TextStyle(color: Theme.of(context).colorScheme.onErrorContainer,
+                                      fontWeight: FontWeight.w600))),
+                                ]),
+                              ),
+                            ],
+                            const SizedBox(height: 20),
+                            Row(children: [
+                              Expanded(child: Text('Your tasks',
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800))),
+                              Text('${taskList.length} total',
+                                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                            ]),
+                          ],
+                        ),
+                      ),
+                      if (taskList.isEmpty)
+                        const Expanded(child: Center(child: Text('No tasks yet. Tap + to create one.')))
+                      else
+                        Expanded(child: 
                   return ImplicitlyAnimatedList(
                     itemData: taskList,
                     itemEquality: (a, b) => a.id == b.id,
@@ -238,6 +301,10 @@ class TaskPage extends StatelessWidget {
                       );
                     },
                   );
+                        ),
+                    ],
+                  );
+                },
                 },
               );
             },
@@ -255,6 +322,36 @@ class TaskPage extends StatelessWidget {
         },
         child: const Icon(Icons.add),
       ),
+    );
+  }
+}
+
+
+class _TaskSummaryCard extends StatelessWidget {
+  final String label;
+  final int count;
+  final IconData icon;
+  final Color color;
+  const _TaskSummaryCard({required this.label, required this.count, required this.icon, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.all(11),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: color.withValues(alpha: 0.20)),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(height: 10),
+        Text('$count', style: theme.textTheme.headlineSmall?.copyWith(color: color, fontWeight: FontWeight.w800)),
+        const SizedBox(height: 2),
+        Text(label, maxLines: 1, overflow: TextOverflow.ellipsis,
+          style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurfaceVariant, fontWeight: FontWeight.w600)),
+      ]),
     );
   }
 }
