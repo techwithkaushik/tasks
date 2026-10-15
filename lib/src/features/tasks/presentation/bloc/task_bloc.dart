@@ -37,6 +37,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   List<Task> _lastTasks = [];
   String? _tasksUserId;
   bool _hasLoadedTasks = false;
+  // Titles remain reserved after a successful write until the Firestore
+  // snapshot confirms them, preventing rapid duplicate submissions.
+  final Set<String> _pendingTaskTitles = <String>{};
 
   TaskBloc(
     this.loadTaskUseCase,
@@ -74,6 +77,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
             _lastTasks = [];
             _tasksUserId = user.uid;
             _hasLoadedTasks = false;
+            _pendingTaskTitles.clear();
             add(const TaskEvent.load());
           }
         },
@@ -82,6 +86,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           _lastTasks = [];
           _tasksUserId = null;
           _hasLoadedTasks = false;
+          _pendingTaskTitles.clear();
           // A new load event uses restartable() to cancel any previous user's
           // Firestore stream before displaying the signed-out state.
           add(const TaskEvent.load());
@@ -128,6 +133,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
                 : const TaskState.loading();
           }
           _lastTasks = tasks;
+          final syncedTitles = tasks
+              .where((task) => task.userId == user.uid)
+              .map((task) => _taskTitleKey(user.uid, task.title))
+              .toSet();
+          _pendingTaskTitles.removeAll(syncedTitles);
           _hasLoadedTasks = true;
           return TaskState.data(tasks: tasks);
         },
@@ -181,7 +191,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     // Re-check the latest in-memory snapshot in the BLoC as well as the
     // form. This closes the common race where two forms submit the same title.
     final normalizedTitle = _normalizeTaskTitle(event.task.title);
-    final alreadyExists = _lastTasks.any(
+    final titleKey = _taskTitleKey(user.uid, event.task.title);
+    final alreadyExists = _pendingTaskTitles.contains(titleKey) || _lastTasks.any(
       (task) =>
           task.userId == user.uid &&
           task.status != TaskStatus.deleted &&
@@ -196,6 +207,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       return;
     }
 
+    _pendingTaskTitles.add(titleKey);
     try {
       await addTaskUseCase(event.task);
       if (_currentUser?.uid != user.uid) return;
@@ -212,6 +224,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         ),
       );
     } catch (_) {
+      _pendingTaskTitles.remove(titleKey);
       if (_currentUser?.uid == user.uid) {
         _notifyWriteFailure(
           emit,
@@ -330,3 +343,6 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
 String _normalizeTaskTitle(String value) =>
     value.trim().replaceAll(RegExp(r'\s+'), ' ').toLowerCase();
+
+String _taskTitleKey(String userId, String title) =>
+    '$userId|${_normalizeTaskTitle(title)}';
