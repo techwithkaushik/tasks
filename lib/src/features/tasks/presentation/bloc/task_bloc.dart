@@ -46,8 +46,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   ) : super(const TaskState.loading()) {
     on<_Load>(_onLoad, transformer: restartable());
     on<_Stop>(_onStop);
-    // Ignore rapid duplicate submit events while a create request is in flight.
-    on<_Add>(_onAdd, transformer: droppable());
+    // Serialize creates so concurrent submits are checked against the latest state.
+    on<_Add>(_onAdd, transformer: sequential());
     // Serialize writes so quick repeated actions cannot race each other.
     on<_Update>(_onUpdate, transformer: sequential());
     on<_UpdateStatus>(_onUpdateStatus, transformer: sequential());
@@ -191,7 +191,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     if (alreadyExists) {
       _notifyWriteFailure(
         emit,
-        "A task with this title already exists. Please choose a different title.",
+        "Couldn't add the task. A task with this title already exists. Please choose a different title.",
       );
       return;
     }
