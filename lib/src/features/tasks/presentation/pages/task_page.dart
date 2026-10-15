@@ -226,6 +226,11 @@ class _TaskPageState extends State<TaskPage> {
                           ),
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             TextField(
                               onChanged: (value) => setState(() => _query = value),
                               decoration: InputDecoration(
@@ -313,13 +318,24 @@ class _TaskPageState extends State<TaskPage> {
                               ],
                             ),
                             const SizedBox(height: 16),
-                            Row(children: [
-                              Expanded(child: Text('Your tasks',
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800))),
-                              Text('${taskList.length} total',
-                                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant)),
-                            ]),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'Your tasks',
+                                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  '${taskList.length} total',
+                                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),
