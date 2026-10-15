@@ -3,6 +3,7 @@ import 'package:tasks/l10n/app_localizations.dart';
 import 'package:tasks/src/features/about/about_page.dart';
 import 'package:tasks/src/features/recycle_bin/recycle_bin_page.dart';
 import 'package:tasks/src/features/tasks/presentation/pages/task_calendar_page.dart';
+import 'package:tasks/src/features/settings/presentation/settings_page.dart';
 
 Widget sideDrawer(BuildContext context) {
   final l = AppLocalizations.of(context);
@@ -49,6 +50,17 @@ Widget sideDrawer(BuildContext context) {
               Navigator.of(context).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const TaskCalendarPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings_outlined),
+            title: Text(l.settingsTitle),
+            subtitle: const Text('Theme and language'),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SettingsPage()),
               );
             },
           ),
