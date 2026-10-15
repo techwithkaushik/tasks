@@ -101,7 +101,7 @@ class TaskAddBloc extends Bloc<TaskAddEvent, TaskAddState> {
     TaskAddDueDateChanged event,
     Emitter<TaskAddState> emit,
   ) {
-    emit(state.copyWith(dueDate: event.dueDate, error: null));
+    emit(state.copyWith(dueDate: event.dueDate, clearDueDate: event.dueDate == null, error: null));
   }
 
   void _onSubmitted(TaskAddSubmitted event, Emitter<TaskAddState> emit) {
