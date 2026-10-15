@@ -46,10 +46,12 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   ) : super(const TaskState.loading()) {
     on<_Load>(_onLoad, transformer: restartable());
     on<_Stop>(_onStop);
-    on<_Add>(_onAdd);
-    on<_Update>(_onUpdate);
+    // Ignore rapid duplicate submit events while a create request is in flight.
+    on<_Add>(_onAdd, transformer: droppable());
+    // Serialize writes so quick repeated actions cannot race each other.
+    on<_Update>(_onUpdate, transformer: sequential());
     on<_UpdateStatus>(_onUpdateStatus, transformer: sequential());
-    on<_Delete>(_onDelete);
+    on<_Delete>(_onDelete, transformer: sequential());
 
     _initializeAuthListener();
   }
@@ -172,6 +174,24 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       _notifyWriteFailure(
         emit,
         "Couldn't add the task. Your session may have changed; please try again.",
+      );
+      return;
+    }
+
+    // Re-check the latest in-memory snapshot in the BLoC as well as the
+    // form. This closes the common race where two forms submit the same title.
+    final normalizedTitle = _normalizeTaskTitle(event.task.title);
+    final alreadyExists = _lastTasks.any(
+      (task) =>
+          task.userId == user.uid &&
+          task.status != TaskStatus.deleted &&
+          task.status != TaskStatus.archived &&
+          _normalizeTaskTitle(task.title) == normalizedTitle,
+    );
+    if (alreadyExists) {
+      _notifyWriteFailure(
+        emit,
+        "A task with this title already exists. Please choose a different title.",
       );
       return;
     }
@@ -306,3 +326,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     }
   }
 }
+
+
+String _normalizeTaskTitle(String value) =>
+    value.trim().replaceAll(RegExp(r'\s+'), ' ').toLowerCase();
