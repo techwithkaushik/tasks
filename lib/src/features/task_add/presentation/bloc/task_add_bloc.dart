@@ -45,20 +45,7 @@ class TaskAddBloc extends Bloc<TaskAddEvent, TaskAddState> {
       titleError = 'Title is required';
     }
 
-    // Check for duplicate title
-    bool isDuplicate = false;
-    taskBloc.state.maybeWhen(
-      data: (tasks) {
-        final normalizedTitle = _normalizeTitle(title);
-        isDuplicate = normalizedTitle.isNotEmpty && tasks.any(
-          (task) =>
-              task.status != TaskStatus.deleted &&
-              task.status != TaskStatus.archived &&
-              _normalizeTitle(task.title) == normalizedTitle,
-        );
-      },
-      orElse: () {},
-    );
+    final isDuplicate = _hasDuplicateTitle(title);
 
     emit(
       state.copyWith(
@@ -67,6 +54,21 @@ class TaskAddBloc extends Bloc<TaskAddEvent, TaskAddState> {
         titleError: titleError,
         isDuplicate: isDuplicate,
       ),
+    );
+  }
+
+  bool _hasDuplicateTitle(String title) {
+    final normalizedTitle = _normalizeTitle(title);
+    if (normalizedTitle.isEmpty) return false;
+
+    return taskBloc.state.maybeWhen(
+      data: (tasks) => tasks.any(
+        (task) =>
+            task.status != TaskStatus.deleted &&
+            task.status != TaskStatus.archived &&
+            _normalizeTitle(task.title) == normalizedTitle,
+      ),
+      orElse: () => false,
     );
   }
 
@@ -109,9 +111,13 @@ class TaskAddBloc extends Bloc<TaskAddEvent, TaskAddState> {
       return;
     }
 
-    // Check for duplicate
-    if (state.isDuplicate) {
-      emit(state.copyWith(error: 'A task with this title already exists'));
+    // Re-check against the latest TaskBloc snapshot at submit time; another
+    // device may have created the same title while this form was open.
+    if (_hasDuplicateTitle(state.title)) {
+      emit(state.copyWith(
+        isDuplicate: true,
+        error: 'A task with this title already exists',
+      ));
       return;
     }
 
