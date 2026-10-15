@@ -671,6 +671,71 @@ void main() {
     expect(repository.lastUpdatedTask?.status, TaskStatus.pending);
   });
 
+  test('soft delete and restore preserve the task lifecycle', () async {
+    final authBloc = _FakeAppAuthBloc(
+      AppAuthState.authenticated(
+        const UserEntity(uid: 'user-1', isEmailVerified: true),
+      ),
+    );
+    final repository = _FakeTaskRepository();
+    locator.registerSingleton<AppAuthBloc>(authBloc);
+    final bloc = TaskBloc(
+      LoadTaskUseCase(repository),
+      AddTaskUseCase(repository),
+      UpdateTaskUseCase(repository),
+      DeleteTaskUseCase(repository),
+    );
+    addTearDown(() async {
+      await bloc.close();
+      await authBloc.dispose();
+      await repository.dispose();
+    });
+
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    repository.taskStream.add([_task()]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.length == 1,
+        orElse: () => false,
+      ),
+    );
+
+    repository.updateGate.complete();
+    bloc.add(const TaskEvent.updateStatus(
+      taskId: 'task-1',
+      status: TaskStatus.deleted,
+      showSnackBar: true,
+    ));
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        effect: (message, taskId, previous) =>
+            message.contains('Status changed') &&
+            taskId == 'task-1' &&
+            previous == TaskStatus.pending,
+        orElse: () => false,
+      ),
+    );
+    expect(
+      bloc.state.maybeWhen(
+        data: (tasks) => tasks.single.status,
+        orElse: () => null,
+      ),
+      TaskStatus.deleted,
+    );
+
+    bloc.add(const TaskEvent.updateStatus(
+      taskId: 'task-1',
+      status: TaskStatus.pending,
+    ));
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.single.status == TaskStatus.pending,
+        orElse: () => false,
+      ),
+    );
+    expect(repository.lastUpdatedTask?.status, TaskStatus.pending);
+  });
+
   test('cached tasks remain available after a transient stream error', () async {
     final authBloc = _FakeAppAuthBloc(
       AppAuthState.authenticated(
