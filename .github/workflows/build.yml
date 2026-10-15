@@ -17,6 +17,12 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: package.json
+
       - uses: actions/setup-java@v6
         with:
           # Gradle 8.14.x and AGP 8.x are not compatible with JDK 25.
@@ -29,7 +35,13 @@ jobs:
           # Pin the SDK so dependency resolution and CI results are reproducible.
           flutter-version: "3.47.7"
 
-      - name: Install dependencies from the committed lockfile
+      - name: Install Firestore rules test dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Test Firestore security rules in the emulator
+        run: npm run test:rules
+
+      - name: Install Flutter dependencies from the committed lockfile
         run: flutter pub get --enforce-lockfile
 
       - name: Generate Dart sources
