@@ -168,10 +168,24 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Future<void> _onAdd(_Add event, Emitter<TaskState> emit) async {
     final user = _currentUser;
-    if (user == null || event.task.userId != user.uid) return;
+    if (user == null || event.task.userId != user.uid) {
+      _notifyWriteFailure(
+        emit,
+        "Couldn't add the task. Your session may have changed; please try again.",
+      );
+      return;
+    }
 
     try {
       await addTaskUseCase(event.task);
+      if (_currentUser?.uid != user.uid) return;
+      emit(
+        TaskState.effect(
+          message: "Task added successfully",
+          taskId: "",
+          previous: TaskStatus.pending,
+        ),
+      );
     } catch (_) {
       if (_currentUser?.uid == user.uid) {
         _notifyWriteFailure(
