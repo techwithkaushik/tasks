@@ -1,13 +1,4 @@
-/// Widget that displays a single task in the task list
-///
-/// Shows:
-/// - Task title with priority indicator
-/// - Task type badge
-/// - Due date if available
-/// - Completion indicator
-/// - Time estimate
-///
-/// Used in the animated task list on TaskPage
+/// Polished, compact task card used by the animated task list.
 library;
 
 import 'package:flutter/material.dart';
@@ -24,61 +15,96 @@ class TaskRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onSurface = Theme.of(context).colorScheme.onSurface;
-    final onSurfaceVariant = Theme.of(context).colorScheme.onSurfaceVariant;
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final isDone = task.status == TaskStatus.completed;
+    final priorityColor = switch (task.priority) {
+      TaskPriority.critical => colors.error,
+      TaskPriority.high => const Color(0xFFE58A28),
+      TaskPriority.medium => colors.primary,
+      TaskPriority.low => colors.tertiary,
+    };
+    final typeIcon = switch (task.type) {
+      TaskType.single => Icons.check_circle_outline_rounded,
+      TaskType.habit => Icons.spa_outlined,
+      TaskType.focus => Icons.center_focus_strong_rounded,
+      TaskType.recurring => Icons.repeat_rounded,
+      TaskType.location => Icons.place_outlined,
+    };
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-        child: InkWell(
-          onTap: onTap,
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      color: colors.surfaceContainerLow,
+      clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(
+          color: colors.outlineVariant.withValues(alpha: 0.55),
+        ),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(50),
-                child: Container(
-                  width: 64,
-                  height: 64,
-                  color: Colors.blueGrey.shade200,
-                  alignment: Alignment.center,
-                  child: Text(
-                    task.type.name[0].toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey.shade900,
-                    ),
-                  ),
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: priorityColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
+                child: Icon(typeIcon, color: priorityColor, size: 23),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      task.title.capitalize(),
-                      style: TextStyle(
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w600,
-                        color: onSurface,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    if (task.description?.isNotEmpty ?? false)
-                      Text(
-                        task.description!,
-                        style: TextStyle(
-                          fontSize: 12.5,
-                          color: onSurfaceVariant,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            task.title.capitalize(),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              height: 1.25,
+                              decoration: isDone ? TextDecoration.lineThrough : null,
+                              color: isDone ? colors.onSurfaceVariant : colors.onSurface,
+                            ),
+                          ),
                         ),
-                        maxLines: 1,
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 8,
+                          height: 8,
+                          margin: const EdgeInsets.only(top: 5),
+                          decoration: BoxDecoration(
+                            color: priorityColor,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (task.description?.trim().isNotEmpty ?? false) ...[
+                      const SizedBox(height: 5),
+                      Text(
+                        task.description!.trim(),
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colors.onSurfaceVariant,
+                          height: 1.35,
+                        ),
                       ),
-                    const SizedBox(height: 6),
+                    ],
+                    const SizedBox(height: 10),
                     TaskPills(task: task),
                   ],
                 ),
