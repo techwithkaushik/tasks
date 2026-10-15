@@ -43,6 +43,7 @@ class _FakeTaskRepository implements TaskRepository {
   Object? addFailure;
   Object? updateFailure;
   Object? deleteFailure;
+  int addCalls = 0;
 
   @override
   Stream<List<Task>> loadTasks(String userId) => taskStream.stream;
@@ -59,6 +60,7 @@ class _FakeTaskRepository implements TaskRepository {
 
   @override
   Future<void> addTask(Task task) async {
+    addCalls++;
     if (addFailure != null) throw addFailure!;
   }
 
@@ -86,6 +88,102 @@ void main() {
 
   tearDown(() async {
     await locator.reset();
+  });
+
+
+  test('duplicate task titles are rejected by TaskBloc before persistence', () async {
+    final authBloc = _FakeAppAuthBloc(
+      AppAuthState.authenticated(
+        const UserEntity(uid: 'user-1', isEmailVerified: true),
+      ),
+    );
+    final repository = _FakeTaskRepository();
+    locator.registerSingleton<AppAuthBloc>(authBloc);
+
+    final bloc = TaskBloc(
+      LoadTaskUseCase(repository),
+      AddTaskUseCase(repository),
+      UpdateTaskUseCase(repository),
+      DeleteTaskUseCase(repository),
+    );
+
+    addTearDown(() async {
+      await bloc.close();
+      await authBloc.dispose();
+      await repository.dispose();
+    });
+
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    repository.taskStream.add([_task()]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.length == 1 && tasks.single.id == 'task-1',
+        orElse: () => false,
+      ),
+    );
+
+    bloc.add(TaskEvent.add(_task().copyWith(
+      id: '',
+      title: '  TEST   TASK ',
+    )));
+
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        effect: (message, _, _) => message.contains('already exists'),
+        orElse: () => false,
+      ),
+    );
+
+    expect(repository.addCalls, 0);
+  });
+
+  test('rapid duplicate submissions are blocked until Firestore syncs the first', () async {
+    final authBloc = _FakeAppAuthBloc(
+      AppAuthState.authenticated(
+        const UserEntity(uid: 'user-1', isEmailVerified: true),
+      ),
+    );
+    final repository = _FakeTaskRepository();
+    locator.registerSingleton<AppAuthBloc>(authBloc);
+    final bloc = TaskBloc(
+      LoadTaskUseCase(repository),
+      AddTaskUseCase(repository),
+      UpdateTaskUseCase(repository),
+      DeleteTaskUseCase(repository),
+    );
+    addTearDown(() async {
+      await bloc.close();
+      await authBloc.dispose();
+      await repository.dispose();
+    });
+
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    repository.taskStream.add(<Task>[]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.isEmpty,
+        orElse: () => false,
+      ),
+    );
+
+    final first = _task().copyWith(id: '', title: 'New task');
+    bloc.add(TaskEvent.add(first));
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        effect: (message, _, _) => message == 'Task added successfully',
+        orElse: () => false,
+      ),
+    );
+
+    bloc.add(TaskEvent.add(first.copyWith(title: '  NEW   TASK ')));
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        effect: (message, _, _) => message.contains('already exists'),
+        orElse: () => false,
+      ),
+    );
+
+    expect(repository.addCalls, 1);
   });
 
   test('status is not emitted until the update is persisted', () async {
@@ -558,6 +656,74 @@ void main() {
         effect: (message, _, _) => message.contains('Status changed'),
         orElse: () => false,
       ),
+    );
+
+    bloc.add(const TaskEvent.updateStatus(
+      taskId: 'task-1',
+      status: TaskStatus.pending,
+    ));
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.single.status == TaskStatus.pending,
+        orElse: () => false,
+      ),
+    );
+    expect(repository.lastUpdatedTask?.status, TaskStatus.pending);
+  });
+
+  test('soft delete and restore preserve the task lifecycle', () async {
+    final authBloc = _FakeAppAuthBloc(
+      AppAuthState.authenticated(
+        const UserEntity(uid: 'user-1', isEmailVerified: true),
+      ),
+    );
+    final repository = _FakeTaskRepository();
+    locator.registerSingleton<AppAuthBloc>(authBloc);
+    final bloc = TaskBloc(
+      LoadTaskUseCase(repository),
+      AddTaskUseCase(repository),
+      UpdateTaskUseCase(repository),
+      DeleteTaskUseCase(repository),
+    );
+    addTearDown(() async {
+      await bloc.close();
+      await authBloc.dispose();
+      await repository.dispose();
+    });
+
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    repository.taskStream.add([_task()]);
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        data: (tasks) => tasks.length == 1,
+        orElse: () => false,
+      ),
+    );
+
+    final observedStates = <TaskState>[];
+    final stateSubscription = bloc.stream.listen(observedStates.add);
+    addTearDown(stateSubscription.cancel);
+    repository.updateGate.complete();
+    bloc.add(const TaskEvent.updateStatus(
+      taskId: 'task-1',
+      status: TaskStatus.deleted,
+      showSnackBar: true,
+    ));
+    await bloc.stream.firstWhere(
+      (state) => state.maybeWhen(
+        effect: (message, taskId, previous) =>
+            message.contains('Status changed') &&
+            taskId == 'task-1' &&
+            previous == TaskStatus.pending,
+        orElse: () => false,
+      ),
+    );
+    expect(
+      observedStates.any((state) => state.maybeWhen(
+        data: (tasks) => tasks.single.status == TaskStatus.deleted,
+        orElse: () => false,
+      )),
+      isTrue,
     );
 
     bloc.add(const TaskEvent.updateStatus(
