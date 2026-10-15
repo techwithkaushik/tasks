@@ -134,7 +134,10 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
           }
           _lastTasks = tasks;
           final syncedTitles = tasks
-              .where((task) => task.userId == user.uid)
+              .where((task) =>
+                  task.userId == user.uid &&
+                  task.status != TaskStatus.deleted &&
+                  task.status != TaskStatus.archived)
               .map((task) => _taskTitleKey(user.uid, task.title))
               .toSet();
           _pendingTaskTitles.removeAll(syncedTitles);
