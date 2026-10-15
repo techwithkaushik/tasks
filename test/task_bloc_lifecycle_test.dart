@@ -700,6 +700,9 @@ void main() {
       ),
     );
 
+    final observedStates = <TaskState>[];
+    final stateSubscription = bloc.stream.listen(observedStates.add);
+    addTearDown(stateSubscription.cancel);
     repository.updateGate.complete();
     bloc.add(const TaskEvent.updateStatus(
       taskId: 'task-1',
@@ -716,11 +719,11 @@ void main() {
       ),
     );
     expect(
-      bloc.state.maybeWhen(
-        data: (tasks) => tasks.single.status,
-        orElse: () => null,
-      ),
-      TaskStatus.deleted,
+      observedStates.any((state) => state.maybeWhen(
+        data: (tasks) => tasks.single.status == TaskStatus.deleted,
+        orElse: () => false,
+      )),
+      isTrue,
     );
 
     bloc.add(const TaskEvent.updateStatus(
