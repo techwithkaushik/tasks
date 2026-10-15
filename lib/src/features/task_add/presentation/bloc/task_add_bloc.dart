@@ -35,9 +35,12 @@ class TaskAddBloc extends Bloc<TaskAddEvent, TaskAddState> {
     bool isDuplicate = false;
     taskBloc.state.maybeWhen(
       data: (tasks) {
-        isDuplicate = tasks.any(
+        final normalizedTitle = _normalizeTitle(title);
+        isDuplicate = normalizedTitle.isNotEmpty && tasks.any(
           (task) =>
-              task.title.toLowerCase().trim() == title.toLowerCase().trim(),
+              task.status != TaskStatus.deleted &&
+              task.status != TaskStatus.archived &&
+              _normalizeTitle(task.title) == normalizedTitle,
         );
       },
       orElse: () {},
@@ -154,3 +157,9 @@ class TaskAddBloc extends Bloc<TaskAddEvent, TaskAddState> {
     emit(TaskAddState.initial());
   }
 }
+
+
+/// Normalizes whitespace and case so accidental formatting differences do not
+/// create duplicate tasks. Deleted/archived tasks are handled separately above.
+String _normalizeTitle(String value) =>
+    value.trim().replaceAll(RegExp(r'\\s+'), ' ').toLowerCase();
