@@ -62,3 +62,12 @@ class TaskAddSubmitted extends TaskAddEvent {
 class TaskAddReset extends TaskAddEvent {
   const TaskAddReset();
 }
+
+class TaskAddPersistenceResult extends TaskAddEvent {
+  final bool success;
+  final String? message;
+  const TaskAddPersistenceResult({required this.success, this.message});
+
+  @override
+  List<Object?> get props => [success, message];
+}
