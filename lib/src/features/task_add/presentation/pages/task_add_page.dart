@@ -328,7 +328,18 @@ class _TaskForm extends StatelessWidget {
                   ? l.noDueDate
                   : '${l.due}: ${_formatDueDate(state.dueDate!)}',
             ),
-            trailing: const Icon(Icons.calendar_today),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (state.dueDate != null)
+                  IconButton(
+                    tooltip: 'Clear due date',
+                    onPressed: () => onDueDateChanged(null),
+                    icon: const Icon(Icons.close_rounded),
+                  ),
+                const Icon(Icons.calendar_today_rounded),
+              ],
+            ),
             onTap: () async {
               var picked = await showDatePicker(
                 context: context,
