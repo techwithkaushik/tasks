@@ -536,15 +536,38 @@ class _TaskPageState extends State<TaskPage> {
                     onPressed: task.status == TaskStatus.completed
                         ? null
                         : () {
+                            final nextStatus = switch (task.status) {
+                              TaskStatus.pending => TaskStatus.inProgress,
+                              TaskStatus.inProgress => TaskStatus.completed,
+                              TaskStatus.skipped => TaskStatus.pending,
+                              TaskStatus.completed => TaskStatus.completed,
+                              TaskStatus.deleted => TaskStatus.pending,
+                              TaskStatus.archived => TaskStatus.pending,
+                            };
                             context.read<TaskBloc>().add(TaskEvent.updateStatus(
                               taskId: task.id,
-                              status: TaskStatus.completed,
+                              status: nextStatus,
                               showSnackBar: true,
                             ));
                             Navigator.of(sheetContext).pop();
                           },
-                    icon: const Icon(Icons.task_alt_rounded),
-                    label: const Text('Mark completed'),
+                    icon: Icon(
+                      task.status == TaskStatus.pending
+                          ? Icons.play_arrow_rounded
+                          : task.status == TaskStatus.inProgress
+                              ? Icons.task_alt_rounded
+                              : Icons.replay_rounded,
+                    ),
+                    label: Text(
+                      switch (task.status) {
+                        TaskStatus.pending => 'Start task',
+                        TaskStatus.inProgress => 'Mark completed',
+                        TaskStatus.skipped => 'Resume task',
+                        TaskStatus.completed => 'Completed',
+                        TaskStatus.deleted => 'Restore task',
+                        TaskStatus.archived => 'Restore task',
+                      },
+                    ),
                   ),
                 ),
               ],
