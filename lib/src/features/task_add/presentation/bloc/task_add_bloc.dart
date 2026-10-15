@@ -162,4 +162,4 @@ class TaskAddBloc extends Bloc<TaskAddEvent, TaskAddState> {
 /// Normalizes whitespace and case so accidental formatting differences do not
 /// create duplicate tasks. Deleted/archived tasks are handled separately above.
 String _normalizeTitle(String value) =>
-    value.trim().replaceAll(RegExp(r'\\s+'), ' ').toLowerCase();
+    value.trim().replaceAll(RegExp(r'\s+'), ' ').toLowerCase();
