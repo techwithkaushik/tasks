@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tasks/src/features/tasks/domain/entities/task_entity.dart';
 import 'package:tasks/src/features/tasks/presentation/bloc/task_bloc.dart';
+import 'package:tasks/src/features/home/cubit/nav_cubit.dart';
 import 'package:tasks/src/features/tasks/presentation/widgets/side_drawer.dart';
 import 'package:tasks/src/features/tasks/presentation/widgets/task_row.dart';
 import 'package:tasks/src/features/task_add/presentation/pages/task_add_page.dart';
