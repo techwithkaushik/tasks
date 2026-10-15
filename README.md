@@ -65,7 +65,7 @@ The Firestore rules have emulator-based regression tests for authenticated owner
 Run them locally with Node.js 22 and Java 17:
 
 ```sh
-npm ci --no-audit --no-fund
+npm install --no-audit --no-fund
 npm run test:rules
 ```
 
@@ -73,9 +73,11 @@ The test command starts the Firestore Emulator, runs the rules tests, and shuts 
 
 ## Quality checks
 
-Run the same core checks used by GitHub Actions:
+Run the same core checks used by GitHub Actions (Node.js 22 and Java 17 are also required for the Firestore emulator tests):
 
 ```sh
+npm install --no-audit --no-fund
+npm run test:rules
 flutter pub get --enforce-lockfile
 dart run build_runner build --delete-conflicting-outputs
 git diff --exit-code -- pubspec.lock
